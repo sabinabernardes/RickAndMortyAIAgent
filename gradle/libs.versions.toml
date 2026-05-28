@@ -75,7 +75,6 @@ koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", versi
 compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 compose-runtime = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "compose" }
 compose-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version = "2.8.7" }
-androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
@@ -108,7 +107,7 @@ turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine
 androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
 androidx-navigation-runtime-android = { group = "androidx.navigation", name = "navigation-runtime-android", version.ref = "navigationRuntimeAndroid" }
 navigation-runtime-android = { group = "androidx.navigation", name = "navigation-runtime-android", version.ref = "navigationRuntimeAndroidVersion" }
-androidx-navigation-compose-jvmstubs = { group = "androidx.navigation", name = "navigation-compose-jvmstubs", version.ref = "navigationComposeJvmstubs" }
+#androidx-navigation-compose-jvmstubs = { group = "androidx.navigation", name = "navigation-compose-jvmstubs", version.ref = "navigationComposeJvmstubs" }
 androidx-ui-android = { group = "androidx.compose.ui", name = "ui-android", version.ref = "uiAndroid" }
 
 [plugins]
