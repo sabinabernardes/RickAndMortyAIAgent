@@ -2,8 +2,19 @@
 .DS_Store
 Thumbs.db
 
+# Gradle e Builds
+.gradle/
+build/
+/*/build/
+
+# Android Studio
+*.iml
+.idea/
+local.properties
+
 # Kotlin
 *.class
 *.log
 *.kts~
 *.swp
+.kotlin/

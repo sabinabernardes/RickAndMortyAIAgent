@@ -1,7 +1,6 @@
 [versions]
 agp = "8.10.1"
 androidxJunit = "1.1.5"
-androidxNavigationCompose = "2.9.3"
 coilCompose = "2.1.0"
 composeBomVersion = "2024.05.00"
 espressoCoreVersion = "3.5.0"
@@ -47,6 +46,8 @@ mockk = "1.13.10"
 mockwebserver = "4.12.0"
 turbine = "1.1.0"
 scalars = "2.9.0"
+androidxNavigationCompose = "2.9.8"
+navigationCommonKtx = "2.9.8"
 
 [libraries]
 androidx-compose-bom-v20240500 = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
@@ -110,6 +111,8 @@ androidx-navigation-runtime-android = { group = "androidx.navigation", name = "n
 navigation-runtime-android = { group = "androidx.navigation", name = "navigation-runtime-android", version.ref = "navigationRuntimeAndroidVersion" }
 androidx-navigation-compose-jvmstubs = { group = "androidx.navigation", name = "navigation-compose-jvmstubs", version.ref = "navigationComposeJvmstubs" }
 androidx-ui-android = { group = "androidx.compose.ui", name = "ui-android", version.ref = "uiAndroid" }
+navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "androidxNavigationCompose" }
+androidx-navigation-common-ktx = { group = "androidx.navigation", name = "navigation-common-ktx", version.ref = "navigationCommonKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
