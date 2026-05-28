@@ -1,19 +1,16 @@
 plugins {
-    alias(libs.plugins.android.application)
+    id("org.jetbrains.kotlin.plugin.compose")
+    alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
 }
 
 android {
-    namespace = "com.bina.home"
+    namespace = "com.bina.features.home"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.bina.home"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -26,12 +23,18 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
+    }
+
+    buildFeatures {
+        compose = true
     }
 }
 
@@ -53,7 +56,7 @@ dependencies {
     implementation(libs.androidx.ui.test.junit4.android)
     implementation(libs.androidx.paging.common.android)
     implementation(libs.androidx.paging.compose)
-    //implementation(libs.navigation.runtime.android)
+    implementation(libs.navigation.runtime.android)
 
     // Preview e testes opcionais
     debugImplementation(libs.androidx.ui.tooling)
@@ -69,9 +72,9 @@ dependencies {
     implementation(libs.coil.compose)
 
     // Koin
-    //implementation(libs.koin.core)
+    implementation(libs.koin.core)
     implementation(libs.koin.android)
-    //implementation(libs.koin.androidx.compose)
+    implementation(libs.koin.androidx.compose)
 
     //Testes
     testImplementation(libs.junit)
