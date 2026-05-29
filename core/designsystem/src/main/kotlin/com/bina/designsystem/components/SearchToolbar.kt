@@ -1,6 +1,6 @@
 package com.bina.designsystem.components
 
-import SpacingTokens
+import com.bina.designsystem.tokens.SpacingTokens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -48,7 +48,7 @@ fun SearchToolbar(
         modifier = modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.primary)
-            .padding(SpacingTokens.spacing16)
+            .padding(SpacingTokens.spacing24) // Aumentado de spacing16 para spacing24
     ) {
         Text(
             text = title,
@@ -56,7 +56,7 @@ fun SearchToolbar(
             color = MaterialTheme.colorScheme.inversePrimary
         )
 
-        Spacer(modifier = Modifier.height(SpacingTokens.spacing8))
+        Spacer(modifier = Modifier.height(SpacingTokens.spacing16)) // Aumentado de spacing8 para spacing16
 
         OutlinedTextField(
             value = query,

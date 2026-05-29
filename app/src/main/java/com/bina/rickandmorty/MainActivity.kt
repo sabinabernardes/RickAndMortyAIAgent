@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.bina.home.presentation.HomeScreen
+import com.bina.home.presentation.view.HomeScreen
 import com.bina.rickandmorty.ui.theme.RickAndMortyTheme
 import core.navigation.NavDestination
 
@@ -30,7 +30,11 @@ class MainActivity : ComponentActivity() {
                     startDestination = NavDestination.Home.route
                 ) {
                     composable(NavDestination.Home.route) {
-                        HomeScreen()
+                        HomeScreen(
+                            onCharacterClick = { id ->
+                                // navController.navigate("details/$id")
+                            }
+                        )
                     }
                 }
             }

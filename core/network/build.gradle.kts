@@ -38,7 +38,7 @@ android {
 dependencies {
 
     implementation(libs.retrofit.v290)
-    implementation(libs.retrofit.moshi)
+    implementation(libs.retrofit.gson)
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
     implementation(libs.moshi)

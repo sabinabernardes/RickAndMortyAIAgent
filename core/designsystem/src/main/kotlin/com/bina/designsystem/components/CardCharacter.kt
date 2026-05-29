@@ -1,6 +1,6 @@
 package com.bina.designsystem.components
 
-import SpacingTokens
+import com.bina.designsystem.tokens.SpacingTokens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box

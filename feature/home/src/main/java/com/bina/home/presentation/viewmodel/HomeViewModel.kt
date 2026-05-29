@@ -27,6 +27,10 @@ open class HomeViewModel(
 
     private var currentQuery = ""
 
+    init {
+        getCharacters()
+    }
+
     fun getCharacters(query: String = "") {
         currentQuery = query
         viewModelScope.launch {

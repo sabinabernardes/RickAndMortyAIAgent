@@ -4,5 +4,6 @@ data class CharacterUiModel(
     val id: Int,
     val name: String,
     val status: String,
-    val imageUrl: String
+    val imageUrl: String,
+    val location: String
 )

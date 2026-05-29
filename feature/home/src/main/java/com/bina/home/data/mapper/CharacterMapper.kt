@@ -11,6 +11,7 @@ object CharacterMapper {
             status = data.status,
             species = data.species,
             image = data.image,
+            location = data.location.name
         )
     }
 }

@@ -75,9 +75,14 @@ tasks.register<JacocoReport>("jacocoTestReport") {
 dependencies {
 
     implementation(project(":core:navigation"))
+    implementation(project(":core:network"))
     implementation(project(":feature:home"))
     implementation(libs.androidx.navigation.common.ktx)
     implementation(libs.androidx.navigation.compose)
+
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
+    implementation(libs.retrofit)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

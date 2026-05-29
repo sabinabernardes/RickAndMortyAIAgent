@@ -24,6 +24,9 @@ internal class CharacterPagingSource(
     }
 
     override fun getRefreshKey(state: PagingState<Int, CharacterData>): Int? {
-        TODO("Not yet implemented")
+        return state.anchorPosition?.let { anchorPosition ->
+            state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
+                ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
+        }
     }
 }

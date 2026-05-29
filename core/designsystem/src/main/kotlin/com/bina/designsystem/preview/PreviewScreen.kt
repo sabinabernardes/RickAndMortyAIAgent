@@ -1,6 +1,6 @@
 package com.bina.design.tokens.preview
 
-import SpacingTokens
+import com.bina.designsystem.tokens.SpacingTokens
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

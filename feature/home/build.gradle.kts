@@ -67,6 +67,8 @@ dependencies {
     // Retrofit
     implementation(libs.retrofit.v290)
     implementation(libs.retrofit.gson)
+    implementation(libs.moshi)
+    implementation(libs.moshi.kotlin)
 
     // Coil
     implementation(libs.coil.compose)

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -15,31 +16,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.bina.designsystem.components.SearchToolbar
-import com.bina.home.presentation.viewmodel.HomeViewModel
-import org.koin.androidx.compose.koinViewModel
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.bina.designsystem.components.CardCharacter
 import com.bina.designsystem.components.DialogError
-import com.bina.home.presentation.state.CharactersUiState
+import com.bina.designsystem.components.SearchToolbar
+import com.bina.designsystem.tokens.SpacingTokens
 import com.bina.home.presentation.model.CharacterUiModel
+import com.bina.home.presentation.state.CharactersUiState
+import com.bina.home.presentation.viewmodel.HomeViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel(),
-    navController: NavHostController
+    onCharacterClick: (Int) -> Unit
 ) {
     var query by remember { mutableStateOf("") }
     val uiState by viewModel.uiState.collectAsState()
@@ -58,9 +56,10 @@ fun HomeScreen(
             query = query,
             onQueryChange = { query = it }
         )
+        
         HomeContent(
             uiState = uiState,
-            navController = navController,
+            onCharacterClick = onCharacterClick,
             viewModel = viewModel
         )
     }
@@ -69,7 +68,7 @@ fun HomeScreen(
 @Composable
 private fun HomeContent(
     uiState: CharactersUiState,
-    navController: NavHostController,
+    onCharacterClick: (Int) -> Unit,
     viewModel: HomeViewModel
 ) {
     when (uiState) {
@@ -78,13 +77,12 @@ private fun HomeContent(
             val characters = uiState.data.collectAsLazyPagingItems()
             CharacterList(
                 characters = characters,
-                onRetry = { characters.retry() },
-                navController = navController
+                onCharacterClick = onCharacterClick
             )
         }
         is CharactersUiState.Error -> {
             DialogError(
-                message = uiState.message ?: "Erro desconhecido",
+                message = uiState.message ?: "Erro ao carregar dados",
                 onDismiss = { viewModel.clearError() },
                 onRetry = { viewModel.onRetry() }
             )
@@ -95,71 +93,50 @@ private fun HomeContent(
 @Composable
 private fun LoadingContent() {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 32.dp),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        CircularProgressIndicator()
+        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
     }
 }
 
 @Composable
 fun CharacterList(
     characters: LazyPagingItems<CharacterUiModel>,
-    onRetry: () -> Unit,
-    navController: NavHostController
+    onCharacterClick: (Int) -> Unit
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = SpacingTokens.spacing8)
     ) {
         items(characters.itemCount) { index ->
             characters[index]?.let { character ->
                 CardCharacter(
-                    painter = rememberImagePainter(data = character.imageUrl ?: ""),
-                    name = character.name ?: "Desconhecido",
-                    status = character.status ?: "Desconhecido",
-                    lastLocation =  "Desconhecido",
-                    onClick = {
-                        navController.navigate(
-                            "details/${character.id}"
-                        )
-                    }
+                    painter = rememberAsyncImagePainter(model = character.imageUrl),
+                    name = character.name.orEmpty(),
+                    status = character.status.orEmpty(),
+                    lastLocation = character.location.orEmpty(),
+                    onClick = { onCharacterClick(character.id) }
                 )
             }
         }
-        when (val appendState = characters.loadState.append) {
-            is LoadState.Loading -> {
-                item(span = { GridItemSpan(2) }) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
-                }
-            }
-            is LoadState.Error -> {
-                item(span = { GridItemSpan(2) }) {
-                    DialogError (
-                        message = "Erro ao carregar mais personagens",
-                        onDismiss = {},
-                        onRetry = { onRetry() }
+
+        if (characters.loadState.append is LoadState.Loading) {
+            item(span = { GridItemSpan(2) }) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(SpacingTokens.spacing16),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(SpacingTokens.spacing32),
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             }
-            else -> Unit
         }
     }
-}
-
-@Preview
-@Composable
-fun HomeScreenPreview() {
-    HomeScreen(
-        navController = NavHostController(LocalContext.current) // Mock NavController for preview
-    )
 }

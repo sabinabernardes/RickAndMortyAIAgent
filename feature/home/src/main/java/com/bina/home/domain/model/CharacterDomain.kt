@@ -6,4 +6,5 @@ data class CharacterDomain(
     val status: String,
     val species: String,
     val image: String,
+    val location: String
 )
