@@ -63,6 +63,31 @@ The UI is built upon a **Token-based Design System**.
 
 ---
 
+## 📜 Engineering Standards & Governance
+
+To maintain high code quality and architectural consistency, this project follows a set of strict engineering rules. These are modularized and located in the `.gemini/rules/` directory for easy reference by developers and automated tools.
+
+### 🏛 [Architecture](.gemini/rules/ARCHITECTURE.md)
+*   **Layer Isolation**: Strict separation of Data, Domain, and Presentation.
+*   **Unidirectional Data Flow (UDF)**: UI state is driven by the ViewModel, propagated via StateFlow.
+*   **Mandatory Mappers**: Data Transfer Objects (DTOs) never reach the Domain or UI layers.
+
+### 🧪 [Testing Standards](.gemini/rules/TESTING.md)
+*   **Given-When-Then (GWT)**: All tests must follow this semantic structure for clarity.
+*   **Flow Verification**: Extensive use of **Turbine** for state emission validation.
+*   **Mocking Strategy**: Use of **MockK** for behavioral verification in unit tests.
+
+### 🧵 [Coroutines & Threading](.gemini/rules/COROUTINES.md)
+*   **Dispatcher Injection**: Avoid hardcoding `Dispatchers.IO` or `Main`.
+*   **Lifecycle Awareness**: Use of `viewModelScope` and lifecycle-aware collection in Compose.
+*   **Error Handling**: Standardized exception handling for asynchronous operations.
+
+### 🎨 [Design System](.gemini/rules/DESIGN_SYSTEM.md)
+*   **Token-First**: All UI dimensions and colors must come from the Design System tokens.
+*   **Atomic Components**: Reusable, small-scale components implemented in `:core:designsystem`.
+
+---
+
 ## 🚀 Getting Started
 
 ### Requirements
