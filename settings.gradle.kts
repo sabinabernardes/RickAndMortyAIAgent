@@ -27,3 +27,5 @@ include(":core:playground")
 include(":core:network")
 include(":feature")
 include(":feature:home")
+include(":feature:character_details")
+

@@ -14,9 +14,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.bina.character_details.presentation.view.CharacterDetailsScreen
 import com.bina.home.presentation.view.HomeScreen
 import com.bina.rickandmorty.ui.theme.RickAndMortyTheme
 import core.navigation.NavDestination
+
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,8 +36,18 @@ class MainActivity : ComponentActivity() {
                     composable(NavDestination.Home.route) {
                         HomeScreen(
                             onCharacterClick = { id ->
-                                // navController.navigate("details/$id")
+                                navController.navigate("detail/$id")
                             }
+                        )
+                    }
+                    composable(
+                        route = "detail/{itemId}",
+                        arguments = listOf(navArgument("itemId") { type = NavType.IntType })
+                    ) { backStackEntry ->
+                        val characterId = backStackEntry.arguments?.getInt("itemId") ?: 0
+                        CharacterDetailsScreen(
+                            characterId = characterId,
+                            onBackClick = { navController.popBackStack() }
                         )
                     }
                 }

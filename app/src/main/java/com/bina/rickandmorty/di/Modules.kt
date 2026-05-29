@@ -1,5 +1,6 @@
 package com.bina.rickandmorty.di
 
+import com.bina.character_details.di.characterDetailsModule
 import com.bina.home.data.datasource.CharacterDataSource
 import com.bina.home.data.datasource.CharacterDataSourceImpl
 import com.bina.home.data.remote.RickAndMortyApiService
@@ -26,4 +27,4 @@ val homeModule = module {
     viewModel { HomeViewModel(get(), get()) }
 }
 
-val appModules = listOf(networkModule, homeModule)
+val appModules = listOf(networkModule, homeModule, characterDetailsModule)

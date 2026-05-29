@@ -1,6 +1,5 @@
 package com.bina.playground.ui.theme.playground
 
-import SpacingTokens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -30,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.bina.designsystem.theme.RickAndMortyTheme
 import com.bina.designsystem.tokens.ColorTokens
+import com.bina.designsystem.tokens.SpacingTokens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

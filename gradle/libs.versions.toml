@@ -45,6 +45,7 @@ okhttp = "4.12.0"
 mockk = "1.13.10"
 mockwebserver = "4.12.0"
 turbine = "1.1.0"
+kotlinxCoroutinesTest = "1.9.0"
 scalars = "2.9.0"
 androidxNavigationCompose = "2.9.8"
 navigationCommonKtx = "2.9.8"
@@ -106,6 +107,7 @@ retrofit-scalars = { group = "com.squareup.retrofit2", name = "converter-scalars
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 mockwebserver = { group = "com.squareup.okhttp3", name = "mockwebserver", version.ref = "mockwebserver" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
 androidx-navigation-runtime-android = { group = "androidx.navigation", name = "navigation-runtime-android", version.ref = "navigationRuntimeAndroid" }
 navigation-runtime-android = { group = "androidx.navigation", name = "navigation-runtime-android", version.ref = "navigationRuntimeAndroidVersion" }
