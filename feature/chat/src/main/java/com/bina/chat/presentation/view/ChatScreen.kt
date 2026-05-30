@@ -1,5 +1,10 @@
 package com.bina.chat.presentation.view
 
+import androidx.compose.animation.core.InfiniteRepeatableSpec
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,17 +20,19 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -38,15 +45,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.bina.chat.domain.model.MessageRole
 import com.bina.chat.presentation.model.ChatMessageUiModel
 import com.bina.chat.presentation.state.ChatUiState
 import com.bina.chat.presentation.viewmodel.ChatViewModel
+import com.bina.designsystem.animation.fadeSlideIn
 import com.bina.designsystem.components.Toolbar
 import com.bina.designsystem.tokens.ColorTokens
+import com.bina.designsystem.tokens.ElevationTokens
 import com.bina.designsystem.tokens.SpacingTokens
 import org.koin.androidx.compose.koinViewModel
 
@@ -82,7 +93,7 @@ fun ChatScreen(
 @Composable
 private fun InitializingContent() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator(color = ColorTokens.Secondary)
+        TypingIndicator(color = MaterialTheme.colorScheme.primary)
     }
 }
 
@@ -98,8 +109,8 @@ private fun ModelUnavailableContent() {
         Icon(
             imageVector = Icons.Default.Warning,
             contentDescription = null,
-            modifier = Modifier.size(64.dp),
-            tint = ColorTokens.Secondary
+            modifier = Modifier.size(SpacingTokens.spacing64),
+            tint = MaterialTheme.colorScheme.error
         )
         Spacer(modifier = Modifier.height(SpacingTokens.spacing16))
         Text(
@@ -109,14 +120,13 @@ private fun ModelUnavailableContent() {
         )
         Spacer(modifier = Modifier.height(SpacingTokens.spacing8))
         Text(
-            text = "Não foi possível baixar ou inicializar o modelo de IA. Verifique sua conexão e tente novamente.",
+            text = "Não foi possível inicializar o Rick AI. Verifique sua conexão e tente novamente.",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            textAlign = TextAlign.Center
         )
     }
 }
-
 
 @Composable
 private fun ConversationContent(
@@ -135,20 +145,7 @@ private fun ConversationContent(
 
     Column(modifier = Modifier.fillMaxSize()) {
         if (state.messages.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Wubba lubba dub dub!\nPergunte algo sobre Rick and Morty.",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                    modifier = Modifier.padding(SpacingTokens.spacing32)
-                )
-            }
+            EmptyConversationContent(modifier = Modifier.weight(1f))
         } else {
             LazyColumn(
                 state = listState,
@@ -173,7 +170,10 @@ private fun ConversationContent(
                 color = ColorTokens.Error,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = SpacingTokens.spacing16, vertical = SpacingTokens.spacing4)
+                    .padding(
+                        horizontal = SpacingTokens.spacing16,
+                        vertical = SpacingTokens.spacing4
+                    )
             )
         }
 
@@ -190,10 +190,43 @@ private fun ConversationContent(
 }
 
 @Composable
+private fun EmptyConversationContent(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(SpacingTokens.spacing32),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            imageVector = Icons.Default.AutoAwesome,
+            contentDescription = null,
+            modifier = Modifier.size(80.dp),
+            tint = MaterialTheme.colorScheme.primary
+        )
+        Spacer(modifier = Modifier.height(SpacingTokens.spacing24))
+        Text(
+            text = "Fale com o Rick",
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+        Spacer(modifier = Modifier.height(SpacingTokens.spacing8))
+        Text(
+            text = "Pergunte sobre o universo de Rick and Morty. Wubba lubba dub dub!",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
 private fun ChatMessageItem(message: ChatMessageUiModel) {
     val isUser = message.role == MessageRole.USER
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .fadeSlideIn(),
         horizontalArrangement = if (isUser) Arrangement.End else Arrangement.Start
     ) {
         Surface(
@@ -204,17 +237,55 @@ private fun ChatMessageItem(message: ChatMessageUiModel) {
                 bottomStart = if (isUser) 16.dp else 4.dp,
                 bottomEnd = if (isUser) 4.dp else 16.dp
             ),
-            color = if (isUser) ColorTokens.Primary else ColorTokens.Secondary,
-            tonalElevation = 2.dp
+            color = if (isUser) MaterialTheme.colorScheme.primary
+                    else MaterialTheme.colorScheme.secondaryContainer,
+            tonalElevation = ElevationTokens.Level1
         ) {
-            Text(
-                text = if (message.isStreaming && message.text.isEmpty()) "..." else message.text,
-                style = MaterialTheme.typography.bodyLarge.copy(fontSize = 17.sp),
-                color = if (isUser) ColorTokens.OnPrimary else ColorTokens.OnSecondary,
-                modifier = Modifier.padding(
-                    horizontal = SpacingTokens.spacing16,
-                    vertical = SpacingTokens.spacing8
+            if (message.isStreaming && message.text.isEmpty()) {
+                Box(modifier = Modifier.padding(horizontal = SpacingTokens.spacing16, vertical = SpacingTokens.spacing16)) {
+                    TypingIndicator(color = MaterialTheme.colorScheme.onSecondaryContainer)
+                }
+            } else {
+                Text(
+                    text = message.text,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = if (isUser) MaterialTheme.colorScheme.onPrimary
+                            else MaterialTheme.colorScheme.onSecondaryContainer,
+                    modifier = Modifier.padding(
+                        horizontal = SpacingTokens.spacing16,
+                        vertical = SpacingTokens.spacing8
+                    )
                 )
+            }
+        }
+    }
+}
+
+@Composable
+private fun TypingIndicator(color: Color = MaterialTheme.colorScheme.primary) {
+    val transition = rememberInfiniteTransition(label = "typing")
+    val alphas = List(3) { index ->
+        transition.animateFloat(
+            initialValue = 0.3f,
+            targetValue = 1f,
+            animationSpec = InfiniteRepeatableSpec(
+                animation = tween(durationMillis = 300, delayMillis = index * 150),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "dot$index"
+        ).value
+    }
+
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(SpacingTokens.spacing4),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        alphas.forEach { alpha ->
+            Box(
+                modifier = Modifier
+                    .size(8.dp)
+                    .alpha(alpha)
+                    .background(color = color, shape = CircleShape)
             )
         }
     }
@@ -227,39 +298,46 @@ private fun ChatInputRow(
     onInputChange: (String) -> Unit,
     onSend: () -> Unit
 ) {
-    Row(
+    Surface(
         modifier = Modifier
             .fillMaxWidth()
             .padding(SpacingTokens.spacing8),
-        verticalAlignment = Alignment.CenterVertically
+        shape = MaterialTheme.shapes.extraLarge,
+        tonalElevation = ElevationTokens.Level1
     ) {
-        OutlinedTextField(
-            value = inputText,
-            onValueChange = onInputChange,
-            modifier = Modifier.weight(1f),
-            placeholder = { Text("Pergunte ao Rick...") },
-            enabled = isEnabled,
-            maxLines = 4,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-            keyboardActions = KeyboardActions(onSend = { if (inputText.isNotBlank()) onSend() })
-        )
-        IconButton(
-            onClick = onSend,
-            enabled = isEnabled && inputText.isNotBlank()
+        Row(
+            modifier = Modifier.padding(horizontal = SpacingTokens.spacing8),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            if (!isEnabled) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(24.dp),
-                    strokeWidth = 2.dp,
-                    color = ColorTokens.Secondary
+            OutlinedTextField(
+                value = inputText,
+                onValueChange = onInputChange,
+                modifier = Modifier.weight(1f),
+                placeholder = { Text("Pergunte ao Rick...") },
+                enabled = isEnabled,
+                maxLines = 4,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+                keyboardActions = KeyboardActions(onSend = { if (inputText.isNotBlank()) onSend() }),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Color.Transparent,
+                    unfocusedBorderColor = Color.Transparent,
+                    disabledBorderColor = Color.Transparent
                 )
-            } else {
-                Icon(
-                    imageVector = Icons.Default.Send,
-                    contentDescription = "Enviar",
-                    tint = if (inputText.isNotBlank()) ColorTokens.Secondary
-                    else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f)
-                )
+            )
+            IconButton(
+                onClick = onSend,
+                enabled = isEnabled && inputText.isNotBlank()
+            ) {
+                if (!isEnabled) {
+                    TypingIndicator(color = MaterialTheme.colorScheme.primary)
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.Send,
+                        contentDescription = "Enviar",
+                        tint = if (inputText.isNotBlank()) MaterialTheme.colorScheme.primary
+                               else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                    )
+                }
             }
         }
     }

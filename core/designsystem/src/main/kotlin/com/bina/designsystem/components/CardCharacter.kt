@@ -1,10 +1,10 @@
 package com.bina.designsystem.components
 
-import com.bina.designsystem.tokens.SpacingTokens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,9 +20,11 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bina.designsystem.theme.RickAndMortyTheme
+import com.bina.designsystem.tokens.SpacingTokens
 import com.bina.designsystem.tokens.TypographyTokens.DefaultTypography
 
 @Composable
@@ -30,6 +32,7 @@ fun CardCharacter(
     painter: Painter,
     name: String,
     status: String,
+    species: String,
     lastLocation: String,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
@@ -63,20 +66,32 @@ fun CardCharacter(
                 Text(
                     text = name,
                     style = DefaultTypography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
-                Spacer(modifier = Modifier.height(
-                    SpacingTokens.spacing4
-                ))
+                Spacer(modifier = Modifier.height(SpacingTokens.spacing4))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = species,
+                        style = DefaultTypography.labelSmall,
+                        color = MaterialTheme.colorScheme.primary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                Spacer(modifier = Modifier.height(SpacingTokens.spacing4))
                 Text(
-                    text = "Last Location",
+                    text = "Localização",
                     style = DefaultTypography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f)
                 )
                 Text(
                     text = lastLocation,
-                    style = DefaultTypography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface
+                    style = DefaultTypography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
@@ -94,8 +109,8 @@ fun CardCharacterPreview() {
             },
             name = "Rick Sanchez",
             status = "Alive",
+            species = "Human",
             lastLocation = "Earth (C-137)",
         )
     }
 }
-
