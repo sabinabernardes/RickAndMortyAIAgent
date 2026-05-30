@@ -129,15 +129,15 @@ ChatScreen (Compose)
 
 <table>
   <tr>
-    <td><img src="img.png" width="200" alt="screenshot 1"/></td>
-    <td><img src="img_1.png" width="200" alt="screenshot 2"/></td>
-    <td><img src="img_2.png" width="200" alt="screenshot 3"/></td>
-    <td><img src="img_3.png" width="200" alt="screenshot 4"/></td>
+    <td><img src="https://raw.githubusercontent.com/sabinabernardes/RickAndMorty/feat/chat-gemini-ai/img.png" width="200" alt="screenshot 1"/></td>
+    <td><img src="https://raw.githubusercontent.com/sabinabernardes/RickAndMorty/feat/chat-gemini-ai/img_1.png" width="200" alt="screenshot 2"/></td>
+    <td><img src="https://raw.githubusercontent.com/sabinabernardes/RickAndMorty/feat/chat-gemini-ai/img_2.png" width="200" alt="screenshot 3"/></td>
+    <td><img src="https://raw.githubusercontent.com/sabinabernardes/RickAndMorty/feat/chat-gemini-ai/img_3.png" width="200" alt="screenshot 4"/></td>
   </tr>
   <tr>
-    <td><img src="img_4.png" width="200" alt="screenshot 5"/></td>
-    <td><img src="img_5.png" width="200" alt="screenshot 6"/></td>
-    <td><img src="img_6.png" width="200" alt="screenshot 7"/></td>
+    <td><img src="https://raw.githubusercontent.com/sabinabernardes/RickAndMorty/feat/chat-gemini-ai/img_4.png" width="200" alt="screenshot 5"/></td>
+    <td><img src="https://raw.githubusercontent.com/sabinabernardes/RickAndMorty/feat/chat-gemini-ai/img_5.png" width="200" alt="screenshot 6"/></td>
+    <td><img src="https://raw.githubusercontent.com/sabinabernardes/RickAndMorty/feat/chat-gemini-ai/img_6.png" width="200" alt="screenshot 7"/></td>
     <td></td>
   </tr>
 </table>
