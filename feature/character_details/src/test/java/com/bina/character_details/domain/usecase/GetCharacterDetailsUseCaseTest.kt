@@ -25,7 +25,8 @@ class GetCharacterDetailsUseCaseTest {
             gender = "Male",
             origin = "Earth",
             location = "Earth",
-            image = "url"
+            image = "url",
+            episodeUrls = emptyList()
         )
         coEvery { repository.getCharacterDetails(id) } returns expectedCharacter
 

@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bina.designsystem.theme.RickAndMortyTheme
+import com.bina.designsystem.tokens.ElevationTokens
 import com.bina.designsystem.tokens.SpacingTokens
 import com.bina.designsystem.tokens.TypographyTokens.DefaultTypography
 
@@ -44,7 +45,8 @@ fun CardCharacter(
             .padding(SpacingTokens.spacing8)
             .width(160.dp),
         shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = ElevationTokens.Level2)
     ) {
         Column {
             Box {

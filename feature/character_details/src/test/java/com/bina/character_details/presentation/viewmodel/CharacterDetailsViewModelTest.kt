@@ -3,7 +3,9 @@ package com.bina.character_details.presentation.viewmodel
 import app.cash.turbine.test
 import com.bina.character_details.domain.model.CharacterDetailsDomain
 import com.bina.character_details.domain.usecase.GetCharacterDetailsUseCase
+import com.bina.character_details.domain.usecase.GetEpisodesUseCase
 import com.bina.character_details.presentation.mapper.CharacterDetailsUiMapper
+import com.bina.character_details.presentation.mapper.EpisodeUiMapper
 import com.bina.character_details.presentation.state.CharacterDetailsUiState
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -22,7 +24,9 @@ import org.junit.Test
 class CharacterDetailsViewModelTest {
 
     private val getCharacterDetailsUseCase: GetCharacterDetailsUseCase = mockk()
+    private val getEpisodesUseCase: GetEpisodesUseCase = mockk(relaxed = true)
     private val uiMapper = CharacterDetailsUiMapper()
+    private val episodeUiMapper = EpisodeUiMapper()
     private lateinit var viewModel: CharacterDetailsViewModel
 
     private val testDispatcher = UnconfinedTestDispatcher()
@@ -30,7 +34,7 @@ class CharacterDetailsViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        viewModel = CharacterDetailsViewModel(getCharacterDetailsUseCase, uiMapper)
+        viewModel = CharacterDetailsViewModel(getCharacterDetailsUseCase, getEpisodesUseCase, uiMapper, episodeUiMapper)
     }
 
     @After
@@ -50,7 +54,8 @@ class CharacterDetailsViewModelTest {
             gender = "Male",
             origin = "Earth",
             location = "Earth",
-            image = "url"
+            image = "url",
+            episodeUrls = emptyList()
         )
         coEvery { getCharacterDetailsUseCase(id) } returns characterDomain
 

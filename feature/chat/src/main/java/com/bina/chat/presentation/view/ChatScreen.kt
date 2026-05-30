@@ -69,8 +69,7 @@ fun ChatScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
-        topBar = { Toolbar(title = "Rick AI", onBackClick = onBackClick) },
-        containerColor = MaterialTheme.colorScheme.background
+        topBar = { Toolbar(title = "Rick AI", onBackClick = onBackClick) }
     ) { padding ->
         Box(
             modifier = Modifier
