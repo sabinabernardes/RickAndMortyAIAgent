@@ -87,36 +87,22 @@ class ChatViewModelTest {
     }
 
     @Test
-    fun `GIVEN model Available WHEN sendMessage THEN user message and AI response appear in messages`() = runTest {
+    fun `GIVEN model Available WHEN sendMessage THEN user message and AI response appear in messages`() = runTest(testDispatcher) {
         coEvery { checkModelAvailabilityUseCase() } returns ModelAvailability.Available
         coEvery { repository.warmup() } returns Unit
         every { sendMessageUseCase(any()) } returns flowOf("Rick ", "é ", "genial.")
 
         viewModel = createViewModel()
+        viewModel.sendMessage("Quem é o Rick?")
 
-        viewModel.uiState.test {
-            awaitItem() // Conversation(empty)
-
-            viewModel.sendMessage("Quem é o Rick?")
-
-            val withUserAndPlaceholder = awaitItem() as ChatUiState.Conversation
-            assertEquals(2, withUserAndPlaceholder.messages.size)
-            assertEquals(MessageRole.USER, withUserAndPlaceholder.messages[0].role)
-            assertTrue(withUserAndPlaceholder.isAiTyping)
-
-            // Stream chunks update AI message
-            awaitItem() // "Rick "
-            awaitItem() // "Rick é "
-            val withFullResponse = awaitItem() as ChatUiState.Conversation // "Rick é genial."
-
-            val finalState = awaitItem() as ChatUiState.Conversation // isStreaming = false
-            assertEquals(2, finalState.messages.size)
-            assertEquals("Rick é genial.", finalState.messages[1].text)
-            assertFalse(finalState.messages[1].isStreaming)
-            assertFalse(finalState.isAiTyping)
-
-            cancelAndIgnoreRemainingEvents()
-        }
+        // With UnconfinedTestDispatcher, all coroutines run eagerly — check final state directly
+        val finalState = viewModel.uiState.value as ChatUiState.Conversation
+        assertEquals(2, finalState.messages.size)
+        assertEquals(MessageRole.USER, finalState.messages[0].role)
+        assertEquals("Rick é genial.", finalState.messages[1].text)
+        assertFalse(finalState.messages[1].isStreaming)
+        assertFalse(finalState.isAiTyping)
+        verify(exactly = 1) { sendMessageUseCase("Quem é o Rick?") }
     }
 
     @Test

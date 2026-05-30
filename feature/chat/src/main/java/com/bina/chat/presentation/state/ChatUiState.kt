@@ -5,6 +5,7 @@ import com.bina.chat.presentation.model.ChatMessageUiModel
 sealed class ChatUiState {
     object Initializing : ChatUiState()
     object ModelUnavailable : ChatUiState()
+    object ModelDownloadable : ChatUiState()
     data class Conversation(
         val messages: List<ChatMessageUiModel>,
         val isAiTyping: Boolean,
