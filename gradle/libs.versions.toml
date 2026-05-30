@@ -4,7 +4,7 @@ androidxJunit = "1.1.5"
 coilCompose = "2.1.0"
 composeBomVersion = "2024.05.00"
 espressoCoreVersion = "3.5.0"
-kotlin = "2.0.21"
+kotlin = "2.2.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -49,6 +49,8 @@ kotlinxCoroutinesTest = "1.9.0"
 scalars = "2.9.0"
 androidxNavigationCompose = "2.9.8"
 navigationCommonKtx = "2.9.8"
+generativeai = "0.9.0"
+coreSplashscreen = "1.0.1"
 
 [libraries]
 androidx-compose-bom-v20240500 = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
@@ -115,6 +117,8 @@ androidx-navigation-compose-jvmstubs = { group = "androidx.navigation", name = "
 androidx-ui-android = { group = "androidx.compose.ui", name = "ui-android", version.ref = "uiAndroid" }
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "androidxNavigationCompose" }
 androidx-navigation-common-ktx = { group = "androidx.navigation", name = "navigation-common-ktx", version.ref = "navigationCommonKtx" }
+generativeai = { group = "com.google.ai.client.generativeai", name = "generativeai", version.ref = "generativeai" }
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -12,6 +12,9 @@ build/
 .idea/
 local.properties
 
+# Claude Code (local config only — ADRs and specs are committed separately)
+.claude/settings.local.json
+
 # Kotlin
 *.class
 *.log

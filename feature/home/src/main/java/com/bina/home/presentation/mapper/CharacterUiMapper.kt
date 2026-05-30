@@ -9,6 +9,7 @@ class CharacterUiMapper {
             id = domain.id,
             name = domain.name,
             status = domain.status,
+            species = domain.species,
             imageUrl = domain.image,
             location = domain.location
         )

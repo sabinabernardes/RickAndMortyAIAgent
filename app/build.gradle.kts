@@ -1,8 +1,14 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     jacoco
+}
+
+val localProperties = Properties().apply {
+    rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
 }
 
 android {
@@ -17,6 +23,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "GEMINI_API_KEY", "\"${localProperties.getProperty("GEMINI_API_KEY", "")}\"")
     }
 
     buildTypes {
@@ -34,14 +41,15 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     kotlinOptions {
         jvmTarget = "11"
     }
 }
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions {
-        jvmTarget = "11"
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
     }
 }
 
@@ -74,10 +82,12 @@ tasks.register<JacocoReport>("jacocoTestReport") {
 
 dependencies {
 
+    implementation(project(":core:designsystem"))
     implementation(project(":core:navigation"))
     implementation(project(":core:network"))
     implementation(project(":feature:home"))
     implementation(project(":feature:character_details"))
+    implementation(project(":feature:chat"))
     implementation(libs.androidx.navigation.common.ktx)
     implementation(libs.androidx.navigation.compose)
 
@@ -85,6 +95,7 @@ dependencies {
     implementation(libs.koin.androidx.compose)
     implementation(libs.retrofit)
 
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
