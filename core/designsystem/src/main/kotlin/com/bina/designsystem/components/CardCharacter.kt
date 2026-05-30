@@ -9,8 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,6 +23,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bina.designsystem.theme.RickAndMortyTheme
+import com.bina.designsystem.tokens.ElevationTokens
 import com.bina.designsystem.tokens.SpacingTokens
 import com.bina.designsystem.tokens.TypographyTokens.DefaultTypography
 
@@ -39,10 +39,12 @@ fun CardCharacter(
 ) {
     androidx.compose.material3.Card(
         modifier = modifier
+            .fillMaxWidth()
             .clickable { onClick() }
-            .padding(SpacingTokens.spacing8)
-            .width(160.dp),
-        shape = MaterialTheme.shapes.medium
+            .padding(SpacingTokens.spacing8),
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = ElevationTokens.Level0)
     ) {
         Column {
             Box {
@@ -51,7 +53,7 @@ fun CardCharacter(
                     contentDescription = name,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .size(160.dp),
+                        .height(160.dp),
                     contentScale = ContentScale.Crop
                 )
                 StatusBadge(
@@ -62,7 +64,7 @@ fun CardCharacter(
                 )
             }
 
-            Column(modifier = Modifier.padding(SpacingTokens.spacing16)) {
+            Column(modifier = Modifier.padding(SpacingTokens.spacing16).fillMaxWidth()) {
                 Text(
                     text = name,
                     style = DefaultTypography.bodyLarge,
@@ -90,7 +92,7 @@ fun CardCharacter(
                     text = lastLocation,
                     style = DefaultTypography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
             }

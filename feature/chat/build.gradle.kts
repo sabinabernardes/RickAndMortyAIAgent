@@ -53,6 +53,8 @@ dependencies {
     implementation(libs.koin.androidx.compose)
 
     implementation(libs.generativeai)
+    implementation(libs.retrofit.v290)
+    implementation(libs.retrofit.gson)
 
     debugImplementation(libs.androidx.ui.tooling)
 

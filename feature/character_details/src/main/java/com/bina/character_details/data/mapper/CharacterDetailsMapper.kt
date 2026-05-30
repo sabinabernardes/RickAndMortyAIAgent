@@ -13,7 +13,8 @@ object CharacterDetailsMapper {
             gender = data.gender,
             origin = data.origin.name,
             location = data.location.name,
-            image = data.image
+            image = data.image,
+            episodeUrls = data.episode
         )
     }
 }

@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -18,8 +16,6 @@ import androidx.compose.ui.unit.dp
 import com.bina.designsystem.animation.shimmerEffect
 import com.bina.designsystem.tokens.SpacingTokens
 
-private val CardSize = 160.dp
-
 @Composable
 fun CardCharacterSkeleton(modifier: Modifier = Modifier) {
     val base = MaterialTheme.colorScheme.surface
@@ -27,15 +23,15 @@ fun CardCharacterSkeleton(modifier: Modifier = Modifier) {
 
     Card(
         modifier = modifier
-            .padding(SpacingTokens.spacing8)
-            .width(CardSize),
+            .fillMaxWidth()
+            .padding(SpacingTokens.spacing8),
         shape = MaterialTheme.shapes.medium
     ) {
         Column {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .size(CardSize)
+                    .height(160.dp)
                     .shimmerEffect(baseColor = base, highlightColor = highlight)
             )
 

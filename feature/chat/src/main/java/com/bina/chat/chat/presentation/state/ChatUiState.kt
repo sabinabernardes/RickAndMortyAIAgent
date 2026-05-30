@@ -1,0 +1,14 @@
+package com.bina.chat.chat.presentation.state
+
+import com.bina.chat.chat.presentation.model.ChatMessageUiModel
+
+sealed class ChatUiState {
+    object Initializing : ChatUiState()
+    object ModelUnavailable : ChatUiState()
+    object ModelDownloadable : ChatUiState()
+    data class Conversation(
+        val messages: List<ChatMessageUiModel>,
+        val isAiTyping: Boolean,
+        val errorMessage: String? = null
+    ) : ChatUiState()
+}
