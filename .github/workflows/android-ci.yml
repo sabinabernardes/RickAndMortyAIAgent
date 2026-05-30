@@ -22,7 +22,7 @@ jobs:
           java-version: '17'
 
       - name: Cache do Gradle
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
@@ -32,10 +32,17 @@ jobs:
             gradle-${{ runner.os }}-
 
       - name: Build com Gradle
-        run: ./gradlew assembleDebug
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: ./gradlew assembleDebug -PGEMINI_API_KEY=$GEMINI_API_KEY
 
       - name: Rodar testes unitários
-        run: ./gradlew testDebugUnitTest
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: ./gradlew testDebugUnitTest -PGEMINI_API_KEY=$GEMINI_API_KEY
+
+      - name: Lint
+        run: ./gradlew lint
 
       - name: Upload de relatórios de teste
         if: always()
@@ -43,6 +50,13 @@ jobs:
         with:
           name: test-results
           path: '**/build/reports/tests/testDebugUnitTest'
+
+      - name: Upload do relatório de lint
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-results
+          path: '**/build/reports/lint-results-debug.html'
 
       - name: Gerar relatório de cobertura Jacoco
         run: ./gradlew jacocoTestReport
@@ -53,3 +67,9 @@ jobs:
         with:
           name: code-coverage-report
           path: app/build/reports/jacoco/jacocoTestReport/html
+
+      - name: Upload do APK debug
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug
+          path: app/build/outputs/apk/debug/app-debug.apk

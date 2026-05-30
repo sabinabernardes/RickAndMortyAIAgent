@@ -11,6 +11,10 @@ val localProperties = Properties().apply {
     rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
 }
 
+fun geminiApiKey(): String =
+    (project.findProperty("GEMINI_API_KEY") as? String)?.takeIf { it.isNotBlank() }
+        ?: localProperties.getProperty("GEMINI_API_KEY", "")
+
 android {
     namespace = "com.bina.rickandmorty"
     compileSdk = 35
@@ -23,7 +27,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "GEMINI_API_KEY", "\"${localProperties.getProperty("GEMINI_API_KEY", "")}\"")
+        buildConfigField("String", "GEMINI_API_KEY", "\"${geminiApiKey()}\"")
     }
 
     buildTypes {
