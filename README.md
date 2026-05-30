@@ -124,13 +124,23 @@ ChatScreen (Compose)
 > No login, no download, no setup required for the end user. Works on any Android device with internet access, including foldables (tested on Samsung Galaxy Z Flip 6).
 
 ---
-![img.png](img.png) 
-![img_3.png](img_3.png)
-![img_1.png](img_1.png)
-![img_5.png](img_5.png)
-![img_2.png](img_2.png)
-![img_4.png](img_4.png)
-![img_6.png](img_6.png)
+
+## 📸 Screenshots
+
+<table>
+  <tr>
+    <td><img src="img.png" width="200" alt="screenshot 1"/></td>
+    <td><img src="img_1.png" width="200" alt="screenshot 2"/></td>
+    <td><img src="img_2.png" width="200" alt="screenshot 3"/></td>
+    <td><img src="img_3.png" width="200" alt="screenshot 4"/></td>
+  </tr>
+  <tr>
+    <td><img src="img_4.png" width="200" alt="screenshot 5"/></td>
+    <td><img src="img_5.png" width="200" alt="screenshot 6"/></td>
+    <td><img src="img_6.png" width="200" alt="screenshot 7"/></td>
+    <td></td>
+  </tr>
+</table>
 
 ## 🚀 Getting Started
 
