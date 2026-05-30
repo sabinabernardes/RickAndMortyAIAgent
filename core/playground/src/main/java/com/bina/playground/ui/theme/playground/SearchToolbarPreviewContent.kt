@@ -28,6 +28,7 @@ fun CardCharacterContent() {
     CardCharacter(
         name = "Rick Sanchez",
         status = "Alive",
+        species = "Human",
         lastLocation = "Earth (Replacement Dimension)",
         onClick = {},
         painter = painterResource(
