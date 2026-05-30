@@ -49,4 +49,7 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(kotlin("test"))
     testImplementation(libs.mockwebserver)
+    testImplementation(libs.retrofit.moshi)
+    testImplementation(libs.moshi)
+    testImplementation(libs.moshi.kotlin)
 }
