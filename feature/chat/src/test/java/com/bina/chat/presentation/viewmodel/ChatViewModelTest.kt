@@ -1,6 +1,8 @@
 package com.bina.chat.presentation.viewmodel
 
 import app.cash.turbine.test
+import com.bina.chat.domain.model.AgentMessageResult
+import com.bina.chat.domain.model.ChatNavigationEvent
 import com.bina.chat.domain.model.MessageRole
 import com.bina.chat.domain.model.ModelAvailability
 import com.bina.chat.domain.repository.ChatRepository
@@ -9,12 +11,10 @@ import com.bina.chat.domain.usecase.SendMessageUseCase
 import com.bina.chat.presentation.mapper.ChatMessageUiMapper
 import com.bina.chat.presentation.state.ChatUiState
 import io.mockk.coEvery
-import io.mockk.every
+import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -87,29 +87,46 @@ class ChatViewModelTest {
     }
 
     @Test
-    fun `GIVEN model Available WHEN sendMessage THEN user message and AI response appear in messages`() = runTest(testDispatcher) {
+    fun `GIVEN model Available WHEN sendMessage THEN user message and AI response appear in messages`() = runTest {
         coEvery { checkModelAvailabilityUseCase() } returns ModelAvailability.Available
         coEvery { repository.warmup() } returns Unit
-        every { sendMessageUseCase(any()) } returns flowOf("Rick ", "é ", "genial.")
+        coEvery { sendMessageUseCase(any()) } returns AgentMessageResult(text = "Rick é genial.")
 
         viewModel = createViewModel()
         viewModel.sendMessage("Quem é o Rick?")
 
-        // With UnconfinedTestDispatcher, all coroutines run eagerly — check final state directly
         val finalState = viewModel.uiState.value as ChatUiState.Conversation
         assertEquals(2, finalState.messages.size)
         assertEquals(MessageRole.USER, finalState.messages[0].role)
         assertEquals("Rick é genial.", finalState.messages[1].text)
         assertFalse(finalState.messages[1].isStreaming)
         assertFalse(finalState.isAiTyping)
-        verify(exactly = 1) { sendMessageUseCase("Quem é o Rick?") }
+        coVerify(exactly = 1) { sendMessageUseCase("Quem é o Rick?") }
     }
 
     @Test
-    fun `GIVEN stream throws WHEN sendMessage THEN errorMessage is set and placeholder removed`() = runTest {
+    fun `GIVEN use case returns navigation event WHEN sendMessage THEN navigationEvent is emitted`() = runTest {
         coEvery { checkModelAvailabilityUseCase() } returns ModelAvailability.Available
         coEvery { repository.warmup() } returns Unit
-        every { sendMessageUseCase(any()) } throws RuntimeException("Falha de rede")
+        val navEvent = ChatNavigationEvent.OpenCharacter(characterId = 2)
+        coEvery { sendMessageUseCase(any()) } returns AgentMessageResult(
+            text = "Aqui está o Morty, *burp*",
+            navigationEvent = navEvent
+        )
+
+        viewModel = createViewModel()
+
+        viewModel.navigationEvent.test {
+            viewModel.sendMessage("mostre o Morty")
+            assertEquals(navEvent, awaitItem())
+        }
+    }
+
+    @Test
+    fun `GIVEN use case throws WHEN sendMessage THEN errorMessage is set and placeholder removed`() = runTest {
+        coEvery { checkModelAvailabilityUseCase() } returns ModelAvailability.Available
+        coEvery { repository.warmup() } returns Unit
+        coEvery { sendMessageUseCase(any()) } throws RuntimeException("Falha de rede")
 
         viewModel = createViewModel()
         viewModel.sendMessage("pergunta")
@@ -117,14 +134,14 @@ class ChatViewModelTest {
         val state = viewModel.uiState.value as ChatUiState.Conversation
         assertFalse(state.isAiTyping)
         assertTrue(state.errorMessage != null)
-        assertEquals(1, state.messages.size) // só a mensagem do usuário
+        assertEquals(1, state.messages.size)
     }
 
     @Test
     fun `GIVEN Conversation with messages WHEN clearChat THEN messages list is empty`() = runTest {
         coEvery { checkModelAvailabilityUseCase() } returns ModelAvailability.Available
         coEvery { repository.warmup() } returns Unit
-        every { sendMessageUseCase(any()) } returns flowOf("resposta")
+        coEvery { sendMessageUseCase(any()) } returns AgentMessageResult(text = "resposta")
 
         viewModel = createViewModel()
         viewModel.sendMessage("oi")
@@ -147,14 +164,14 @@ class ChatViewModelTest {
         viewModel.sendMessage("   ")
 
         assertEquals(stateBefore, viewModel.uiState.value)
-        verify(exactly = 0) { sendMessageUseCase(any()) }
+        coVerify(exactly = 0) { sendMessageUseCase(any()) }
     }
 
     @Test
     fun `GIVEN error present WHEN dismissError THEN errorMessage is null`() = runTest {
         coEvery { checkModelAvailabilityUseCase() } returns ModelAvailability.Available
         coEvery { repository.warmup() } returns Unit
-        every { sendMessageUseCase(any()) } throws RuntimeException("erro")
+        coEvery { sendMessageUseCase(any()) } throws RuntimeException("erro")
 
         viewModel = createViewModel()
         viewModel.sendMessage("pergunta")

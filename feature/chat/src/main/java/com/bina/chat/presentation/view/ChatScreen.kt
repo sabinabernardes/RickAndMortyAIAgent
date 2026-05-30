@@ -50,6 +50,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.bina.chat.domain.model.ChatNavigationEvent
 import com.bina.chat.domain.model.MessageRole
 import com.bina.chat.presentation.model.ChatMessageUiModel
 import com.bina.chat.presentation.state.ChatUiState
@@ -64,9 +65,20 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun ChatScreen(
     onBackClick: () -> Unit,
+    onNavigateToCharacter: (Int) -> Unit = {},
+    onSearchCharacters: (String) -> Unit = {},
     viewModel: ChatViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvent.collect { event ->
+            when (event) {
+                is ChatNavigationEvent.OpenCharacter -> onNavigateToCharacter(event.characterId)
+                is ChatNavigationEvent.SearchCharacters -> onSearchCharacters(event.query)
+            }
+        }
+    }
 
     Scaffold(
         topBar = { Toolbar(title = "Rick AI", onBackClick = onBackClick) }

@@ -2,17 +2,20 @@ package com.bina.chat.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bina.chat.domain.model.ChatNavigationEvent
 import com.bina.chat.domain.model.MessageRole
 import com.bina.chat.domain.model.ModelAvailability
 import com.bina.chat.domain.repository.ChatRepository
-
 import com.bina.chat.domain.usecase.CheckModelAvailabilityUseCase
 import com.bina.chat.domain.usecase.SendMessageUseCase
 import com.bina.chat.presentation.mapper.ChatMessageUiMapper
 import com.bina.chat.presentation.model.ChatMessageUiModel
 import com.bina.chat.presentation.state.ChatUiState
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 class ChatViewModel(
@@ -24,6 +27,9 @@ class ChatViewModel(
 
     private val _uiState = MutableStateFlow<ChatUiState>(ChatUiState.Initializing)
     val uiState: StateFlow<ChatUiState> = _uiState
+
+    private val _navigationEvent = MutableSharedFlow<ChatNavigationEvent>()
+    val navigationEvent: SharedFlow<ChatNavigationEvent> = _navigationEvent.asSharedFlow()
 
     init {
         viewModelScope.launch { checkAvailability() }
@@ -51,35 +57,27 @@ class ChatViewModel(
         val currentState = _uiState.value as? ChatUiState.Conversation ?: return
 
         val userMessage = ChatMessageUiModel(role = MessageRole.USER, text = userText)
-        val streamingPlaceholder = ChatMessageUiModel(role = MessageRole.AI, text = "", isStreaming = true)
+        val placeholder = ChatMessageUiModel(role = MessageRole.AI, text = "", isStreaming = true)
 
         _uiState.value = currentState.copy(
-            messages = currentState.messages + userMessage + streamingPlaceholder,
+            messages = currentState.messages + userMessage + placeholder,
             isAiTyping = true,
             errorMessage = null
         )
 
         viewModelScope.launch {
-            var accumulated = ""
             try {
-                sendMessageUseCase(userText).collect { chunk ->
-                    accumulated += chunk
-                    val state = _uiState.value as? ChatUiState.Conversation ?: return@collect
-                    val updatedMessages = state.messages.toMutableList().also {
-                        it[it.lastIndex] = streamingPlaceholder.copy(text = accumulated)
-                    }
-                    _uiState.value = state.copy(messages = updatedMessages)
+                val result = sendMessageUseCase(userText)
+                val state = _uiState.value as? ChatUiState.Conversation ?: return@launch
+                val finalMessages = state.messages.toMutableList().also {
+                    it[it.lastIndex] = placeholder.copy(text = result.text, isStreaming = false)
                 }
-                val finalState = _uiState.value as? ChatUiState.Conversation ?: return@launch
-                val finalMessages = finalState.messages.toMutableList().also {
-                    it[it.lastIndex] = it.last().copy(isStreaming = false)
-                }
-                _uiState.value = finalState.copy(messages = finalMessages, isAiTyping = false)
+                _uiState.value = state.copy(messages = finalMessages, isAiTyping = false)
+                result.navigationEvent?.let { _navigationEvent.emit(it) }
             } catch (e: Exception) {
                 val state = _uiState.value as? ChatUiState.Conversation ?: return@launch
-                val messagesWithoutPlaceholder = state.messages.dropLast(1)
                 _uiState.value = state.copy(
-                    messages = messagesWithoutPlaceholder,
+                    messages = state.messages.dropLast(1),
                     isAiTyping = false,
                     errorMessage = "Erro ao gerar resposta. Tente novamente."
                 )

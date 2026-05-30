@@ -47,7 +47,15 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(NavDestination.Chat.route) {
-                        ChatScreen(onBackClick = { navController.popBackStack() })
+                        ChatScreen(
+                            onBackClick = { navController.popBackStack() },
+                            onNavigateToCharacter = { id ->
+                                navController.navigate(NavDestination.Detail.createRoute(id.toString()))
+                            },
+                            onSearchCharacters = { query ->
+                                navController.navigate(NavDestination.Home.route)
+                            }
+                        )
                     }
                     composable(
                         route = "detail/{itemId}",
