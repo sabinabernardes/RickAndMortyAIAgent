@@ -2,6 +2,7 @@ package com.bina.home.data.datasource
 
 import com.bina.home.data.model.CharacterData
 import com.bina.home.data.model.CharacterResponse
+import com.bina.home.data.model.LocationData
 import com.bina.home.data.remote.RickAndMortyApiService
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -25,7 +26,7 @@ class CharacterDataSourceImplTest {
     @Test
     fun `given api returns data when getCharacters then returns character list`() = runBlocking {
         // Given
-        val expectedList = listOf(CharacterData(id = 1, name = "Rick", status = "Alive", species = "Human", image = "img"))
+        val expectedList = listOf(CharacterData(id = 1, name = "Rick", status = "Alive", species = "Human", image = "img", location = LocationData("Earth", "")))
         val response = CharacterResponse(results = expectedList)
         coEvery { apiService.getCharacters("", 1) } returns response
 

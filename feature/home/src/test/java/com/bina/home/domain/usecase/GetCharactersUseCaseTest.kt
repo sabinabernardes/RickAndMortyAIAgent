@@ -2,6 +2,7 @@ package com.bina.home.domain.usecase
 
 import androidx.paging.PagingData
 import com.bina.home.domain.model.CharacterDomain
+
 import com.bina.home.domain.repository.HomeRepository
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -27,7 +28,7 @@ class GetCharactersUseCaseTest {
     @Test
     fun `given repository returns PagingData when invoke then emits PagingData`() = runTest {
         // Given
-        val pagingData = PagingData.from(listOf(CharacterDomain(1, "Rick", "Alive", "Human", "img")))
+        val pagingData = PagingData.from(listOf(CharacterDomain(1, "Rick", "Alive", "Human", "img", "Earth")))
         coEvery { repository.getCharacters("") } returns flowOf(pagingData)
 
         // When
