@@ -92,7 +92,7 @@ fun CardCharacter(
                     text = lastLocation,
                     style = DefaultTypography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
             }
