@@ -10,8 +10,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.SmartToy
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LargeFloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -21,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -28,6 +34,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.bina.designsystem.components.CardCharacter
 import com.bina.designsystem.components.DialogError
 import com.bina.designsystem.components.SearchToolbar
+import com.bina.designsystem.tokens.ColorTokens
 import com.bina.designsystem.tokens.SpacingTokens
 import com.bina.home.presentation.model.CharacterUiModel
 import com.bina.home.presentation.state.CharactersUiState
@@ -37,7 +44,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel(),
-    onCharacterClick: (Int) -> Unit
+    onCharacterClick: (Int) -> Unit,
+    onChatClick: () -> Unit = {}
 ) {
     var query by remember { mutableStateOf("") }
     val uiState by viewModel.uiState.collectAsState()
@@ -46,22 +54,39 @@ fun HomeScreen(
         viewModel.getCharacters(query)
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        SearchToolbar(
-            title = "Personagens",
-            query = query,
-            onQueryChange = { query = it }
-        )
-        
-        HomeContent(
-            uiState = uiState,
-            onCharacterClick = onCharacterClick,
-            viewModel = viewModel
-        )
+    Scaffold(
+        floatingActionButton = {
+            LargeFloatingActionButton(
+                onClick = onChatClick,
+                containerColor = ColorTokens.Secondary,
+                contentColor = ColorTokens.OnSecondary
+            ) {
+                Icon(
+                    imageVector = Icons.Default.SmartToy,
+                    contentDescription = "Chat com Rick AI",
+                    modifier = Modifier.size(36.dp)
+                )
+            }
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            SearchToolbar(
+                title = "Personagens",
+                query = query,
+                onQueryChange = { query = it }
+            )
+
+            HomeContent(
+                uiState = uiState,
+                onCharacterClick = onCharacterClick,
+                viewModel = viewModel
+            )
+        }
     }
 }
 
