@@ -4,6 +4,7 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.bina.home.data.datasource.CharacterDataSource
 import com.bina.home.data.model.CharacterData
+import com.bina.home.data.model.LocationData
 import com.bina.home.data.pagingSouce.CharacterPagingSource
 import com.bina.home.domain.model.CharacterDomain
 import com.bina.home.domain.repository.HomeRepository
@@ -31,8 +32,8 @@ class HomeRepositoryImplTest {
     @Test
     fun `given dataSource returns data when getCharacters then emits PagingData with CharacterDomain`() = runTest {
         // Given
-        val characterData = CharacterData(1, "Rick", "Alive", "Human", "img")
-        val expectedDomain = CharacterDomain(1, "Rick", "Alive", "Human", "img")
+        val characterData = CharacterData(1, "Rick", "Alive", "Human", "img", LocationData("Earth", ""))
+        val expectedDomain = CharacterDomain(1, "Rick", "Alive", "Human", "img", "Earth")
         coEvery { dataSource.getCharacters("", 1) } returns listOf(characterData)
 
         // When

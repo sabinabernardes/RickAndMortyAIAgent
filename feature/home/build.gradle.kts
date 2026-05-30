@@ -60,7 +60,6 @@ dependencies {
 
     // Preview e testes opcionais
     debugImplementation(libs.androidx.ui.tooling)
-    testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit.v115)
     androidTestImplementation(libs.androidx.espresso.core.v350)
 
@@ -81,6 +80,7 @@ dependencies {
     //Testes
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

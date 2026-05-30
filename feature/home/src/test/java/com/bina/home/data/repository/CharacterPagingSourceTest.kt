@@ -3,6 +3,7 @@ package com.bina.home.data.repository
 import androidx.paging.PagingSource
 import com.bina.home.data.datasource.CharacterDataSource
 import com.bina.home.data.model.CharacterData
+import com.bina.home.data.model.LocationData
 import com.bina.home.data.pagingSouce.CharacterPagingSource
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -28,7 +29,7 @@ class CharacterPagingSourceTest {
     @Test
     fun `given dataSource returns data when load then returns page`() = runTest {
         // Given
-        val characters = listOf(CharacterData(1, "Rick", "Alive", "Human", "img"))
+        val characters = listOf(CharacterData(1, "Rick", "Alive", "Human", "img", LocationData("Earth", "")))
         coEvery { dataSource.getCharacters("", 1) } returns characters
 
         // When
