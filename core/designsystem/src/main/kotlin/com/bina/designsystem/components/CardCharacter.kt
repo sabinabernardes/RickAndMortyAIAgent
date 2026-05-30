@@ -66,7 +66,7 @@ fun CardCharacter(
                 )
             }
 
-            Column(modifier = Modifier.padding(SpacingTokens.spacing16)) {
+            Column(modifier = Modifier.padding(SpacingTokens.spacing16).fillMaxWidth()) {
                 Text(
                     text = name,
                     style = DefaultTypography.bodyLarge,
