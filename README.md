@@ -14,6 +14,7 @@ The project is structured into independent, highly-decoupled modules to optimize
 - **`:feature:[name]`**: Self-contained business units.
     - `home`: Character discovery with search and infinite pagination (Paging 3).
     - `character_details`: Detailed character profiles and deep-linking support.
+    - `chat`: Generative AI chat powered by Gemini 2.5 Flash (see below).
 - **`:core:[name]`**: Internal SDKs and shared infrastructure.
     - `network`: Retrofit configuration, OkHttp interceptors, and global error handling.
     - `designsystem`: Single source of truth for UI. Atomic components and **Design Tokens** (Spacing, Typography, Color).
@@ -39,12 +40,13 @@ Each feature module is strictly divided into layers:
 | **Networking** | Retrofit, OkHttp, Gson |
 | **Pagination** | Paging 3 (RemoteMediator ready) |
 | **Navigation** | Jetpack Navigation Compose |
+| **Generative AI** | Google Gemini 2.5 Flash via `com.google.ai.client.generativeai` |
 | **Testing** | MockK, JUnit 4, Turbine (Flow testing), Compose UI Test |
 | **Build** | Gradle Kotlin DSL, Version Catalogs (.toml) |
 
 ---
 
-## 🔬 Quality Assurance (Senior Focus)
+## 🔬 Quality Assurance 
 
 ### Testing Strategy (Given-When-Then)
 We enforce the **Given-When-Then** pattern to ensure tests are readable and serve as living documentation.
@@ -85,6 +87,41 @@ To maintain high code quality and architectural consistency, this project follow
 ### 🎨 [Design System](.gemini/rules/DESIGN_SYSTEM.md)
 *   **Token-First**: All UI dimensions and colors must come from the Design System tokens.
 *   **Atomic Components**: Reusable, small-scale components implemented in `:core:designsystem`.
+
+---
+
+## 🤖 Generative AI — Rick Chat
+
+The `:feature:chat` module adds a conversational AI experience to the app. Users can ask anything about the Rick and Morty universe and receive answers in Rick Sanchez's sarcastic, brilliant voice.
+
+### How it works
+
+- Powered by **Google Gemini 2.5 Flash** via the official Android SDK (`com.google.ai.client.generativeai`).
+- Responses are **streamed token by token** using `generateContentStream`, so text appears progressively — no waiting for the full response.
+- A **Rick persona prompt** is prepended to every message inside `ChatRepositoryImpl`, shaping Gemini's tone and knowledge scope.
+- The API key is stored in `local.properties` (never committed) and injected at build time via `BuildConfig`.
+
+### Architecture
+
+Follows the same Clean Architecture pattern as all other features:
+
+```
+ChatScreen (Compose)
+    └─ ChatViewModel (StateFlow / UDF)
+        └─ SendMessageUseCase
+            └─ ChatRepository → ChatDataSource → GenerativeModel (Gemini SDK)
+```
+
+### Setup
+
+1. Get a free API key at [aistudio.google.com](https://aistudio.google.com).
+2. Add to `local.properties`:
+   ```properties
+   GEMINI_API_KEY=your_key_here
+   ```
+3. Build and run — the chat is accessible via the FAB on the home screen.
+
+> No login, no download, no setup required for the end user. Works on any Android device with internet access, including foldables (tested on Samsung Galaxy Z Flip 6).
 
 ---
 
