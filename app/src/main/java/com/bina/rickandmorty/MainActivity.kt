@@ -36,8 +36,16 @@ class MainActivity : ComponentActivity() {
                     navController = navController,
                     startDestination = NavDestination.Home.route
                 ) {
-                    composable(NavDestination.Home.route) {
+                    composable(
+                        route = NavDestination.Home.routeWithQuery,
+                        arguments = listOf(navArgument("query") {
+                            type = NavType.StringType
+                            defaultValue = ""
+                        })
+                    ) { backStackEntry ->
+                        val initialQuery = backStackEntry.arguments?.getString("query") ?: ""
                         HomeScreen(
+                            initialQuery = initialQuery,
                             onCharacterClick = { id ->
                                 navController.navigate("detail/$id")
                             },
@@ -53,7 +61,9 @@ class MainActivity : ComponentActivity() {
                                 navController.navigate(NavDestination.Detail.createRoute(id.toString()))
                             },
                             onSearchCharacters = { query ->
-                                navController.navigate(NavDestination.Home.route)
+                                navController.navigate(NavDestination.Home.createRoute(query)) {
+                                    popUpTo(NavDestination.Home.route) { inclusive = true }
+                                }
                             }
                         )
                     }

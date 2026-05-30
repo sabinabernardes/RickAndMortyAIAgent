@@ -5,7 +5,10 @@ package core.navigation
  * Pode ser expandido para incluir argumentos.
  */
 sealed class NavDestination(val route: String) {
-    object Home : NavDestination("home")
+    object Home : NavDestination("home") {
+        const val routeWithQuery = "home?query={query}"
+        fun createRoute(query: String) = "home?query=$query"
+    }
     object Chat : NavDestination("chat")
     data class Detail(val itemId: String) : NavDestination("detail/{itemId}") {
         companion object {

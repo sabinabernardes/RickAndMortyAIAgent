@@ -58,11 +58,12 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeScreen(
+    initialQuery: String = "",
     viewModel: HomeViewModel = koinViewModel(),
     onCharacterClick: (Int) -> Unit,
     onChatClick: () -> Unit = {}
 ) {
-    var query by remember { mutableStateOf("") }
+    var query by remember { mutableStateOf(initialQuery) }
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(query) {
