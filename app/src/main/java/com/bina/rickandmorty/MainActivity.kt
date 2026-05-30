@@ -15,6 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.bina.character_details.presentation.view.CharacterDetailsScreen
+import com.bina.chat.presentation.view.ChatScreen
 import com.bina.home.presentation.view.HomeScreen
 import com.bina.rickandmorty.ui.theme.RickAndMortyTheme
 import core.navigation.NavDestination
@@ -37,8 +38,14 @@ class MainActivity : ComponentActivity() {
                         HomeScreen(
                             onCharacterClick = { id ->
                                 navController.navigate("detail/$id")
+                            },
+                            onChatClick = {
+                                navController.navigate(NavDestination.Chat.route)
                             }
                         )
+                    }
+                    composable(NavDestination.Chat.route) {
+                        ChatScreen(onBackClick = { navController.popBackStack() })
                     }
                     composable(
                         route = "detail/{itemId}",
