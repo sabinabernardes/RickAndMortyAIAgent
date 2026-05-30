@@ -50,6 +50,7 @@ scalars = "2.9.0"
 androidxNavigationCompose = "2.9.8"
 navigationCommonKtx = "2.9.8"
 generativeai = "0.9.0"
+coreSplashscreen = "1.0.1"
 
 [libraries]
 androidx-compose-bom-v20240500 = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
@@ -117,6 +118,7 @@ androidx-ui-android = { group = "androidx.compose.ui", name = "ui-android", vers
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "androidxNavigationCompose" }
 androidx-navigation-common-ktx = { group = "androidx.navigation", name = "navigation-common-ktx", version.ref = "navigationCommonKtx" }
 generativeai = { group = "com.google.ai.client.generativeai", name = "generativeai", version.ref = "generativeai" }
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
