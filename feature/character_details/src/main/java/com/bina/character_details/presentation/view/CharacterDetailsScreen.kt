@@ -1,6 +1,10 @@
 package com.bina.character_details.presentation.view
 
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +23,8 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
@@ -44,7 +50,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.bina.character_details.presentation.model.CharacterDetailsUiModel
+import com.bina.character_details.presentation.model.EpisodeUiModel
 import com.bina.character_details.presentation.state.CharacterDetailsUiState
+import com.bina.character_details.presentation.state.EpisodesState
 import com.bina.character_details.presentation.viewmodel.CharacterDetailsViewModel
 import com.bina.designsystem.animation.fadeSlideIn
 import com.bina.designsystem.components.StatusBadge
@@ -82,6 +90,7 @@ fun CharacterDetailsScreen(
             is CharacterDetailsUiState.Success -> {
                 CharacterDetailsContent(
                     character = state.character,
+                    episodesState = state.episodesState,
                     onBackClick = onBackClick
                 )
             }
@@ -113,6 +122,7 @@ fun CharacterDetailsScreen(
 @Composable
 private fun CharacterDetailsContent(
     character: CharacterDetailsUiModel,
+    episodesState: EpisodesState,
     onBackClick: () -> Unit
 ) {
     val scrollState = rememberScrollState()
@@ -200,6 +210,8 @@ private fun CharacterDetailsContent(
                     DetailItem(label = "Status", value = character.status, index = 0)
                     DetailItem(label = "Origem", value = character.origin, index = 1)
                     DetailItem(label = "Localização", value = character.location, index = 2)
+
+                    EpisodeListSection(episodesState = episodesState)
 
                     Spacer(modifier = Modifier.height(SpacingTokens.spacing32))
                 }
@@ -294,6 +306,139 @@ private fun DetailItem(
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.weight(0.6f)
+        )
+    }
+}
+
+@Composable
+private fun EpisodeListSection(episodesState: EpisodesState) {
+    HorizontalDivider(
+        modifier = Modifier.padding(vertical = SpacingTokens.spacing16),
+        color = MaterialTheme.colorScheme.outlineVariant
+    )
+
+    when (episodesState) {
+        is EpisodesState.Loading -> {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = SpacingTokens.spacing8),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Aparece em",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+            repeat(3) { EpisodeSkeletonItem() }
+        }
+        is EpisodesState.Success -> {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = SpacingTokens.spacing8),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Aparece em",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = "${episodesState.episodes.size}",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f)
+                )
+            }
+            episodesState.episodes.forEachIndexed { index, episode ->
+                if (index > 0) {
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                }
+                EpisodeCard(episode = episode, index = index)
+            }
+        }
+        is EpisodesState.Error -> {
+            Text(
+                text = "Aparece em",
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.padding(bottom = SpacingTokens.spacing8)
+            )
+            Text(
+                text = "Não foi possível carregar os episódios.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f)
+            )
+        }
+    }
+}
+
+@Composable
+private fun EpisodeCard(episode: EpisodeUiModel, index: Int) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fadeSlideIn(index)
+            .padding(vertical = SpacingTokens.spacing8)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(SpacingTokens.spacing8),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = episode.code,
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                text = episode.name,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+        Text(
+            text = episode.airDate,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f),
+            modifier = Modifier.padding(top = SpacingTokens.spacing4)
+        )
+    }
+}
+
+@Composable
+private fun EpisodeSkeletonItem() {
+    val infiniteTransition = rememberInfiniteTransition(label = "skeleton")
+    val alpha by infiniteTransition.animateFloat(
+        initialValue = 0.15f,
+        targetValue = 0.35f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(800),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "skeletonAlpha"
+    )
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = SpacingTokens.spacing8),
+        horizontalArrangement = Arrangement.spacedBy(SpacingTokens.spacing8),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .size(52.dp, 14.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = alpha))
+        )
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .height(14.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = alpha))
         )
     }
 }
