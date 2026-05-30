@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -41,9 +39,9 @@ fun CardCharacter(
 ) {
     androidx.compose.material3.Card(
         modifier = modifier
+            .fillMaxWidth()
             .clickable { onClick() }
-            .padding(SpacingTokens.spacing8)
-            .width(160.dp),
+            .padding(SpacingTokens.spacing8),
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = ElevationTokens.Level0)
@@ -55,7 +53,7 @@ fun CardCharacter(
                     contentDescription = name,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .size(160.dp),
+                        .height(160.dp),
                     contentScale = ContentScale.Crop
                 )
                 StatusBadge(
