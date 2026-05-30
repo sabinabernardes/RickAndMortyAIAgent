@@ -171,5 +171,23 @@ ChatScreen (Compose)
 
 ---
 
+---
+
+## 📚 Wiki
+
+A documentação completa do projeto está na [Wiki do repositório](https://github.com/sabinabernardes/RickAndMorty/wiki):
+
+| Página | Conteúdo |
+|--------|----------|
+| [Setup do Projeto](https://github.com/sabinabernardes/RickAndMorty/wiki/Setup-do-Projeto) | Como rodar, configurar a API Key e dependências |
+| [Arquitetura](https://github.com/sabinabernardes/RickAndMorty/wiki/Arquitetura) | Diagrama de módulos e camadas Clean Architecture |
+| [Feature: Chat Agêntico](https://github.com/sabinabernardes/RickAndMorty/wiki/Feature-Chat-Agêntico) | Como a IA navega o app com Gemini Function Calling |
+| [Core: Design System](https://github.com/sabinabernardes/RickAndMorty/wiki/Core-Design-System) | Tokens, componentes e sistema de animações |
+| [Core: Navigation](https://github.com/sabinabernardes/RickAndMorty/wiki/Core-Navigation) | Rotas centralizadas e fluxo de navegação |
+| [Core: Network](https://github.com/sabinabernardes/RickAndMorty/wiki/Core-Network) | Cliente HTTP, retry com backoff exponencial |
+| [Documentação de Engenharia](https://github.com/sabinabernardes/RickAndMorty/wiki/Documentação-de-Engenharia) | Rules, Specs (SDDs) e ADRs do projeto |
+
+---
+
 **Developed with ❤️ by [Sabina Bernardes](https://github.com/sabinabernardes)**.  
 *Architected for scalability, performance, and maintainability.*
