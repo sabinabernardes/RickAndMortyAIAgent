@@ -129,16 +129,20 @@ ChatScreen (Compose)
 
 <table>
   <tr>
-    <td><img src="https://raw.githubusercontent.com/sabinabernardes/RickAndMorty/feat/chat-gemini-ai/img.png" width="200" alt="screenshot 1"/></td>
-    <td><img src="https://raw.githubusercontent.com/sabinabernardes/RickAndMorty/feat/chat-gemini-ai/img_1.png" width="200" alt="screenshot 2"/></td>
-    <td><img src="https://raw.githubusercontent.com/sabinabernardes/RickAndMorty/feat/chat-gemini-ai/img_2.png" width="200" alt="screenshot 3"/></td>
-    <td><img src="https://raw.githubusercontent.com/sabinabernardes/RickAndMorty/feat/chat-gemini-ai/img_3.png" width="200" alt="screenshot 4"/></td>
+    <th align="center">Home — Dark</th>
+    <th align="center">Home — Light</th>
+    <th align="center">Detalhes — Dark</th>
+    <th align="center">Detalhes — Light</th>
+    <th align="center">Chat — Dark</th>
+    <th align="center">Chat — Light</th>
   </tr>
   <tr>
-    <td><img src="https://raw.githubusercontent.com/sabinabernardes/RickAndMorty/feat/chat-gemini-ai/img_4.png" width="200" alt="screenshot 5"/></td>
-    <td><img src="https://raw.githubusercontent.com/sabinabernardes/RickAndMorty/feat/chat-gemini-ai/img_5.png" width="200" alt="screenshot 6"/></td>
-    <td><img src="https://raw.githubusercontent.com/sabinabernardes/RickAndMorty/feat/chat-gemini-ai/img_6.png" width="200" alt="screenshot 7"/></td>
-    <td></td>
+    <td><img src="https://raw.githubusercontent.com/wiki/sabinabernardes/RickAndMorty/assets/home_grid.png" width="160"/></td>
+    <td><img src="https://raw.githubusercontent.com/wiki/sabinabernardes/RickAndMorty/assets/home_light.png" width="160"/></td>
+    <td><img src="https://raw.githubusercontent.com/wiki/sabinabernardes/RickAndMorty/assets/detail_dark.png" width="160"/></td>
+    <td><img src="https://raw.githubusercontent.com/wiki/sabinabernardes/RickAndMorty/assets/detail_light.png" width="160"/></td>
+    <td><img src="https://raw.githubusercontent.com/wiki/sabinabernardes/RickAndMorty/assets/chat_empty.png" width="160"/></td>
+    <td><img src="https://raw.githubusercontent.com/wiki/sabinabernardes/RickAndMorty/assets/chat_light.png" width="160"/></td>
   </tr>
 </table>
 
