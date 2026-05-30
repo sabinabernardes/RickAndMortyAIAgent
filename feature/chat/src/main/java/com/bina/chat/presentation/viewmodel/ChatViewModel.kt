@@ -42,6 +42,7 @@ class ChatViewModel(
                 )
             }
             is ModelAvailability.Unavailable -> _uiState.value = ChatUiState.ModelUnavailable
+            is ModelAvailability.Downloadable -> _uiState.value = ChatUiState.ModelDownloadable
         }
     }
 

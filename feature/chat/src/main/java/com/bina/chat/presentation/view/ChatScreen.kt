@@ -80,6 +80,7 @@ fun ChatScreen(
             when (val state = uiState) {
                 is ChatUiState.Initializing -> InitializingContent()
                 is ChatUiState.ModelUnavailable -> ModelUnavailableContent()
+                is ChatUiState.ModelDownloadable -> ModelUnavailableContent()
                 is ChatUiState.Conversation -> ConversationContent(
                     state = state,
                     onSendMessage = viewModel::sendMessage,
