@@ -1,16 +1,16 @@
 package com.bina.chat.di
 
-import com.bina.chat.data.datasource.CharacterSearchDataSource
-import com.bina.chat.data.datasource.CharacterSearchDataSourceImpl
-import com.bina.chat.data.datasource.ChatDataSource
-import com.bina.chat.data.datasource.ChatDataSourceImpl
-import com.bina.chat.data.remote.CharacterSearchApiService
-import com.bina.chat.data.repository.ChatRepositoryImpl
-import com.bina.chat.domain.repository.ChatRepository
-import com.bina.chat.domain.usecase.CheckModelAvailabilityUseCase
-import com.bina.chat.domain.usecase.SendMessageUseCase
-import com.bina.chat.presentation.mapper.ChatMessageUiMapper
-import com.bina.chat.presentation.viewmodel.ChatViewModel
+import com.bina.chat.chat.data.datasource.ChatDataSource
+import com.bina.chat.chat.data.datasource.ChatDataSourceImpl
+import com.bina.chat.chat.data.repository.ChatRepositoryImpl
+import com.bina.chat.chat.domain.repository.ChatRepository
+import com.bina.chat.chat.domain.usecase.CheckModelAvailabilityUseCase
+import com.bina.chat.chat.domain.usecase.SendMessageUseCase
+import com.bina.chat.chat.presentation.mapper.ChatMessageUiMapper
+import com.bina.chat.chat.presentation.viewmodel.ChatViewModel
+import com.bina.chat.search.data.datasource.CharacterSearchDataSource
+import com.bina.chat.search.data.datasource.CharacterSearchDataSourceImpl
+import com.bina.chat.search.data.remote.CharacterSearchApiService
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.Schema
 import com.google.ai.client.generativeai.type.Tool

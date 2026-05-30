@@ -16,7 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.bina.character_details.presentation.view.CharacterDetailsScreen
-import com.bina.chat.presentation.view.ChatScreen
+import com.bina.chat.chat.presentation.view.ChatScreen
 import com.bina.home.presentation.view.HomeScreen
 import com.bina.designsystem.theme.RickAndMortyTheme
 import core.navigation.NavDestination
