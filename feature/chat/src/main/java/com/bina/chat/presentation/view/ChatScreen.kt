@@ -75,7 +75,7 @@ fun ChatScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(MaterialTheme.colorScheme.background)
+                .background(MaterialTheme.colorScheme.surface)
         ) {
             when (val state = uiState) {
                 is ChatUiState.Initializing -> InitializingContent()
