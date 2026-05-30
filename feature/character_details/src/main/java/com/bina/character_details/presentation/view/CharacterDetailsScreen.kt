@@ -56,7 +56,6 @@ import com.bina.character_details.presentation.state.EpisodesState
 import com.bina.character_details.presentation.viewmodel.CharacterDetailsViewModel
 import com.bina.designsystem.animation.fadeSlideIn
 import com.bina.designsystem.components.StatusBadge
-import com.bina.designsystem.tokens.ElevationTokens
 import com.bina.designsystem.tokens.SpacingTokens
 import org.koin.androidx.compose.koinViewModel
 
@@ -186,8 +185,7 @@ private fun CharacterDetailsContent(
                         }
                     },
                 shape = RoundedCornerShape(topStart = CardOverlap, topEnd = CardOverlap),
-                color = MaterialTheme.colorScheme.surface,
-                tonalElevation = ElevationTokens.Level2
+                color = MaterialTheme.colorScheme.surface
             ) {
                 Column(modifier = Modifier.padding(SpacingTokens.spacing24)) {
                     Text(

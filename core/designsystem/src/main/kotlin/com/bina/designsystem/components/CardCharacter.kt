@@ -46,7 +46,7 @@ fun CardCharacter(
             .width(160.dp),
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = ElevationTokens.Level2)
+        elevation = CardDefaults.cardElevation(defaultElevation = ElevationTokens.Level0)
     ) {
         Column {
             Box {
