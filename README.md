@@ -54,6 +54,19 @@ We enforce the **Given-When-Then** pattern to ensure tests are readable and serv
 - **UI Tests**: Isolated component testing via Compose Testing library.
 - **Turbine**: Leveraged for robust `Flow` and `StateFlow` validation.
 
+### Coverage Report (Unit Tests)
+
+| Module | Lines | Branches | Methods |
+|---|---|---|---|
+| `core:network` | 60.0% (24/40) | 100.0% (14/14) | 78.6% (11/14) |
+| `core:navigation` | 50.0% (3/6) | — | 37.5% (3/8) |
+| `feature:chat` | 87.2% (136/156) | 80.0% (48/60) | 83.8% (67/80) |
+| `feature:character_details` | 96.6% (140/145) | 66.7% (4/6) | 92.0% (80/87) |
+| `feature:home` | 90.8% (109/120) | 37.5% (9/24) | 88.9% (56/63) |
+| **Total** | **88.2%** (412/467) | **72.1%** (75/104) | **86.1%** (217/252) |
+
+> Generated with Jacoco. Run `./gradlew :<module>:jacocoTestReport` to refresh.
+
 ### Design System & Tokens
 The UI is built upon a **Token-based Design System**. 
 - No hardcoded margins or colors in features. 
@@ -158,8 +171,11 @@ ChatScreen (Compose)
 # Run unit tests across all modules
 ./gradlew test
 
-# Generate Jacoco coverage report
-./gradlew jacocoTestReport
+# Generate Jacoco coverage report (single module)
+./gradlew :<module>:jacocoTestReport
+
+# Generate aggregated coverage report for all modules
+./gradlew jacocoFullReport
 
 # Build debug APK
 ./gradlew assembleDebug
