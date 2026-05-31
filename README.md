@@ -159,6 +159,19 @@ ChatScreen (Compose)
   </tr>
 </table>
 
+### 🤖 Chat Agêntico — em ação
+
+<table>
+  <tr>
+    <th align="center">Abrir personagem pelo chat</th>
+    <th align="center">Buscar personagens pelo chat</th>
+  </tr>
+  <tr>
+    <td><img src="https://raw.githubusercontent.com/wiki/sabinabernardes/RickAndMorty/assets/chat_show_character.gif" width="240"/></td>
+    <td><img src="https://raw.githubusercontent.com/wiki/sabinabernardes/RickAndMorty/assets/chat_search_characters.gif" width="240"/></td>
+  </tr>
+</table>
+
 ## 🚀 Getting Started
 
 ### Requirements
