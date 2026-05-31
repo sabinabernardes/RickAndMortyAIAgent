@@ -48,8 +48,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.bina.features.chat.R
 import com.bina.chat.chat.domain.model.ChatNavigationEvent
 import com.bina.chat.chat.domain.model.MessageRole
 import com.bina.chat.chat.presentation.model.ChatMessageUiModel
@@ -57,8 +59,10 @@ import com.bina.chat.chat.presentation.state.ChatUiState
 import com.bina.chat.chat.presentation.viewmodel.ChatViewModel
 import com.bina.designsystem.animation.fadeSlideIn
 import com.bina.designsystem.components.Toolbar
+import com.bina.designsystem.tokens.AnimationTokens
 import com.bina.designsystem.tokens.ColorTokens
 import com.bina.designsystem.tokens.ElevationTokens
+import com.bina.designsystem.tokens.ShapeTokens
 import com.bina.designsystem.tokens.SpacingTokens
 import org.koin.androidx.compose.koinViewModel
 
@@ -81,7 +85,7 @@ fun ChatScreen(
     }
 
     Scaffold(
-        topBar = { Toolbar(title = "Rick AI", onBackClick = onBackClick) }
+        topBar = { Toolbar(title = stringResource(R.string.chat_toolbar_title), onBackClick = onBackClick) }
     ) { padding ->
         Box(
             modifier = Modifier
@@ -127,13 +131,13 @@ private fun ModelUnavailableContent() {
         )
         Spacer(modifier = Modifier.height(SpacingTokens.spacing16))
         Text(
-            text = "Erro ao carregar modelo",
+            text = stringResource(R.string.chat_model_unavailable_title),
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.height(SpacingTokens.spacing8))
         Text(
-            text = "Não foi possível inicializar o Rick AI. Verifique sua conexão e tente novamente.",
+            text = stringResource(R.string.chat_model_unavailable_message),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
             textAlign = TextAlign.Center
@@ -176,9 +180,9 @@ private fun ConversationContent(
             }
         }
 
-        state.errorMessage?.let { error ->
+        state.errorMessage?.let {
             Text(
-                text = error,
+                text = stringResource(R.string.chat_error_generate_response),
                 style = MaterialTheme.typography.bodySmall,
                 color = ColorTokens.Error,
                 modifier = Modifier
@@ -214,18 +218,18 @@ private fun EmptyConversationContent(modifier: Modifier = Modifier) {
         Icon(
             imageVector = Icons.Default.AutoAwesome,
             contentDescription = null,
-            modifier = Modifier.size(80.dp),
+            modifier = Modifier.size(SpacingTokens.spacing80),
             tint = MaterialTheme.colorScheme.primary
         )
         Spacer(modifier = Modifier.height(SpacingTokens.spacing24))
         Text(
-            text = "Fale com o Rick",
+            text = stringResource(R.string.chat_empty_title),
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.height(SpacingTokens.spacing8))
         Text(
-            text = "Pergunte sobre o universo de Rick and Morty. Wubba lubba dub dub!",
+            text = stringResource(R.string.chat_empty_message),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
             textAlign = TextAlign.Center
@@ -245,10 +249,10 @@ private fun ChatMessageItem(message: ChatMessageUiModel) {
         Surface(
             modifier = Modifier.widthIn(max = if (isUser) 280.dp else 340.dp),
             shape = RoundedCornerShape(
-                topStart = 16.dp,
-                topEnd = 16.dp,
-                bottomStart = if (isUser) 16.dp else 4.dp,
-                bottomEnd = if (isUser) 4.dp else 16.dp
+                topStart = ShapeTokens.Large.topStart,
+                topEnd = ShapeTokens.Large.topEnd,
+                bottomStart = if (isUser) ShapeTokens.Large.bottomStart else ShapeTokens.Small.bottomStart,
+                bottomEnd = if (isUser) ShapeTokens.Small.bottomEnd else ShapeTokens.Large.bottomEnd
             ),
             color = if (isUser) MaterialTheme.colorScheme.primary
                     else MaterialTheme.colorScheme.secondaryContainer,
@@ -282,7 +286,7 @@ private fun TypingIndicator(color: Color = MaterialTheme.colorScheme.primary) {
             initialValue = 0.3f,
             targetValue = 1f,
             animationSpec = InfiniteRepeatableSpec(
-                animation = tween(durationMillis = 300, delayMillis = index * 150),
+                animation = tween(durationMillis = AnimationTokens.DurationMedium, delayMillis = index * AnimationTokens.StaggerMaxDelay),
                 repeatMode = RepeatMode.Reverse
             ),
             label = "dot$index"
@@ -296,7 +300,7 @@ private fun TypingIndicator(color: Color = MaterialTheme.colorScheme.primary) {
         alphas.forEach { alpha ->
             Box(
                 modifier = Modifier
-                    .size(8.dp)
+                    .size(SpacingTokens.spacing8)
                     .alpha(alpha)
                     .background(color = color, shape = CircleShape)
             )
@@ -326,7 +330,7 @@ private fun ChatInputRow(
                 value = inputText,
                 onValueChange = onInputChange,
                 modifier = Modifier.weight(1f),
-                placeholder = { Text("Pergunte ao Rick...") },
+                placeholder = { Text(stringResource(R.string.chat_input_placeholder)) },
                 enabled = isEnabled,
                 maxLines = 4,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
@@ -346,7 +350,7 @@ private fun ChatInputRow(
                 } else {
                     Icon(
                         imageVector = Icons.Default.Send,
-                        contentDescription = "Enviar",
+                        contentDescription = stringResource(R.string.chat_send_content_description),
                         tint = if (inputText.isNotBlank()) MaterialTheme.colorScheme.primary
                                else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
                     )

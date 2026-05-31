@@ -8,6 +8,7 @@ This file serves as the root index for all project-wide rules and engineering st
 - [Testing Standards (Given-When-Then)](.gemini/rules/TESTING.md)
 - [Coroutines & Flow Best Practices](.gemini/rules/COROUTINES.md)
 - [Design System & UI Tokens](.gemini/rules/DESIGN_SYSTEM.md)
+- [String Resources](.gemini/rules/STRINGS.md)
 
 ---
 

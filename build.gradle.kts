@@ -4,5 +4,55 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android) apply false
     alias(libs.plugins.kotlin.compose) apply false
     alias(libs.plugins.android.library) apply false
+    jacoco
+}
 
+val coveredModules = listOf(
+    ":core:network",
+    ":core:navigation",
+    ":feature:chat",
+    ":feature:character_details",
+    ":feature:home"
+)
+
+tasks.register<JacocoReport>("jacocoFullReport") {
+    group = "verification"
+    description = "Aggregated Jacoco coverage report for all modules"
+
+    dependsOn(coveredModules.map { "$it:testDebugUnitTest" })
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+        html.outputLocation.set(layout.buildDirectory.dir("reports/jacoco/full/html"))
+        xml.outputLocation.set(layout.buildDirectory.file("reports/jacoco/full/jacocoFullReport.xml"))
+    }
+
+    val excludes = listOf(
+        "**/R.class", "**/R\$*.class", "**/BuildConfig.*", "**/Manifest*.*",
+        "**/*Test*.*", "**/di/**", "**/*Screen*", "**/*Activity*", "**/*Fragment*"
+    )
+
+    classDirectories.setFrom(
+        coveredModules.map { module ->
+            fileTree("${project(module).layout.buildDirectory.get()}/tmp/kotlin-classes/debug") {
+                exclude(excludes)
+            }
+        }
+    )
+
+    sourceDirectories.setFrom(
+        coveredModules.flatMap { module ->
+            listOf(
+                "${project(module).projectDir}/src/main/java",
+                "${project(module).projectDir}/src/main/kotlin"
+            )
+        }
+    )
+
+    executionData.setFrom(
+        coveredModules.map { module ->
+            "${project(module).layout.buildDirectory.get()}/jacoco/testDebugUnitTest.exec"
+        }.filter { file(it).exists() }
+    )
 }
