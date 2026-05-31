@@ -2,11 +2,13 @@ package com.bina.character_details.presentation.viewmodel
 
 import app.cash.turbine.test
 import com.bina.character_details.domain.model.CharacterDetailsDomain
+import com.bina.character_details.domain.model.EpisodeDomain
 import com.bina.character_details.domain.usecase.GetCharacterDetailsUseCase
 import com.bina.character_details.domain.usecase.GetEpisodesUseCase
 import com.bina.character_details.presentation.mapper.CharacterDetailsUiMapper
 import com.bina.character_details.presentation.mapper.EpisodeUiMapper
 import com.bina.character_details.presentation.state.CharacterDetailsUiState
+import com.bina.character_details.presentation.state.EpisodesState
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -85,6 +87,95 @@ class CharacterDetailsViewModelTest {
             val state = expectMostRecentItem()
             assert(state is CharacterDetailsUiState.Error)
             assertEquals(errorMessage, (state as CharacterDetailsUiState.Error).message)
+        }
+    }
+
+    @Test
+    fun `GIVEN character with episodes WHEN getCharacterDetails THEN episodesState is Success`() = runTest {
+        val id = 1
+        val characterDomain = CharacterDetailsDomain(
+            id = 1, name = "Rick", status = "Alive", species = "Human", gender = "Male",
+            origin = "Earth", location = "Earth", image = "url",
+            episodeUrls = listOf(
+                "https://rickandmortyapi.com/api/episode/1",
+                "https://rickandmortyapi.com/api/episode/2"
+            )
+        )
+        val episodes = listOf(
+            EpisodeDomain(1, "Pilot", "S01E01", "December 2, 2013"),
+            EpisodeDomain(2, "Lawnmower Dog", "S01E02", "December 9, 2013")
+        )
+        coEvery { getCharacterDetailsUseCase(id) } returns characterDomain
+        coEvery { getEpisodesUseCase(listOf(1, 2)) } returns episodes
+
+        viewModel.getCharacterDetails(id)
+
+        viewModel.uiState.test {
+            val state = expectMostRecentItem() as CharacterDetailsUiState.Success
+            assert(state.episodesState is EpisodesState.Success)
+            assertEquals(2, (state.episodesState as EpisodesState.Success).episodes.size)
+            assertEquals("Pilot", (state.episodesState as EpisodesState.Success).episodes[0].name)
+        }
+    }
+
+    @Test
+    fun `GIVEN episodes use case throws WHEN getCharacterDetails THEN episodesState is Error`() = runTest {
+        val id = 1
+        val characterDomain = CharacterDetailsDomain(
+            id = 1, name = "Rick", status = "Alive", species = "Human", gender = "Male",
+            origin = "Earth", location = "Earth", image = "url",
+            episodeUrls = listOf("https://rickandmortyapi.com/api/episode/1")
+        )
+        coEvery { getCharacterDetailsUseCase(id) } returns characterDomain
+        coEvery { getEpisodesUseCase(listOf(1)) } throws RuntimeException("Episodes error")
+
+        viewModel.getCharacterDetails(id)
+
+        viewModel.uiState.test {
+            val state = expectMostRecentItem() as CharacterDetailsUiState.Success
+            assert(state.episodesState is EpisodesState.Error)
+            assertEquals("Episodes error", (state.episodesState as EpisodesState.Error).message)
+        }
+    }
+
+    @Test
+    fun `GIVEN character with no episodes WHEN getCharacterDetails THEN episodesState is Success with empty list`() = runTest {
+        val id = 1
+        val characterDomain = CharacterDetailsDomain(
+            id = 1, name = "Rick", status = "Alive", species = "Human", gender = "Male",
+            origin = "Earth", location = "Earth", image = "url",
+            episodeUrls = emptyList()
+        )
+        coEvery { getCharacterDetailsUseCase(id) } returns characterDomain
+        coEvery { getEpisodesUseCase(emptyList()) } returns emptyList()
+
+        viewModel.getCharacterDetails(id)
+
+        viewModel.uiState.test {
+            val state = expectMostRecentItem() as CharacterDetailsUiState.Success
+            assert(state.episodesState is EpisodesState.Success)
+            assertEquals(0, (state.episodesState as EpisodesState.Success).episodes.size)
+        }
+    }
+
+    @Test
+    fun `GIVEN episode url WHEN getCharacterDetails THEN id is parsed from url path`() = runTest {
+        val id = 1
+        val characterDomain = CharacterDetailsDomain(
+            id = 1, name = "Rick", status = "Alive", species = "Human", gender = "Male",
+            origin = "Earth", location = "Earth", image = "url",
+            episodeUrls = listOf("https://rickandmortyapi.com/api/episode/42")
+        )
+        coEvery { getCharacterDetailsUseCase(id) } returns characterDomain
+        coEvery { getEpisodesUseCase(listOf(42)) } returns listOf(
+            EpisodeDomain(42, "Total Rickall", "S02E04", "August 30, 2015")
+        )
+
+        viewModel.getCharacterDetails(id)
+
+        viewModel.uiState.test {
+            val state = expectMostRecentItem() as CharacterDetailsUiState.Success
+            assertEquals("Total Rickall", (state.episodesState as EpisodesState.Success).episodes[0].name)
         }
     }
 }
