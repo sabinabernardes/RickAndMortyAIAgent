@@ -14,5 +14,6 @@ object SpacingTokens {
     val spacing32 = 32.dp
     val spacing54 = 54.dp
     val spacing64 = 64.dp
+    val spacing80 = 80.dp
     val spacing128 = 128.dp
 }

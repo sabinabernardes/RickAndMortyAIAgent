@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="chat_toolbar_title">Rick AI</string>
+    <string name="chat_model_unavailable_title">Erro ao carregar modelo</string>
+    <string name="chat_model_unavailable_message">Não foi possível inicializar o Rick AI. Verifique sua conexão e tente novamente.</string>
+    <string name="chat_empty_title">Fale com o Rick</string>
+    <string name="chat_empty_message">Pergunte sobre o universo de Rick and Morty. Wubba lubba dub dub!</string>
+    <string name="chat_input_placeholder">Pergunte ao Rick…</string>
+    <string name="chat_send_content_description">Enviar</string>
+    <string name="chat_error_generate_response">Erro ao gerar resposta. Tente novamente.</string>
+</resources>

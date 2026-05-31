@@ -1,6 +1,8 @@
 package com.bina.chat.chat.presentation.viewmodel
 
+import app.cash.turbine.test
 import com.bina.chat.chat.domain.model.AgentMessageResult
+import com.bina.chat.chat.domain.model.ChatNavigationEvent
 import com.bina.chat.chat.domain.model.MessageRole
 import com.bina.chat.chat.domain.model.ModelAvailability
 import com.bina.chat.chat.domain.repository.ChatRepository
@@ -144,6 +146,21 @@ class ChatViewModelTest {
 
         assertEquals(stateBefore, viewModel.uiState.value)
         coVerify(exactly = 0) { sendMessageUseCase(any()) }
+    }
+
+    @Test
+    fun `GIVEN result with navigation event WHEN sendMessage THEN navigationEvent is emitted`() = runTest(testDispatcher) {
+        coEvery { checkModelAvailabilityUseCase() } returns ModelAvailability.Available
+        coEvery { repository.warmup() } returns Unit
+        val navEvent = ChatNavigationEvent.OpenCharacter(characterId = 42)
+        coEvery { sendMessageUseCase(any()) } returns AgentMessageResult(text = "Aqui está!", navigationEvent = navEvent)
+
+        viewModel = createViewModel()
+
+        viewModel.navigationEvent.test {
+            viewModel.sendMessage("Mostre o Rick")
+            assertEquals(navEvent, awaitItem())
+        }
     }
 
     @Test
