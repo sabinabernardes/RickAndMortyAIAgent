@@ -1,4 +1,4 @@
-# 🧠 Rick and Morty AI - Android Refactor
+# 🧠 Rick and Morty AI - Study Projec 
 
 Enterprise-grade Android project refactored to demonstrate **Clean Architecture**, **Modern Tooling**, and **Multi-module Architecture**. This repository serves as a technical showcase for scalable Android development using Jetpack Compose and state-of-the-art libraries.
 
