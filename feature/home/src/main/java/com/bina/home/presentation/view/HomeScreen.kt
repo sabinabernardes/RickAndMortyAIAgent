@@ -149,7 +149,7 @@ private fun ChatPortalBar(onClick: () -> Unit) {
 }
 
 @Composable
-private fun HomeContent(
+internal fun HomeContent(
     uiState: CharactersUiState,
     onCharacterClick: (Int) -> Unit,
     viewModel: HomeViewModel,
@@ -194,7 +194,7 @@ private fun HomeContent(
 }
 
 @Composable
-private fun LoadingContent(modifier: Modifier = Modifier) {
+internal fun LoadingContent(modifier: Modifier = Modifier) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = modifier

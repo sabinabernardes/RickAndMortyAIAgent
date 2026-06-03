@@ -108,14 +108,14 @@ fun ChatScreen(
 }
 
 @Composable
-private fun InitializingContent() {
+internal fun InitializingContent() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         TypingIndicator(color = MaterialTheme.colorScheme.primary)
     }
 }
 
 @Composable
-private fun ModelUnavailableContent() {
+internal fun ModelUnavailableContent() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -146,7 +146,7 @@ private fun ModelUnavailableContent() {
 }
 
 @Composable
-private fun ConversationContent(
+internal fun ConversationContent(
     state: ChatUiState.Conversation,
     onSendMessage: (String) -> Unit,
     onDismissError: () -> Unit
