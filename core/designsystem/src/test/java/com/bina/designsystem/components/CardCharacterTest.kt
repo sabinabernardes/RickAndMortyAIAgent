@@ -3,7 +3,11 @@ package com.bina.designsystem.components
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -73,6 +77,43 @@ class CardCharacterTest {
             }
         }
         composeTestRule.onNodeWithText("Citadel of Ricks").assertIsDisplayed()
+    }
+
+    // --- Accessibility ---
+
+    @Test
+    fun `GIVEN card WHEN rendered THEN node has role Button`() {
+        val hasButtonRole = SemanticsMatcher("has Role Button") {
+            it.config.contains(SemanticsProperties.Role) && it.config[SemanticsProperties.Role] == Role.Button
+        }
+        composeTestRule.setContent {
+            RickAndMortyTheme {
+                CardCharacter(
+                    painter = placeholder,
+                    name = "Rick Sanchez",
+                    status = "Alive",
+                    species = "Human",
+                    lastLocation = "Earth (C-137)"
+                )
+            }
+        }
+        composeTestRule.onNode(hasButtonRole).assertExists()
+    }
+
+    @Test
+    fun `GIVEN card WHEN rendered THEN content description contains character name`() {
+        composeTestRule.setContent {
+            RickAndMortyTheme {
+                CardCharacter(
+                    painter = placeholder,
+                    name = "Rick Sanchez",
+                    status = "Alive",
+                    species = "Human",
+                    lastLocation = "Earth (C-137)"
+                )
+            }
+        }
+        composeTestRule.onNode(hasContentDescription("Rick Sanchez", substring = true)).assertExists()
     }
 
     @Test

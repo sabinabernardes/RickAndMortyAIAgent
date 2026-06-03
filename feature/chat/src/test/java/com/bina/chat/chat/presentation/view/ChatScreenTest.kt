@@ -1,6 +1,7 @@
 package com.bina.chat.chat.presentation.view
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -96,6 +97,56 @@ class ChatScreenTest {
     }
 
     // --- ConversationContent: send message ---
+
+    // --- Accessibility ---
+
+    @Test
+    fun `GIVEN ai is typing WHEN rendered THEN send button announces ai typing`() {
+        composeTestRule.setContent {
+            RickAndMortyTheme {
+                ConversationContent(
+                    state = ChatUiState.Conversation(messages = emptyList(), isAiTyping = true),
+                    onSendMessage = {},
+                    onDismissError = {}
+                )
+            }
+        }
+        composeTestRule.onNode(hasContentDescription("Rick AI está digitando", substring = true)).assertExists()
+    }
+
+    @Test
+    fun `GIVEN user message WHEN rendered THEN content description contains sender prefix`() {
+        val messages = listOf(
+            ChatMessageUiModel(role = MessageRole.USER, text = "Olá Rick")
+        )
+        composeTestRule.setContent {
+            RickAndMortyTheme {
+                ConversationContent(
+                    state = ChatUiState.Conversation(messages = messages, isAiTyping = false),
+                    onSendMessage = {},
+                    onDismissError = {}
+                )
+            }
+        }
+        composeTestRule.onNode(hasContentDescription("Você: Olá Rick", substring = true)).assertExists()
+    }
+
+    @Test
+    fun `GIVEN ai message WHEN rendered THEN content description contains sender prefix`() {
+        val messages = listOf(
+            ChatMessageUiModel(role = MessageRole.AI, text = "Wubba lubba dub dub!")
+        )
+        composeTestRule.setContent {
+            RickAndMortyTheme {
+                ConversationContent(
+                    state = ChatUiState.Conversation(messages = messages, isAiTyping = false),
+                    onSendMessage = {},
+                    onDismissError = {}
+                )
+            }
+        }
+        composeTestRule.onNode(hasContentDescription("Rick AI: Wubba lubba dub dub!", substring = true)).assertExists()
+    }
 
     @Test
     fun `GIVEN typed message WHEN send clicked THEN onSendMessage callback fires`() {

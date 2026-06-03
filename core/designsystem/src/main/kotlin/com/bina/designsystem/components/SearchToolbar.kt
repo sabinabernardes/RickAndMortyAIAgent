@@ -21,7 +21,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.bina.designsystem.R
 import com.bina.designsystem.theme.RickAndMortyTheme
 import com.bina.designsystem.tokens.ElevationTokens
 import com.bina.designsystem.tokens.SpacingTokens
@@ -66,11 +68,14 @@ fun SearchToolbar(
             OutlinedTextField(
                 value = query,
                 onValueChange = onQueryChange,
+                label = {
+                    Text(text = stringResource(R.string.search_toolbar_label))
+                },
                 placeholder = {
                     Text(
-                        text = "Buscar personagem...",
+                        text = stringResource(R.string.search_toolbar_placeholder),
                         style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.45f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.60f)
                     )
                 },
                 singleLine = true,
@@ -84,8 +89,8 @@ fun SearchToolbar(
                     cursorColor = MaterialTheme.colorScheme.primary,
                     focusedTextColor = MaterialTheme.colorScheme.onSurface,
                     unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                    focusedPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.45f),
-                    unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.45f)
+                    focusedPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.60f),
+                    unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.60f)
                 )
             )
         }

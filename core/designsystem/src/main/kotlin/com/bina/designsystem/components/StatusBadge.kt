@@ -17,10 +17,10 @@ fun StatusBadge(
     status: String,
     modifier: Modifier = Modifier
 ) {
-    val backgroundColor = when (status.lowercase()) {
-        "alive" -> ColorTokens.StatusAlive
-        "dead" -> ColorTokens.StatusDead
-        else -> ColorTokens.StatusUnknown
+    val (backgroundColor, textColor) = when (status.lowercase()) {
+        "alive" -> ColorTokens.StatusAlive to ColorTokens.OnStatusAlive
+        "dead" -> ColorTokens.StatusDead to ColorTokens.OnStatusDead
+        else -> ColorTokens.StatusUnknown to ColorTokens.OnStatusUnknown
     }
 
     Surface(
@@ -33,7 +33,7 @@ fun StatusBadge(
             text = status,
             modifier = Modifier.padding(horizontal = SpacingTokens.spacing8, vertical = SpacingTokens.spacing4),
             style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onPrimary
+            color = textColor
         )
     }
 }

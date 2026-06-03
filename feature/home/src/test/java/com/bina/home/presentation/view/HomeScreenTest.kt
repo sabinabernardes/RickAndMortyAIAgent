@@ -1,7 +1,9 @@
 package com.bina.home.presentation.view
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.bina.analytics.AnalyticsTracker
@@ -36,6 +38,16 @@ class HomeScreenTest {
         val performance = mockk<PerformanceTracker>(relaxed = true)
         every { performance.stopTrace(any()) } returns 0L
         return HomeViewModel(useCase, CharacterUiMapper(), logger, analytics, performance, debounceMs = 0L)
+    }
+
+    // --- Accessibility ---
+
+    @Test
+    fun `GIVEN loading state WHEN rendered THEN loading grid has content description`() {
+        composeTestRule.setContent {
+            RickAndMortyTheme { LoadingContent() }
+        }
+        composeTestRule.onNode(hasContentDescription("Carregando personagens", substring = true)).assertExists()
     }
 
     @Test

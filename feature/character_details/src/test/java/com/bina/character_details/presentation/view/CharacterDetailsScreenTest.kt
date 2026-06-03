@@ -1,6 +1,7 @@
 package com.bina.character_details.presentation.view
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
@@ -94,6 +95,25 @@ class CharacterDetailsScreenTest {
         }
         composeTestRule.onNodeWithText("Voltar").performClick()
         assertTrue(backClicked)
+    }
+
+    // --- Accessibility ---
+
+    @Test
+    fun `GIVEN success state WHEN rendered THEN detail item label and value are merged in single node`() {
+        composeTestRule.setContent {
+            RickAndMortyTheme {
+                CharacterDetailsContent(
+                    character = character,
+                    episodesState = EpisodesState.Loading,
+                    onBackClick = {}
+                )
+            }
+        }
+        // mergeDescendants = true merges child text nodes into one; the merged row contains both label and value
+        composeTestRule.onNode(
+            hasText("Status", substring = true) and hasText("Alive", substring = true)
+        ).assertExists()
     }
 
     @Test

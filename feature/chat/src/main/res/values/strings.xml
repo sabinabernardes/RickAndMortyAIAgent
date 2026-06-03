@@ -8,4 +8,7 @@
     <string name="chat_input_placeholder">Pergunte ao Rick…</string>
     <string name="chat_send_content_description">Enviar</string>
     <string name="chat_error_generate_response">Erro ao gerar resposta. Tente novamente.</string>
+    <string name="chat_ai_typing_description">Rick AI está digitando</string>
+    <string name="chat_sender_user">Você</string>
+    <string name="chat_sender_ai">Rick AI</string>
 </resources>

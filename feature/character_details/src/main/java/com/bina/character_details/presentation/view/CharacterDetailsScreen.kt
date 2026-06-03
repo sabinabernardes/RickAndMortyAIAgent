@@ -46,8 +46,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.hideFromAccessibility
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.bina.designsystem.R as DesignSystemR
 import coil.compose.AsyncImage
 import com.bina.character_details.presentation.model.CharacterDetailsUiModel
 import com.bina.character_details.presentation.model.EpisodeUiModel
@@ -81,8 +88,11 @@ fun CharacterDetailsScreen(
     ) {
         when (val state = uiState) {
             is CharacterDetailsUiState.Loading -> {
+                val loadingDesc = stringResource(DesignSystemR.string.loading_content_description)
                 CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center),
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .semantics { contentDescription = loadingDesc },
                     color = MaterialTheme.colorScheme.primary
                 )
             }
@@ -98,7 +108,8 @@ fun CharacterDetailsScreen(
                     text = state.message ?: "Erro desconhecido",
                     modifier = Modifier
                         .align(Alignment.Center)
-                        .padding(SpacingTokens.spacing24),
+                        .padding(SpacingTokens.spacing24)
+                        .semantics { liveRegion = LiveRegionMode.Assertive },
                     color = MaterialTheme.colorScheme.error,
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyLarge
@@ -230,7 +241,8 @@ internal fun CharacterDetailsContent(
                 text = character.name,
                 modifier = Modifier
                     .alpha(toolbarFraction)
-                    .padding(horizontal = 80.dp),
+                    .padding(horizontal = 80.dp)
+                    .semantics { if (toolbarFraction < 0.5f) hideFromAccessibility() },
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1
@@ -266,12 +278,12 @@ private fun PillBackButton(
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Voltar",
+                contentDescription = stringResource(DesignSystemR.string.toolbar_back_content_description),
                 tint = Color.White,
                 modifier = Modifier.size(18.dp)
             )
             Text(
-                text = "Voltar",
+                text = stringResource(DesignSystemR.string.toolbar_back_content_description),
                 color = Color.White,
                 style = MaterialTheme.typography.labelLarge
             )
@@ -290,6 +302,7 @@ private fun DetailItem(
         modifier = modifier
             .fillMaxWidth()
             .fadeSlideIn(index)
+            .semantics(mergeDescendants = true) {}
             .padding(vertical = SpacingTokens.spacing8),
         verticalAlignment = Alignment.CenterVertically
     ) {
