@@ -25,7 +25,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.bina.designsystem.theme.RickAndMortyTheme
 import com.bina.designsystem.tokens.ColorTokens
@@ -81,14 +80,20 @@ fun DesignSystemPlaygroundScreen() {
                         onClick = { selectedComponent = label },
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (selectedComponent == label)
-                                ColorTokens.Primary else ColorTokens.Surface
+                            containerColor = if (selectedComponent == label) {
+                                ColorTokens.Primary
+                            } else {
+                                ColorTokens.Surface
+                            }
                         )
                     ) {
                         Text(
                             text = label,
-                            color = if (selectedComponent == label)
-                                ColorTokens.OnPrimary else ColorTokens.OnBackground
+                            color = if (selectedComponent == label) {
+                                ColorTokens.OnPrimary
+                            } else {
+                                ColorTokens.OnBackground
+                            }
                         )
                     }
                 }

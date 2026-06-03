@@ -49,7 +49,7 @@ class NavDestinationTest {
             override fun navigateTo(destination: NavDestination) {
                 received.add(destination)
             }
-            override fun goBack() {}
+            override fun goBack() { /* no-op */ }
         }
         val navigator = FakeNavigator()
         val destination = NavDestination.Detail("42")

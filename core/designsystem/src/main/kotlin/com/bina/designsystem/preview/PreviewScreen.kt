@@ -1,4 +1,4 @@
-package com.bina.design.tokens.preview
+package com.bina.designsystem.preview
 
 import com.bina.designsystem.tokens.SpacingTokens
 import android.content.res.Configuration

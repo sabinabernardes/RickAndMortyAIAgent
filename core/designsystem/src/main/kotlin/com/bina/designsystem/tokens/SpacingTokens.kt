@@ -1,9 +1,6 @@
 package com.bina.designsystem.tokens
 
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-
 
 object SpacingTokens {
     val spacing2 = 2.dp

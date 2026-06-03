@@ -26,7 +26,9 @@ class CharacterDataSourceImplTest {
     @Test
     fun `given api returns data when getCharacters then returns character list`() = runBlocking {
         // Given
-        val expectedList = listOf(CharacterData(id = 1, name = "Rick", status = "Alive", species = "Human", image = "img", location = LocationData("Earth", "")))
+        val expectedList = listOf(
+            CharacterData(id = 1, name = "Rick", status = "Alive", species = "Human", image = "img", location = LocationData("Earth", ""))
+        )
         val response = CharacterResponse(results = expectedList)
         coEvery { apiService.getCharacters("", 1) } returns response
 

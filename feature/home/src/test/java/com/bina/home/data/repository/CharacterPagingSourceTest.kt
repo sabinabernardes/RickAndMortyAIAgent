@@ -98,11 +98,12 @@ class CharacterPagingSourceTest {
 
     @Test
     fun `GIVEN null anchorPosition WHEN getRefreshKey THEN returns null`() {
-        val state = PagingState<Int, CharacterData>(pages = emptyList(), anchorPosition = null, config = PagingConfig(20), leadingPlaceholderCount = 0)
+        val state = PagingState<Int, CharacterData>(
+            pages = emptyList(), anchorPosition = null, config = PagingConfig(20), leadingPlaceholderCount = 0
+        )
 
         val result = pagingSource.getRefreshKey(state)
 
         assertEquals(null, result)
     }
 }
-

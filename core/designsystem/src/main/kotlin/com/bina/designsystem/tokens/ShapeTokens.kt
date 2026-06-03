@@ -15,4 +15,3 @@ object ShapeTokens {
         large = Large
     )
 }
-

@@ -54,4 +54,3 @@ val LightColorScheme: ColorScheme = lightColorScheme(
     outline = Color(0xFF8AAABB),
     outlineVariant = Color(0xFFBDD4E0),
 )
-

@@ -1,7 +1,6 @@
 package com.bina.logging
 
 import com.bina.logging.impl.LogcatLogger
-import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Test

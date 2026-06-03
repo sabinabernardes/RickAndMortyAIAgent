@@ -21,4 +21,12 @@ val keysModule = module {
     single(named("geminiApiKey")) { BuildConfig.GEMINI_API_KEY }
 }
 
-val appModules = listOf(loggingModule, analyticsModule, networkModule, homeModule, characterDetailsModule, keysModule, chatModule)
+val appModules = listOf(
+    loggingModule,
+    analyticsModule,
+    networkModule,
+    homeModule,
+    characterDetailsModule,
+    keysModule,
+    chatModule,
+)

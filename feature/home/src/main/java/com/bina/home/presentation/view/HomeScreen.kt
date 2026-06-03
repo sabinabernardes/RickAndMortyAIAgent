@@ -169,9 +169,9 @@ internal fun HomeContent(
             val previousAppendState = remember { mutableStateOf<LoadState>(LoadState.NotLoading(false)) }
             LaunchedEffect(characters.loadState.append) {
                 val current = characters.loadState.append
-                if (previousAppendState.value is LoadState.Loading
-                    && current is LoadState.NotLoading
-                    && !current.endOfPaginationReached
+                if (previousAppendState.value is LoadState.Loading &&
+                    current is LoadState.NotLoading &&
+                    !current.endOfPaginationReached
                 ) {
                     viewModel.onPageLoaded()
                 }

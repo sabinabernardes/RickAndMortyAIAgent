@@ -118,7 +118,7 @@ fun CardCharacterPreview() {
         CardCharacter(
             painter = object : Painter() {
                 override val intrinsicSize = Size.Unspecified
-                override fun DrawScope.onDraw() {}
+                override fun DrawScope.onDraw() { /* no-op */ }
             },
             name = "Rick Sanchez",
             status = "Alive",

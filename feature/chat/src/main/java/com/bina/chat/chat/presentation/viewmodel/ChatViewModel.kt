@@ -22,11 +22,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
+@Suppress("UnusedPrivateProperty")
 class ChatViewModel(
     private val checkModelAvailabilityUseCase: CheckModelAvailabilityUseCase,
     private val sendMessageUseCase: SendMessageUseCase,
     private val repository: ChatRepository,
-    private val uiMapper: ChatMessageUiMapper,
+    uiMapper: ChatMessageUiMapper,
     private val logger: AppLogger,
     private val analytics: AnalyticsTracker,
     private val performance: PerformanceTracker
@@ -68,6 +69,7 @@ class ChatViewModel(
         }
     }
 
+    @Suppress("TooGenericExceptionCaught")
     fun sendMessage(userText: String) {
         if (userText.isBlank()) return
         val currentState = _uiState.value as? ChatUiState.Conversation ?: return

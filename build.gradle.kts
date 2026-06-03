@@ -4,7 +4,27 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android) apply false
     alias(libs.plugins.kotlin.compose) apply false
     alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.detekt) apply false
     jacoco
+}
+
+subprojects {
+    apply(plugin = "io.gitlab.arturbosch.detekt")
+    dependencies {
+        "detektPlugins"("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.7")
+    }
+}
+
+allprojects {
+    tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+        config.setFrom(rootProject.files("config/detekt/detekt.yml"))
+        buildUponDefaultConfig = true
+        autoCorrect = false
+    }
+    tasks.withType<io.gitlab.arturbosch.detekt.DetektCreateBaselineTask>().configureEach {
+        config.setFrom(rootProject.files("config/detekt/detekt.yml"))
+        buildUponDefaultConfig = true
+    }
 }
 
 val coveredModules = listOf(

@@ -1,0 +1,134 @@
+build:
+  maxIssues: 0
+
+config:
+  validation: true
+  warningsAsErrors: false
+
+complexity:
+  LongParameterList:
+    active: true
+    functionThreshold: 6
+    constructorThreshold: 8
+    ignoreDefaultParameters: true
+    ignoreDataClasses: true
+    ignoreAnnotated:
+      - 'Composable'
+  CyclomaticComplexMethod:
+    active: true
+    threshold: 15
+  LongMethod:
+    active: true
+    threshold: 60
+    ignoreAnnotated:
+      - 'Composable'
+
+naming:
+  PackageNaming:
+    active: false
+  FunctionNaming:
+    active: true
+    ignoreAnnotated:
+      - 'Composable'
+  TopLevelPropertyNaming:
+    active: true
+    constantPattern: '[A-Z][_A-Z0-9]*'
+
+style:
+  MagicNumber:
+    active: true
+    ignoreNumbers:
+      - '-1'
+      - '0'
+      - '1'
+      - '2'
+    ignoreAnnotated:
+      - 'Preview'
+      - 'Composable'
+    ignorePropertyDeclaration: true
+    ignoreLocalVariableDeclaration: false
+    ignoreConstantDeclaration: true
+    ignoreCompanionObjectPropertyDeclaration: true
+  MaxLineLength:
+    active: true
+    maxLineLength: 140
+  UnusedImports:
+    active: true
+  WildcardImport:
+    active: true
+    excludeImports:
+      - 'kotlinx.android.synthetic.*'
+
+formatting:
+  active: true
+  android: true
+  autoCorrect: false
+  AnnotationOnSeparateLine:
+    active: false
+  ArgumentListWrapping:
+    active: false
+  ChainWrapping:
+    active: true
+  EnumEntryNameCase:
+    active: false
+  Filename:
+    active: true
+  FinalNewline:
+    active: true
+    insertFinalNewLine: true
+  ImportOrdering:
+    active: false
+  Indentation:
+    active: true
+    indentSize: 4
+  MaximumLineLength:
+    active: false
+    maxLineLength: 140
+  ModifierOrdering:
+    active: true
+  NoBlankLineBeforeRbrace:
+    active: true
+  NoConsecutiveBlankLines:
+    active: true
+  NoEmptyClassBody:
+    active: true
+  NoLineBreakAfterElse:
+    active: true
+  NoLineBreakBeforeAssignment:
+    active: true
+  NoMultipleSpaces:
+    active: true
+  NoSemicolons:
+    active: true
+  NoTrailingSpaces:
+    active: true
+  NoUnitReturn:
+    active: true
+  NoUnusedImports:
+    active: false
+  PackageName:
+    active: false
+  ParameterListWrapping:
+    active: false
+  SpacingAroundColon:
+    active: true
+  SpacingAroundComma:
+    active: true
+  SpacingAroundCurly:
+    active: true
+  SpacingAroundKeyword:
+    active: true
+  SpacingAroundOperators:
+    active: true
+  SpacingAroundParens:
+    active: true
+  SpacingAroundRangeOperator:
+    active: true
+  StringTemplate:
+    active: true
+  TrailingCommaOnCallSite:
+    active: false
+  TrailingCommaOnDeclarationSite:
+    active: false
+  Wrapping:
+    active: false

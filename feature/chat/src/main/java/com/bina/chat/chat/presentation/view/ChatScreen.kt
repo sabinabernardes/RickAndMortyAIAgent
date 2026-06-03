@@ -150,6 +150,7 @@ internal fun ModelUnavailableContent() {
     }
 }
 
+@Suppress("UnusedParameter")
 @Composable
 internal fun ConversationContent(
     state: ChatUiState.Conversation,
@@ -247,8 +248,11 @@ private fun ChatMessageItem(message: ChatMessageUiModel) {
     val isUser = message.role == MessageRole.USER
     val senderLabel = if (isUser) stringResource(R.string.chat_sender_user) else stringResource(R.string.chat_sender_ai)
     val typingDesc = stringResource(R.string.chat_ai_typing_description)
-    val bubbleDesc = if (message.isStreaming && message.text.isEmpty()) typingDesc
-                     else "$senderLabel: ${message.text}"
+    val bubbleDesc = if (message.isStreaming && message.text.isEmpty()) {
+        typingDesc
+    } else {
+        "$senderLabel: ${message.text}"
+    }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -265,8 +269,11 @@ private fun ChatMessageItem(message: ChatMessageUiModel) {
                 bottomStart = if (isUser) ShapeTokens.Large.bottomStart else ShapeTokens.Small.bottomStart,
                 bottomEnd = if (isUser) ShapeTokens.Small.bottomEnd else ShapeTokens.Large.bottomEnd
             ),
-            color = if (isUser) MaterialTheme.colorScheme.primary
-                    else MaterialTheme.colorScheme.secondaryContainer,
+            color = if (isUser) {
+                MaterialTheme.colorScheme.primary
+            } else {
+                MaterialTheme.colorScheme.secondaryContainer
+            },
             tonalElevation = ElevationTokens.Level1
         ) {
             if (message.isStreaming && message.text.isEmpty()) {
@@ -277,8 +284,11 @@ private fun ChatMessageItem(message: ChatMessageUiModel) {
                 Text(
                     text = message.text,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = if (isUser) MaterialTheme.colorScheme.onPrimary
-                            else MaterialTheme.colorScheme.onSecondaryContainer,
+                    color = if (isUser) {
+                        MaterialTheme.colorScheme.onPrimary
+                    } else {
+                        MaterialTheme.colorScheme.onSecondaryContainer
+                    },
                     modifier = Modifier.padding(
                         horizontal = SpacingTokens.spacing16,
                         vertical = SpacingTokens.spacing8
@@ -366,8 +376,11 @@ private fun ChatInputRow(
                     Icon(
                         imageVector = Icons.Default.Send,
                         contentDescription = sendDesc,
-                        tint = if (inputText.isNotBlank()) MaterialTheme.colorScheme.primary
-                               else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                        tint = if (inputText.isNotBlank()) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                        }
                     )
                 }
             }

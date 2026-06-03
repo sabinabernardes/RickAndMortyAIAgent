@@ -9,6 +9,7 @@ internal class CharacterPagingSource(
     private val dataSource: CharacterDataSource,
     private val query: String
 ) : PagingSource<Int, CharacterData>() {
+    @Suppress("TooGenericExceptionCaught")
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, CharacterData> {
         val page = params.key ?: 1
         return try {
