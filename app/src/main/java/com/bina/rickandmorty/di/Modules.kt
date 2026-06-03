@@ -29,7 +29,7 @@ val homeModule = module {
     factory<HomeRepository> { HomeRepositoryImpl(get()) }
     factory { GetCharactersUseCase(get()) }
     factory { CharacterUiMapper() }
-    viewModel { HomeViewModel(get(), get()) }
+    viewModel { HomeViewModel(get(), get(), get(), get(), get()) }
 }
 
 val keysModule = module {

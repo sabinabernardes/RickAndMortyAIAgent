@@ -47,5 +47,5 @@ val chatModule = module {
     factory { CheckModelAvailabilityUseCase(get()) }
     factory { SendMessageUseCase(get()) }
     factory { ChatMessageUiMapper() }
-    viewModel { ChatViewModel(get(), get(), get(), get()) }
+    viewModel { ChatViewModel(get(), get(), get(), get(), get(), get(), get()) }
 }

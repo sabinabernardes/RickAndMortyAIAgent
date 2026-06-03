@@ -30,5 +30,5 @@ val characterDetailsModule = module {
     factory { GetEpisodesUseCase(get()) }
     factory { CharacterDetailsUiMapper() }
     factory { EpisodeUiMapper() }
-    viewModel { CharacterDetailsViewModel(get(), get(), get(), get()) }
+    viewModel { CharacterDetailsViewModel(get(), get(), get(), get(), get(), get(), get()) }
 }

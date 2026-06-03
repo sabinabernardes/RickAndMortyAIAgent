@@ -1,6 +1,9 @@
 package com.bina.character_details.presentation.viewmodel
 
 import app.cash.turbine.test
+import com.bina.analytics.AnalyticsTracker
+import com.bina.analytics.PerformanceTracker
+import com.bina.character_details.analytics.CharacterDetailsEvent
 import com.bina.character_details.domain.model.CharacterDetailsDomain
 import com.bina.character_details.domain.model.EpisodeDomain
 import com.bina.character_details.domain.usecase.GetCharacterDetailsUseCase
@@ -9,8 +12,11 @@ import com.bina.character_details.presentation.mapper.CharacterDetailsUiMapper
 import com.bina.character_details.presentation.mapper.EpisodeUiMapper
 import com.bina.character_details.presentation.state.CharacterDetailsUiState
 import com.bina.character_details.presentation.state.EpisodesState
+import com.bina.logging.AppLogger
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -29,6 +35,9 @@ class CharacterDetailsViewModelTest {
     private val getEpisodesUseCase: GetEpisodesUseCase = mockk(relaxed = true)
     private val uiMapper = CharacterDetailsUiMapper()
     private val episodeUiMapper = EpisodeUiMapper()
+    private val logger = mockk<AppLogger>(relaxed = true)
+    private val analytics = mockk<AnalyticsTracker>(relaxed = true)
+    private val performance = mockk<PerformanceTracker>(relaxed = true)
     private lateinit var viewModel: CharacterDetailsViewModel
 
     private val testDispatcher = UnconfinedTestDispatcher()
@@ -36,7 +45,11 @@ class CharacterDetailsViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        viewModel = CharacterDetailsViewModel(getCharacterDetailsUseCase, getEpisodesUseCase, uiMapper, episodeUiMapper)
+        every { performance.stopTrace(any()) } returns 100L
+        viewModel = CharacterDetailsViewModel(
+            getCharacterDetailsUseCase, getEpisodesUseCase, uiMapper, episodeUiMapper,
+            logger, analytics, performance
+        )
     }
 
     @After
@@ -46,7 +59,6 @@ class CharacterDetailsViewModelTest {
 
     @Test
     fun `GIVEN a character id WHEN getCharacterDetails is called THEN should emit success state`() = runTest {
-        // GIVEN
         val id = 1
         val characterDomain = CharacterDetailsDomain(
             id = 1,
@@ -61,10 +73,8 @@ class CharacterDetailsViewModelTest {
         )
         coEvery { getCharacterDetailsUseCase(id) } returns characterDomain
 
-        // WHEN
         viewModel.getCharacterDetails(id)
 
-        // THEN
         viewModel.uiState.test {
             val state = expectMostRecentItem()
             assert(state is CharacterDetailsUiState.Success)
@@ -74,15 +84,12 @@ class CharacterDetailsViewModelTest {
 
     @Test
     fun `GIVEN a character id WHEN getCharacterDetails fails THEN should emit error state`() = runTest {
-        // GIVEN
         val id = 1
         val errorMessage = "Error loading character"
         coEvery { getCharacterDetailsUseCase(id) } throws Exception(errorMessage)
 
-        // WHEN
         viewModel.getCharacterDetails(id)
 
-        // THEN
         viewModel.uiState.test {
             val state = expectMostRecentItem()
             assert(state is CharacterDetailsUiState.Error)
@@ -177,5 +184,70 @@ class CharacterDetailsViewModelTest {
             val state = expectMostRecentItem() as CharacterDetailsUiState.Success
             assertEquals("Total Rickall", (state.episodesState as EpisodesState.Success).episodes[0].name)
         }
+    }
+
+    @Test
+    fun `GIVEN character id WHEN getCharacterDetails THEN ScreenOpened event is tracked`() = runTest {
+        val id = 5
+        coEvery { getCharacterDetailsUseCase(id) } returns CharacterDetailsDomain(
+            id = id, name = "Morty", status = "Alive", species = "Human", gender = "Male",
+            origin = "Earth", location = "Earth", image = "url", episodeUrls = emptyList()
+        )
+
+        viewModel.getCharacterDetails(id)
+
+        verify { analytics.track(CharacterDetailsEvent.ScreenOpened("5")) }
+    }
+
+    @Test
+    fun `GIVEN episodes loaded WHEN getCharacterDetails THEN EpisodesLoaded event is tracked with correct count`() = runTest {
+        val id = 1
+        val characterDomain = CharacterDetailsDomain(
+            id = id, name = "Rick", status = "Alive", species = "Human", gender = "Male",
+            origin = "Earth", location = "Earth", image = "url",
+            episodeUrls = listOf(
+                "https://rickandmortyapi.com/api/episode/1",
+                "https://rickandmortyapi.com/api/episode/2"
+            )
+        )
+        coEvery { getCharacterDetailsUseCase(id) } returns characterDomain
+        coEvery { getEpisodesUseCase(listOf(1, 2)) } returns listOf(
+            EpisodeDomain(1, "Pilot", "S01E01", "December 2, 2013"),
+            EpisodeDomain(2, "Lawnmower Dog", "S01E02", "December 9, 2013")
+        )
+
+        viewModel.getCharacterDetails(id)
+
+        verify { analytics.track(CharacterDetailsEvent.EpisodesLoaded(2)) }
+    }
+
+    @Test
+    fun `GIVEN episodes fail WHEN getCharacterDetails THEN EpisodesLoadFailed event is tracked`() = runTest {
+        val id = 1
+        coEvery { getCharacterDetailsUseCase(id) } returns CharacterDetailsDomain(
+            id = id, name = "Rick", status = "Alive", species = "Human", gender = "Male",
+            origin = "Earth", location = "Earth", image = "url",
+            episodeUrls = listOf("https://rickandmortyapi.com/api/episode/1")
+        )
+        coEvery { getEpisodesUseCase(any()) } throws RuntimeException("network error")
+
+        viewModel.getCharacterDetails(id)
+
+        verify { analytics.track(CharacterDetailsEvent.EpisodesLoadFailed) }
+    }
+
+    @Test
+    fun `GIVEN episodes fail WHEN getCharacterDetails THEN episodes_fetch trace is stopped`() = runTest {
+        val id = 1
+        coEvery { getCharacterDetailsUseCase(id) } returns CharacterDetailsDomain(
+            id = id, name = "Rick", status = "Alive", species = "Human", gender = "Male",
+            origin = "Earth", location = "Earth", image = "url",
+            episodeUrls = listOf("https://rickandmortyapi.com/api/episode/1")
+        )
+        coEvery { getEpisodesUseCase(any()) } throws RuntimeException("network error")
+
+        viewModel.getCharacterDetails(id)
+
+        verify { performance.stopTrace("episodes_fetch") }
     }
 }

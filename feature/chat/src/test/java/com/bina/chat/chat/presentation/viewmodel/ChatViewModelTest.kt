@@ -1,6 +1,9 @@
 package com.bina.chat.chat.presentation.viewmodel
 
 import app.cash.turbine.test
+import com.bina.analytics.AnalyticsTracker
+import com.bina.analytics.PerformanceTracker
+import com.bina.chat.analytics.ChatEvent
 import com.bina.chat.chat.domain.model.AgentMessageResult
 import com.bina.chat.chat.domain.model.ChatNavigationEvent
 import com.bina.chat.chat.domain.model.MessageRole
@@ -10,9 +13,12 @@ import com.bina.chat.chat.domain.usecase.CheckModelAvailabilityUseCase
 import com.bina.chat.chat.domain.usecase.SendMessageUseCase
 import com.bina.chat.chat.presentation.mapper.ChatMessageUiMapper
 import com.bina.chat.chat.presentation.state.ChatUiState
+import com.bina.logging.AppLogger
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -34,6 +40,9 @@ class ChatViewModelTest {
     private val sendMessageUseCase: SendMessageUseCase = mockk()
     private val repository: ChatRepository = mockk(relaxed = true)
     private val uiMapper = ChatMessageUiMapper()
+    private val logger = mockk<AppLogger>(relaxed = true)
+    private val analytics = mockk<AnalyticsTracker>(relaxed = true)
+    private val performance = mockk<PerformanceTracker>(relaxed = true)
 
     private lateinit var viewModel: ChatViewModel
     private val testDispatcher = UnconfinedTestDispatcher()
@@ -41,6 +50,7 @@ class ChatViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
+        every { performance.stopTrace(any()) } returns 100L
     }
 
     @After
@@ -52,7 +62,10 @@ class ChatViewModelTest {
         checkModelAvailabilityUseCase,
         sendMessageUseCase,
         repository,
-        uiMapper
+        uiMapper,
+        logger,
+        analytics,
+        performance
     )
 
     @Test
@@ -175,5 +188,68 @@ class ChatViewModelTest {
 
         val state = viewModel.uiState.value as ChatUiState.Conversation
         assertNull(state.errorMessage)
+    }
+
+    @Test
+    fun `GIVEN model Unavailable WHEN init THEN ModelUnavailable event is tracked`() = runTest {
+        coEvery { checkModelAvailabilityUseCase() } returns ModelAvailability.Unavailable
+
+        viewModel = createViewModel()
+
+        verify { analytics.track(ChatEvent.ModelUnavailable) }
+    }
+
+    @Test
+    fun `WHEN sendMessage THEN MessageSent event is tracked`() = runTest {
+        coEvery { checkModelAvailabilityUseCase() } returns ModelAvailability.Available
+        coEvery { repository.warmup() } returns Unit
+        coEvery { sendMessageUseCase(any()) } returns AgentMessageResult(text = "resposta")
+
+        viewModel = createViewModel()
+        viewModel.sendMessage("olá")
+
+        verify { analytics.track(ChatEvent.MessageSent) }
+    }
+
+    @Test
+    fun `GIVEN OpenCharacter navigation event WHEN sendMessage THEN AgentNavigationTriggered with open_character is tracked`() = runTest(testDispatcher) {
+        coEvery { checkModelAvailabilityUseCase() } returns ModelAvailability.Available
+        coEvery { repository.warmup() } returns Unit
+        coEvery { sendMessageUseCase(any()) } returns AgentMessageResult(
+            text = "Aqui está!",
+            navigationEvent = ChatNavigationEvent.OpenCharacter(characterId = 1)
+        )
+
+        viewModel = createViewModel()
+        viewModel.sendMessage("Mostre o Rick")
+
+        verify { analytics.track(ChatEvent.AgentNavigationTriggered("open_character")) }
+    }
+
+    @Test
+    fun `GIVEN SearchCharacters navigation event WHEN sendMessage THEN AgentNavigationTriggered with search_characters is tracked`() = runTest(testDispatcher) {
+        coEvery { checkModelAvailabilityUseCase() } returns ModelAvailability.Available
+        coEvery { repository.warmup() } returns Unit
+        coEvery { sendMessageUseCase(any()) } returns AgentMessageResult(
+            text = "Buscando!",
+            navigationEvent = ChatNavigationEvent.SearchCharacters(query = "Morty")
+        )
+
+        viewModel = createViewModel()
+        viewModel.sendMessage("busca Morty")
+
+        verify { analytics.track(ChatEvent.AgentNavigationTriggered("search_characters")) }
+    }
+
+    @Test
+    fun `GIVEN send message fails WHEN sendMessage THEN chat_response_time trace is stopped`() = runTest {
+        coEvery { checkModelAvailabilityUseCase() } returns ModelAvailability.Available
+        coEvery { repository.warmup() } returns Unit
+        coEvery { sendMessageUseCase(any()) } throws RuntimeException("timeout")
+
+        viewModel = createViewModel()
+        viewModel.sendMessage("pergunta")
+
+        verify { performance.stopTrace("chat_response_time") }
     }
 }

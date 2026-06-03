@@ -159,9 +159,25 @@ private fun HomeContent(
         is CharactersUiState.Loading -> LoadingContent(modifier = modifier)
         is CharactersUiState.Success -> {
             val characters = uiState.data.collectAsLazyPagingItems()
+
+            val previousAppendState = remember { mutableStateOf<LoadState>(LoadState.NotLoading(false)) }
+            LaunchedEffect(characters.loadState.append) {
+                val current = characters.loadState.append
+                if (previousAppendState.value is LoadState.Loading
+                    && current is LoadState.NotLoading
+                    && !current.endOfPaginationReached
+                ) {
+                    viewModel.onPageLoaded()
+                }
+                previousAppendState.value = current
+            }
+
             CharacterList(
                 characters = characters,
-                onCharacterClick = onCharacterClick,
+                onCharacterClick = { id ->
+                    viewModel.onCharacterClicked(id)
+                    onCharacterClick(id)
+                },
                 modifier = modifier
             )
         }
