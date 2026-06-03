@@ -44,6 +44,11 @@ class LogcatAnalyticsTrackerTest {
             override val properties = mapOf("query" to "Rick", "page" to "1")
         }
         tracker.track(event)
-        verify { logger.info("Analytics", match { it.contains("search_performed") && it.contains("query=Rick") && it.contains("page=1") }) }
+        verify {
+            logger.info(
+                "Analytics",
+                match { it.contains("search_performed") && it.contains("query=Rick") && it.contains("page=1") }
+            )
+        }
     }
 }
