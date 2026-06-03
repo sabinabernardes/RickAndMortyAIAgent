@@ -21,7 +21,7 @@ class ResilienceInterceptor(
         // Retenta se a resposta não for bem-sucedida e o código for passível de retry (429 ou 5xx)
         while (!response.isSuccessful && shouldRetry(response.code) && tryCount < maxRetries) {
             val waitTime = getWaitTime(response, tryCount)
-            
+
             tryCount++
             response.close() // Fecha a resposta anterior para evitar vazamento de memória
 
@@ -31,7 +31,7 @@ class ResilienceInterceptor(
                 // Se a thread for interrompida, retorna a última resposta obtida
                 return response
             }
-            
+
             response = chain.proceed(request)
         }
 
@@ -43,7 +43,7 @@ class ResilienceInterceptor(
      * 429: Too Many Requests
      * 5xx: Server Errors (500 Internal Server Error, 503 Service Unavailable, etc)
      */
-    private fun shouldRetry(code: Int) = code == 429 || code >= 500
+    private fun shouldRetry(code: Int) = code == HTTP_TOO_MANY_REQUESTS || code >= HTTP_SERVER_ERROR_THRESHOLD
 
     /**
      * Calcula o tempo de espera antes da próxima tentativa.
@@ -52,10 +52,16 @@ class ResilienceInterceptor(
     private fun getWaitTime(response: Response, attempt: Int): Long {
         val retryAfter = response.header("Retry-After")?.toLongOrNull()
         return if (retryAfter != null) {
-            retryAfter * 1000L // Converte de segundos para milisegundos
+            retryAfter * MILLIS_PER_SECOND
         } else {
             // Exponential backoff: 1s, 2s, 4s...
             initialDelay * (2.0.pow(attempt.toDouble()).toLong())
         }
+    }
+
+    companion object {
+        private const val HTTP_TOO_MANY_REQUESTS = 429
+        private const val HTTP_SERVER_ERROR_THRESHOLD = 500
+        private const val MILLIS_PER_SECOND = 1000L
     }
 }

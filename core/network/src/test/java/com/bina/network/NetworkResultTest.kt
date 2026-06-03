@@ -1,5 +1,7 @@
-package com.bina.network// NetworkResultTest.kt
-import org.junit.Assert.*
+package com.bina.network
+
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertSame
 import org.junit.Test
 
 class NetworkResultTest {

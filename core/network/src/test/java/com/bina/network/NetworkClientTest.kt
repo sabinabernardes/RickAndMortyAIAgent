@@ -1,4 +1,4 @@
-package com.bina.network// NetworkClientTest.kt
+package com.bina.network
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.runBlocking
