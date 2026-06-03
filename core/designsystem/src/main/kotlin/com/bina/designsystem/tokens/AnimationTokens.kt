@@ -16,4 +16,3 @@ object AnimationTokens {
     val DefaultEasing: Easing = EaseInOut
     val EasingEnter: Easing = EaseOut
 }
-

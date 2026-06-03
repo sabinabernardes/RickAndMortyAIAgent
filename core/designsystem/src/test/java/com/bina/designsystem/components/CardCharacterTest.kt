@@ -28,7 +28,7 @@ class CardCharacterTest {
 
     private val placeholder = object : Painter() {
         override val intrinsicSize = Size.Unspecified
-        override fun DrawScope.onDraw() {}
+        override fun DrawScope.onDraw() { /* no-op */ }
     }
 
     @Test

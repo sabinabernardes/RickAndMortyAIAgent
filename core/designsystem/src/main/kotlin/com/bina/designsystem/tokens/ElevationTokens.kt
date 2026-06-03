@@ -10,4 +10,3 @@ object ElevationTokens {
     val Level4 = 8.dp
     val Level5 = 12.dp
 }
-
