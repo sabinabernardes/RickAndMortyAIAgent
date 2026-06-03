@@ -26,8 +26,6 @@ complexity:
 naming:
   FunctionNaming:
     active: true
-    # Aceita PascalCase para Composables (convenção obrigatória do Compose)
-    functionPattern: '[a-zA-Z][a-zA-Z0-9]*'
     ignoreAnnotated:
       - 'Composable'
   TopLevelPropertyNaming:

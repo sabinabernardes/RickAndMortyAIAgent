@@ -10,13 +10,11 @@ plugins {
 
 subprojects {
     apply(plugin = "io.gitlab.arturbosch.detekt")
-    // libs não está disponível em subprojects{} — usar coordenadas diretas
     dependencies {
         "detektPlugins"("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.7")
     }
 }
 
-// Configurar tasks Detekt em todos os subprojetos após aplicação do plugin
 allprojects {
     tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
         config.setFrom(rootProject.files("config/detekt/detekt.yml"))

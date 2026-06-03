@@ -117,7 +117,7 @@ jobs:
           path: build/reports/jacoco/full/
 
       - name: Check coverage
-        uses: madrapps/jacoco-report@v1.6.0
+        uses: madrapps/jacoco-report@v1.6.1
         with:
           paths: build/reports/jacoco/full/jacocoFullReport.xml
           token: ${{ secrets.GITHUB_TOKEN }}
