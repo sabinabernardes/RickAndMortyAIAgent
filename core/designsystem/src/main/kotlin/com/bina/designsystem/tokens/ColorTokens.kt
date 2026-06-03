@@ -13,5 +13,9 @@ object ColorTokens {
     val OnSurface = Color(0xFF1B1B1F)
     val Error = Color(0xFFB00020)
     val OnError = Color(0xFFFFFFFF)
+
+    val StatusAlive = Color(0xFF2ECC71)
+    val StatusDead = Color(0xFFE74C3C)
+    val StatusUnknown = Color(0xFF9E9E9E)
 }
 

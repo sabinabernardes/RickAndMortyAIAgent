@@ -21,8 +21,8 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.bina.designsystem.theme.RickAndMortyTheme
+import com.bina.designsystem.tokens.DimensionTokens
 import com.bina.designsystem.tokens.ElevationTokens
 import com.bina.designsystem.tokens.SpacingTokens
 import com.bina.designsystem.tokens.TypographyTokens.DefaultTypography
@@ -53,7 +53,7 @@ fun CardCharacter(
                     contentDescription = name,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(160.dp),
+                        .height(DimensionTokens.CardCharacterImageHeight),
                     contentScale = ContentScale.Crop
                 )
                 StatusBadge(
