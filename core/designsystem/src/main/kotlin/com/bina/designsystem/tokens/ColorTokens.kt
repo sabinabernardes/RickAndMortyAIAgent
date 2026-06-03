@@ -16,7 +16,8 @@ object ColorTokens {
 
     // StatusAlive escurecido para contraste AA (branco sobre #1E8449 ≈ 4.6:1)
     val StatusAlive = Color(0xFF1E8449)
-    val StatusDead = Color(0xFFE74C3C)
+    // StatusDead escurecido para contraste AA (branco sobre #A93226 ≈ 6.1:1)
+    val StatusDead = Color(0xFFA93226)
     // StatusUnknown escurecido para contraste AA (branco sobre #616161 ≈ 4.6:1)
     val StatusUnknown = Color(0xFF616161)
 

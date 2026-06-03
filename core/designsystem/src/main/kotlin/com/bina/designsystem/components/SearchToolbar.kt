@@ -69,10 +69,7 @@ fun SearchToolbar(
                 value = query,
                 onValueChange = onQueryChange,
                 label = {
-                    Text(
-                        text = stringResource(R.string.search_toolbar_label),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+                    Text(text = stringResource(R.string.search_toolbar_label))
                 },
                 placeholder = {
                     Text(

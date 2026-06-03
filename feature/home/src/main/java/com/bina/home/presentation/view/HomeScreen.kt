@@ -43,8 +43,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import com.bina.features.home.R
 import androidx.paging.LoadState
+import com.bina.features.home.R
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.rememberAsyncImagePainter
@@ -207,7 +207,7 @@ internal fun LoadingContent(modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = SpacingTokens.spacing8)
-            .semantics { contentDescription = loadingDesc }
+            .semantics(mergeDescendants = true) { contentDescription = loadingDesc }
     ) {
         items(6) {
             CardCharacterSkeleton()

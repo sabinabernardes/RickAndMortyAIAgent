@@ -61,7 +61,7 @@ fun CardCharacter(
             Box {
                 Image(
                     painter = painter,
-                    contentDescription = name,
+                    contentDescription = null,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(DimensionTokens.CardCharacterImageHeight),

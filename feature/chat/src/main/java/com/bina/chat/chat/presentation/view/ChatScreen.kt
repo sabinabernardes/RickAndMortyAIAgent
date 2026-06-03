@@ -246,7 +246,9 @@ private fun EmptyConversationContent(modifier: Modifier = Modifier) {
 private fun ChatMessageItem(message: ChatMessageUiModel) {
     val isUser = message.role == MessageRole.USER
     val senderLabel = if (isUser) stringResource(R.string.chat_sender_user) else stringResource(R.string.chat_sender_ai)
-    val bubbleDesc = "$senderLabel: ${message.text}"
+    val typingDesc = stringResource(R.string.chat_ai_typing_description)
+    val bubbleDesc = if (message.isStreaming && message.text.isEmpty()) typingDesc
+                     else "$senderLabel: ${message.text}"
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -350,21 +352,20 @@ private fun ChatInputRow(
                     disabledBorderColor = Color.Transparent
                 )
             )
-            val sendOrTypingDesc = if (!isEnabled)
-                stringResource(R.string.chat_ai_typing_description)
-            else
-                stringResource(R.string.chat_send_content_description)
+            val aiTypingDesc = stringResource(R.string.chat_ai_typing_description)
+            val sendDesc = stringResource(R.string.chat_send_content_description)
             IconButton(
                 onClick = onSend,
-                enabled = isEnabled && inputText.isNotBlank(),
-                modifier = Modifier.semantics { contentDescription = sendOrTypingDesc }
+                enabled = isEnabled && inputText.isNotBlank()
             ) {
                 if (!isEnabled) {
-                    TypingIndicator(color = MaterialTheme.colorScheme.primary)
+                    Box(modifier = Modifier.semantics { contentDescription = aiTypingDesc }) {
+                        TypingIndicator(color = MaterialTheme.colorScheme.primary)
+                    }
                 } else {
                     Icon(
                         imageVector = Icons.Default.Send,
-                        contentDescription = null,
+                        contentDescription = sendDesc,
                         tint = if (inputText.isNotBlank()) MaterialTheme.colorScheme.primary
                                else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
                     )
