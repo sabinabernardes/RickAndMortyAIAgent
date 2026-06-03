@@ -65,6 +65,8 @@ formatting:
   autoCorrect: false
   AnnotationOnSeparateLine:
     active: false
+  ArgumentListWrapping:
+    active: false
   ChainWrapping:
     active: true
   EnumEntryNameCase:
