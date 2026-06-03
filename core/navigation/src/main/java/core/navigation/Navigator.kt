@@ -7,4 +7,3 @@ interface Navigator {
     fun navigateTo(destination: NavDestination)
     fun goBack()
 }
-

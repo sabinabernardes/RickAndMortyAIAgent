@@ -16,4 +16,3 @@ sealed class NavDestination(val route: String) {
         }
     }
 }
-
