@@ -218,6 +218,7 @@ A documentação completa do projeto está na [Wiki do repositório](https://git
 | [Core: Design System](https://github.com/sabinabernardes/RickAndMorty/wiki/Core-Design-System) | Tokens, componentes e sistema de animações |
 | [Core: Navigation](https://github.com/sabinabernardes/RickAndMorty/wiki/Core-Navigation) | Rotas centralizadas e fluxo de navegação |
 | [Core: Network](https://github.com/sabinabernardes/RickAndMorty/wiki/Core-Network) | Cliente HTTP, retry com backoff exponencial |
+| [Core: Observabilidade](https://github.com/sabinabernardes/RickAndMorty/wiki/Core-Observabilidade) | Logging estruturado, analytics de eventos e performance monitoring |
 | [Documentação de Engenharia](https://github.com/sabinabernardes/RickAndMorty/wiki/Documentação-de-Engenharia) | Rules, Specs (SDDs) e ADRs do projeto |
 
 ---
