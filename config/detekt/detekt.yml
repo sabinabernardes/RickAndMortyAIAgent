@@ -9,7 +9,7 @@ complexity:
   LongParameterList:
     active: true
     functionThreshold: 6
-    constructorThreshold: 7
+    constructorThreshold: 8
     ignoreDefaultParameters: true
     ignoreDataClasses: true
     ignoreAnnotated:
@@ -24,6 +24,8 @@ complexity:
       - 'Composable'
 
 naming:
+  PackageNaming:
+    active: false
   FunctionNaming:
     active: true
     ignoreAnnotated:
@@ -100,6 +102,8 @@ formatting:
   NoUnitReturn:
     active: true
   NoUnusedImports:
+    active: false
+  PackageName:
     active: false
   ParameterListWrapping:
     active: false

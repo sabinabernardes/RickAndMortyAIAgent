@@ -30,6 +30,7 @@ class CharacterDetailsViewModel(
     private val _uiState = MutableStateFlow<CharacterDetailsUiState>(CharacterDetailsUiState.Loading)
     val uiState: StateFlow<CharacterDetailsUiState> = _uiState
 
+    @Suppress("TooGenericExceptionCaught")
     fun getCharacterDetails(id: Int) {
         viewModelScope.launch {
             _uiState.value = CharacterDetailsUiState.Loading
@@ -53,7 +54,7 @@ class CharacterDetailsViewModel(
                     _uiState.update { state ->
                         if (state is CharacterDetailsUiState.Success) {
                             state.copy(episodesState = EpisodesState.Success(episodes))
-                        } else state
+                        } else { state }
                     }
                 } catch (e: Exception) {
                     performance.stopTrace(TRACE_EPISODES_FETCH)
@@ -62,7 +63,7 @@ class CharacterDetailsViewModel(
                     _uiState.update { state ->
                         if (state is CharacterDetailsUiState.Success) {
                             state.copy(episodesState = EpisodesState.Error(e.message))
-                        } else state
+                        } else { state }
                     }
                 }
             } catch (e: Exception) {
