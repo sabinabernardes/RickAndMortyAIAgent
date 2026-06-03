@@ -1,4 +1,6 @@
-# 🧠 Rick and Morty AI - Study Project 
+# 🧠 Rick and Morty AI - Study Project
+
+[![Android CI](https://github.com/sabinabernardes/RickAndMorty/actions/workflows/android-ci.yml/badge.svg)](https://github.com/sabinabernardes/RickAndMorty/actions/workflows/android-ci.yml)
 
 Enterprise-grade Android project refactored to demonstrate **Clean Architecture**, **Modern Tooling**, and **Multi-module Architecture**. This repository serves as a technical showcase for scalable Android development using Jetpack Compose and state-of-the-art libraries.
 
@@ -182,9 +184,12 @@ ChatScreen (Compose)
 ### Build Commands
 ```bash
 # Run unit tests across all modules
-./gradlew test
+./gradlew testDebugUnitTest
 
-# Generate Jacoco coverage report (single module)
+# Static analysis (Detekt + Android Lint)
+./gradlew detekt lint
+
+# Generate coverage report (single module)
 ./gradlew :<module>:jacocoTestReport
 
 # Generate aggregated coverage report for all modules
@@ -200,7 +205,7 @@ ChatScreen (Compose)
 
 - [ ] **Offline-first**: Room integration for character caching.
 - [ ] **Screenshot Testing**: Implementation of Paparazzi or Roborazzi.
-- [ ] **Advanced CI**: Dynamic analysis and Play Store Internal App Sharing integration.
+- [ ] **Baseline Profile**: Startup time optimization with Jetpack Baseline Profiles.
 
 ---
 
@@ -221,6 +226,7 @@ A documentação completa do projeto está na [Wiki do repositório](https://git
 | [Core: Observabilidade](https://github.com/sabinabernardes/RickAndMorty/wiki/Core-Observabilidade) | Logging estruturado, analytics de eventos e performance monitoring |
 | [Documentação de Engenharia](https://github.com/sabinabernardes/RickAndMorty/wiki/Documentação-de-Engenharia) | Rules, Specs (SDDs) e ADRs do projeto |
 | [Testes de UI](https://github.com/sabinabernardes/RickAndMorty/wiki/Testes-de-UI) | Robolectric, createComposeRule e cobertura por módulo |
+| [Acessibilidade WCAG 2.1 AA](https://github.com/sabinabernardes/RickAndMorty/wiki/Acessibilidade-WCAG-2.1-AA) | TalkBack, contraste AA, semântica e live regions |
 
 ---
 

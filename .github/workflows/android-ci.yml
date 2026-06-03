@@ -7,8 +7,8 @@ on:
     branches: [ "master", "develop" ]
 
 jobs:
-  build:
-    name: Build e Teste Android
+  static-analysis:
+    name: Análise Estática
     runs-on: ubuntu-latest
 
     steps:
@@ -31,57 +31,110 @@ jobs:
           restore-keys: |
             gradle-${{ runner.os }}-
 
-      - name: Build with Gradle
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: ./gradlew assembleDebug -PGEMINI_API_KEY=$GEMINI_API_KEY
+      - name: Run Detekt
+        run: ./gradlew detekt
 
-      - name: Run unit tests
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: ./gradlew testDebugUnitTest -PGEMINI_API_KEY=$GEMINI_API_KEY
-
-      - name: Lint
+      - name: Run Lint
         run: ./gradlew lint
 
-      - name: Upload test reports
+      - name: Upload Detekt report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
-          path: '**/build/reports/tests/testDebugUnitTest'
+          name: detekt-results
+          path: '**/build/reports/detekt/detekt.html'
 
-      - name: Upload lint report
+      - name: Upload Lint report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: lint-results
           path: '**/build/reports/lint-results-debug.html'
 
-      - name: Generate Jacoco coverage report
-        run: ./gradlew jacocoTestReport
+  test:
+    name: Testes e Cobertura
+    runs-on: ubuntu-latest
 
-      - name: Upload coverage report (HTML)
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17 (Zulu)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
+      - name: Run unit tests
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: ./gradlew testDebugUnitTest -PGEMINI_API_KEY=$GEMINI_API_KEY
+
+      - name: Generate JaCoCo coverage report
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: ./gradlew jacocoTestReport jacocoFullReport -PGEMINI_API_KEY=$GEMINI_API_KEY
+
+      - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: code-coverage-report
-          path: app/build/reports/jacoco/jacocoTestReport/html
+          name: test-results
+          path: '**/build/reports/tests/testDebugUnitTest'
 
-      - name: Upload debug APK
+      - name: Upload JaCoCo XML
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: jacoco-xml
+          path: build/reports/jacoco/full/jacocoFullReport.xml
+
+  coverage-gate:
+    name: Coverage Gate
+    runs-on: ubuntu-latest
+    needs: [ test ]
+    if: github.event_name == 'pull_request'
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download JaCoCo XML
+        uses: actions/download-artifact@v4
+        with:
+          name: jacoco-xml
+          path: build/reports/jacoco/full/
+
+      - name: Check coverage
+        uses: madrapps/jacoco-report@v1.6.0
+        with:
+          paths: build/reports/jacoco/full/jacocoFullReport.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          min-coverage-overall: 60
+          min-coverage-changed-files: 60
+          title: Cobertura de Testes
+          update-comment: true
 
   auto-merge:
     name: Enable auto-merge
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: [ static-analysis, coverage-gate ]
     if: github.event_name == 'pull_request'
     permissions:
       pull-requests: write
       contents: write
+
     steps:
       - name: Enable auto-merge (squash)
         run: gh pr merge --auto --squash "$PR_URL"
