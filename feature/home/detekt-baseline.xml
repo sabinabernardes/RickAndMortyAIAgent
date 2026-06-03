@@ -1,0 +1,67 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues></ManuallySuppressedIssues>
+  <CurrentIssues>
+    <ID>ArgumentListWrapping:CharacterDataSourceImplTest.kt$CharacterDataSourceImplTest$("Earth", "")</ID>
+    <ID>ArgumentListWrapping:CharacterDataSourceImplTest.kt$CharacterDataSourceImplTest$(CharacterData(id = 1, name = "Rick", status = "Alive", species = "Human", image = "img", location = LocationData("Earth", "")))</ID>
+    <ID>ArgumentListWrapping:CharacterDataSourceImplTest.kt$CharacterDataSourceImplTest$(id = 1, name = "Rick", status = "Alive", species = "Human", image = "img", location = LocationData("Earth", ""))</ID>
+    <ID>ArgumentListWrapping:CharacterPagingSourceTest.kt$CharacterPagingSourceTest$(20)</ID>
+    <ID>ArgumentListWrapping:CharacterPagingSourceTest.kt$CharacterPagingSourceTest$(PagingSource.LoadParams.Refresh(key = 1, loadSize = 20, placeholdersEnabled = false))</ID>
+    <ID>ArgumentListWrapping:CharacterPagingSourceTest.kt$CharacterPagingSourceTest$(PagingSource.LoadParams.Refresh(key = 2, loadSize = 20, placeholdersEnabled = false))</ID>
+    <ID>ArgumentListWrapping:CharacterPagingSourceTest.kt$CharacterPagingSourceTest$(PagingSource.LoadParams.Refresh(key = null, loadSize = 20, placeholdersEnabled = false))</ID>
+    <ID>ArgumentListWrapping:CharacterPagingSourceTest.kt$CharacterPagingSourceTest$(key = 1, loadSize = 20, placeholdersEnabled = false)</ID>
+    <ID>ArgumentListWrapping:CharacterPagingSourceTest.kt$CharacterPagingSourceTest$(key = 2, loadSize = 20, placeholdersEnabled = false)</ID>
+    <ID>ArgumentListWrapping:CharacterPagingSourceTest.kt$CharacterPagingSourceTest$(key = null, loadSize = 20, placeholdersEnabled = false)</ID>
+    <ID>ArgumentListWrapping:CharacterPagingSourceTest.kt$CharacterPagingSourceTest$(pages = emptyList(), anchorPosition = null, config = PagingConfig(20), leadingPlaceholderCount = 0)</ID>
+    <ID>ArgumentListWrapping:HomeViewModelTest.kt$HomeViewModelTest$(testDispatcher)</ID>
+    <ID>ChainWrapping:HomeScreen.kt$&amp;&amp;</ID>
+    <ID>FinalNewline:CharacterData.kt$com.bina.home.data.model.CharacterData.kt</ID>
+    <ID>FinalNewline:CharacterDataSourceImpl.kt$com.bina.home.data.datasource.CharacterDataSourceImpl.kt</ID>
+    <ID>FinalNewline:CharacterDomain.kt$com.bina.home.domain.model.CharacterDomain.kt</ID>
+    <ID>FinalNewline:CharacterMapper.kt$com.bina.home.data.mapper.CharacterMapper.kt</ID>
+    <ID>FinalNewline:CharacterMapperTest.kt$com.bina.home.data.mapper.CharacterMapperTest.kt</ID>
+    <ID>FinalNewline:CharacterPagingSource.kt$com.bina.home.data.pagingSource.CharacterPagingSource.kt</ID>
+    <ID>FinalNewline:CharacterResponse.kt$com.bina.home.data.model.CharacterResponse.kt</ID>
+    <ID>FinalNewline:CharacterUiMapper.kt$com.bina.home.presentation.mapper.CharacterUiMapper.kt</ID>
+    <ID>FinalNewline:CharacterUiMapperTest.kt$com.bina.home.presentation.mapper.CharacterUiMapperTest.kt</ID>
+    <ID>FinalNewline:CharacterUiModel.kt$com.bina.home.presentation.model.CharacterUiModel.kt</ID>
+    <ID>FinalNewline:CharactersUiState.kt$com.bina.home.presentation.state.CharactersUiState.kt</ID>
+    <ID>FinalNewline:GetCharactersUseCase.kt$com.bina.home.domain.usecase.GetCharactersUseCase.kt</ID>
+    <ID>FinalNewline:HomeModule.kt$com.bina.home.di.HomeModule.kt</ID>
+    <ID>FinalNewline:HomeRepository.kt$com.bina.home.domain.repository.HomeRepository.kt</ID>
+    <ID>FinalNewline:HomeRepositoryImpl.kt$com.bina.home.data.repository.HomeRepositoryImpl.kt</ID>
+    <ID>FinalNewline:HomeScreen.kt$com.bina.home.presentation.view.HomeScreen.kt</ID>
+    <ID>FinalNewline:HomeViewModel.kt$com.bina.home.presentation.viewmodel.HomeViewModel.kt</ID>
+    <ID>FinalNewline:HomeViewModelTest.kt$com.bina.home.presentation.viewmodel.HomeViewModelTest.kt</ID>
+    <ID>FinalNewline:RickAndMortyApiService.kt$com.bina.home.data.remote.RickAndMortyApiService.kt</ID>
+    <ID>MaxLineLength:CharacterDataSourceImplTest.kt$CharacterDataSourceImplTest$val expectedList = listOf(CharacterData(id = 1, name = "Rick", status = "Alive", species = "Human", image = "img", location = LocationData("Earth", "")))</ID>
+    <ID>MaxLineLength:CharacterPagingSourceTest.kt$CharacterPagingSourceTest$val state = PagingState&lt;Int, CharacterData&gt;(pages = emptyList(), anchorPosition = null, config = PagingConfig(20), leadingPlaceholderCount = 0)</ID>
+    <ID>NewLineAtEndOfFile:CharacterData.kt$com.bina.home.data.model.CharacterData.kt</ID>
+    <ID>NewLineAtEndOfFile:CharacterDataSourceImpl.kt$com.bina.home.data.datasource.CharacterDataSourceImpl.kt</ID>
+    <ID>NewLineAtEndOfFile:CharacterDomain.kt$com.bina.home.domain.model.CharacterDomain.kt</ID>
+    <ID>NewLineAtEndOfFile:CharacterMapper.kt$com.bina.home.data.mapper.CharacterMapper.kt</ID>
+    <ID>NewLineAtEndOfFile:CharacterMapperTest.kt$com.bina.home.data.mapper.CharacterMapperTest.kt</ID>
+    <ID>NewLineAtEndOfFile:CharacterPagingSource.kt$com.bina.home.data.pagingSource.CharacterPagingSource.kt</ID>
+    <ID>NewLineAtEndOfFile:CharacterResponse.kt$com.bina.home.data.model.CharacterResponse.kt</ID>
+    <ID>NewLineAtEndOfFile:CharacterUiMapper.kt$com.bina.home.presentation.mapper.CharacterUiMapper.kt</ID>
+    <ID>NewLineAtEndOfFile:CharacterUiMapperTest.kt$com.bina.home.presentation.mapper.CharacterUiMapperTest.kt</ID>
+    <ID>NewLineAtEndOfFile:CharacterUiModel.kt$com.bina.home.presentation.model.CharacterUiModel.kt</ID>
+    <ID>NewLineAtEndOfFile:CharactersUiState.kt$com.bina.home.presentation.state.CharactersUiState.kt</ID>
+    <ID>NewLineAtEndOfFile:GetCharactersUseCase.kt$com.bina.home.domain.usecase.GetCharactersUseCase.kt</ID>
+    <ID>NewLineAtEndOfFile:HomeModule.kt$com.bina.home.di.HomeModule.kt</ID>
+    <ID>NewLineAtEndOfFile:HomeRepository.kt$com.bina.home.domain.repository.HomeRepository.kt</ID>
+    <ID>NewLineAtEndOfFile:HomeRepositoryImpl.kt$com.bina.home.data.repository.HomeRepositoryImpl.kt</ID>
+    <ID>NewLineAtEndOfFile:HomeScreen.kt$com.bina.home.presentation.view.HomeScreen.kt</ID>
+    <ID>NewLineAtEndOfFile:HomeViewModel.kt$com.bina.home.presentation.viewmodel.HomeViewModel.kt</ID>
+    <ID>NewLineAtEndOfFile:HomeViewModelTest.kt$com.bina.home.presentation.viewmodel.HomeViewModelTest.kt</ID>
+    <ID>NewLineAtEndOfFile:RickAndMortyApiService.kt$com.bina.home.data.remote.RickAndMortyApiService.kt</ID>
+    <ID>NoConsecutiveBlankLines:CharacterPagingSourceTest.kt$ </ID>
+    <ID>NoConsecutiveBlankLines:GetCharactersUseCaseTest.kt$ </ID>
+    <ID>PropertyWrapping:CharacterDataSourceImplTest.kt$CharacterDataSourceImplTest$val expectedList = listOf(CharacterData(id = 1, name = "Rick", status = "Alive", species = "Human", image = "img", location = LocationData("Earth", "")))</ID>
+    <ID>PropertyWrapping:CharacterPagingSourceTest.kt$CharacterPagingSourceTest$val state = PagingState&lt;Int, CharacterData&gt;(pages = emptyList(), anchorPosition = null, config = PagingConfig(20), leadingPlaceholderCount = 0)</ID>
+    <ID>TooGenericExceptionCaught:CharacterPagingSource.kt$CharacterPagingSource$e: Exception</ID>
+    <ID>UnusedImports:HomeScreenTest.kt$import androidx.compose.ui.test.onNodeWithContentDescription</ID>
+    <ID>UnusedImports:HomeViewModelTest.kt$import kotlinx.coroutines.test.advanceUntilIdle</ID>
+    <ID>UnusedPrivateProperty:HomeRepositoryImplTest.kt$HomeRepositoryImplTest$val expectedDomain = CharacterDomain(1, "Rick", "Alive", "Human", "img", "Earth")</ID>
+  </CurrentIssues>
+</SmellBaseline>

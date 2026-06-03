@@ -107,4 +107,3 @@ class CharacterPagingSourceTest {
         assertEquals(null, result)
     }
 }
-

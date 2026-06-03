@@ -38,4 +38,3 @@ class GetCharactersUseCaseTest {
         assertEquals(pagingData, result)
     }
 }
-
