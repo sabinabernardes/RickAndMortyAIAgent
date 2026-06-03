@@ -39,7 +39,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.bina.features.home.R
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -113,11 +117,13 @@ private fun ChatPortalBar(onClick: () -> Unit) {
                 .navigationBarsPadding()
                 .padding(horizontal = SpacingTokens.spacing16, vertical = SpacingTokens.spacing16)
         ) {
+            val chatButtonDesc = stringResource(R.string.home_chat_button_description)
             Surface(
                 onClick = onClick,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(54.dp),
+                    .height(54.dp)
+                    .semantics { contentDescription = chatButtonDesc },
                 shape = RoundedCornerShape(16.dp),
                 color = MaterialTheme.colorScheme.background,
                 border = androidx.compose.foundation.BorderStroke(
@@ -195,11 +201,13 @@ internal fun HomeContent(
 
 @Composable
 internal fun LoadingContent(modifier: Modifier = Modifier) {
+    val loadingDesc = stringResource(R.string.home_loading_description)
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = SpacingTokens.spacing8)
+            .semantics { contentDescription = loadingDesc }
     ) {
         items(6) {
             CardCharacterSkeleton()

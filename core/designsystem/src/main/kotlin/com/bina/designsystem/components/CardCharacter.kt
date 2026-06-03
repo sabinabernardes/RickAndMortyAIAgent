@@ -19,8 +19,14 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import com.bina.designsystem.R
 import com.bina.designsystem.theme.RickAndMortyTheme
 import com.bina.designsystem.tokens.DimensionTokens
 import com.bina.designsystem.tokens.ElevationTokens
@@ -37,10 +43,15 @@ fun CardCharacter(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
+    val clickLabel = stringResource(R.string.card_character_click_label, name)
     androidx.compose.material3.Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onClick() }
+            .semantics(mergeDescendants = true) {
+                role = Role.Button
+                contentDescription = clickLabel
+            }
+            .clickable(onClickLabel = clickLabel) { onClick() }
             .padding(SpacingTokens.spacing8),
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
@@ -84,9 +95,9 @@ fun CardCharacter(
                 }
                 Spacer(modifier = Modifier.height(SpacingTokens.spacing4))
                 Text(
-                    text = "Localização",
+                    text = stringResource(R.string.card_character_location_label),
                     style = DefaultTypography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f)
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.70f)
                 )
                 Text(
                     text = lastLocation,

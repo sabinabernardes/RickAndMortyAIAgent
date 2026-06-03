@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">home</string>
+    <string name="home_loading_description">Carregando personagens</string>
+    <string name="home_chat_button_description">Abrir chat com Rick AI</string>
 </resources>

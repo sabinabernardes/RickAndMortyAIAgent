@@ -3,4 +3,10 @@
     <string name="dialog_error_title">Algo deu errado</string>
     <string name="dialog_error_retry">Tentar novamente\n</string>
     <string name="dialog_error_close">Fechar</string>
+    <string name="toolbar_back_content_description">Voltar</string>
+    <string name="card_character_location_label">Localização</string>
+    <string name="card_character_click_label">Ver detalhes de %1$s</string>
+    <string name="search_toolbar_label">Buscar personagem</string>
+    <string name="search_toolbar_placeholder">Buscar personagem…</string>
+    <string name="loading_content_description">Carregando</string>
 </resources>

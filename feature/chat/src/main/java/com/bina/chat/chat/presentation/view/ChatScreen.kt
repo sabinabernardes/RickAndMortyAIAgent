@@ -47,8 +47,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import com.bina.features.chat.R
 import com.bina.chat.chat.domain.model.ChatNavigationEvent
@@ -119,7 +123,8 @@ internal fun ModelUnavailableContent() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(SpacingTokens.spacing32),
+            .padding(SpacingTokens.spacing32)
+            .semantics { liveRegion = LiveRegionMode.Polite },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -240,6 +245,8 @@ private fun EmptyConversationContent(modifier: Modifier = Modifier) {
 @Composable
 private fun ChatMessageItem(message: ChatMessageUiModel) {
     val isUser = message.role == MessageRole.USER
+    val senderLabel = if (isUser) stringResource(R.string.chat_sender_user) else stringResource(R.string.chat_sender_ai)
+    val bubbleDesc = "$senderLabel: ${message.text}"
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -247,7 +254,9 @@ private fun ChatMessageItem(message: ChatMessageUiModel) {
         horizontalArrangement = if (isUser) Arrangement.End else Arrangement.Start
     ) {
         Surface(
-            modifier = Modifier.widthIn(max = if (isUser) DimensionTokens.ChatBubbleUserMaxWidth else DimensionTokens.ChatBubbleAiMaxWidth),
+            modifier = Modifier
+                .widthIn(max = if (isUser) DimensionTokens.ChatBubbleUserMaxWidth else DimensionTokens.ChatBubbleAiMaxWidth)
+                .semantics { contentDescription = bubbleDesc },
             shape = RoundedCornerShape(
                 topStart = ShapeTokens.Large.topStart,
                 topEnd = ShapeTokens.Large.topEnd,
@@ -341,16 +350,21 @@ private fun ChatInputRow(
                     disabledBorderColor = Color.Transparent
                 )
             )
+            val sendOrTypingDesc = if (!isEnabled)
+                stringResource(R.string.chat_ai_typing_description)
+            else
+                stringResource(R.string.chat_send_content_description)
             IconButton(
                 onClick = onSend,
-                enabled = isEnabled && inputText.isNotBlank()
+                enabled = isEnabled && inputText.isNotBlank(),
+                modifier = Modifier.semantics { contentDescription = sendOrTypingDesc }
             ) {
                 if (!isEnabled) {
                     TypingIndicator(color = MaterialTheme.colorScheme.primary)
                 } else {
                     Icon(
                         imageVector = Icons.Default.Send,
-                        contentDescription = stringResource(R.string.chat_send_content_description),
+                        contentDescription = null,
                         tint = if (inputText.isNotBlank()) MaterialTheme.colorScheme.primary
                                else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
                     )
