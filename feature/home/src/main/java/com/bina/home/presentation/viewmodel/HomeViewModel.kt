@@ -14,36 +14,75 @@ import com.bina.home.presentation.state.CharactersUiState
 import com.bina.home.presentation.mapper.CharacterUiMapper
 import com.bina.home.presentation.model.CharacterUiModel
 import com.bina.logging.AppLogger
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
-open class HomeViewModel(
+@OptIn(FlowPreview::class)
+class HomeViewModel(
     private val getCharactersUseCase: GetCharactersUseCase,
     private val uiMapper: CharacterUiMapper,
     private val logger: AppLogger,
     private val analytics: AnalyticsTracker,
-    private val performance: PerformanceTracker
+    private val performance: PerformanceTracker,
+    private val debounceMs: Long = DEBOUNCE_MS
 ) : ViewModel() {
+
     private val _uiState = MutableStateFlow<CharactersUiState>(CharactersUiState.Loading)
     val uiState: StateFlow<CharactersUiState> = _uiState
 
     private var currentQuery = ""
     private var screenLoadTracked = false
+    private val _searchQuery = MutableStateFlow("")
 
     init {
         logger.debug(TAG, "initialized")
         performance.startTrace(TRACE_SCREEN_LOAD)
-        getCharacters()
+        loadCharacters("")
+        viewModelScope.launch {
+            _searchQuery
+                .drop(1)
+                .debounce(debounceMs)
+                .distinctUntilChanged()
+                .collect { query ->
+                    if (query.isNotBlank()) analytics.track(HomeEvent.SearchPerformed(query))
+                    loadCharacters(query)
+                }
+        }
     }
 
-    fun getCharacters(query: String = "") {
-        currentQuery = query
-        if (query.isNotBlank()) analytics.track(HomeEvent.SearchPerformed(query))
+    fun onQueryChange(newQuery: String) {
+        currentQuery = newQuery
+        _searchQuery.value = newQuery
+    }
+
+    fun onCharacterClicked(characterId: Int) {
+        analytics.track(HomeEvent.CharacterClicked(characterId.toString()))
+    }
+
+    fun onPageLoaded() {
+        analytics.track(HomeEvent.PaginationLoadedNextPage)
+    }
+
+    fun onRetry() {
+        loadCharacters(currentQuery)
+    }
+
+    fun clearError() {
+        if (_uiState.value is CharactersUiState.Error) {
+            _uiState.value = CharactersUiState.Loading
+        }
+    }
+
+    private fun loadCharacters(query: String) {
         viewModelScope.launch {
             getCharactersUseCase(query)
                 .map { pagingData: PagingData<CharacterDomain> ->
@@ -71,30 +110,9 @@ open class HomeViewModel(
         }
     }
 
-    fun onCharacterClicked(characterId: Int) {
-        analytics.track(HomeEvent.CharacterClicked(characterId.toString()))
-    }
-
-    fun onPageLoaded() {
-        analytics.track(HomeEvent.PaginationLoadedNextPage)
-    }
-
-    fun onQueryChange(newQuery: String) {
-        getCharacters(newQuery)
-    }
-
-    fun onRetry() {
-        getCharacters(currentQuery)
-    }
-
-    fun clearError() {
-        if (_uiState.value is CharactersUiState.Error) {
-            _uiState.value = CharactersUiState.Loading
-        }
-    }
-
     companion object {
         private const val TAG = "HomeViewModel"
         private const val TRACE_SCREEN_LOAD = "home_screen_load"
+        const val DEBOUNCE_MS = 500L
     }
 }

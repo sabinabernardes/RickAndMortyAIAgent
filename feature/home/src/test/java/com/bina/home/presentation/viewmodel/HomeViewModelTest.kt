@@ -3,7 +3,6 @@ package com.bina.home.presentation.viewmodel
 import androidx.paging.PagingData
 import com.bina.analytics.AnalyticsTracker
 import com.bina.analytics.PerformanceTracker
-import com.bina.analytics.event.AnalyticsEvent
 import com.bina.home.analytics.HomeEvent
 import com.bina.home.domain.model.CharacterDomain
 import com.bina.home.domain.usecase.GetCharactersUseCase
@@ -18,6 +17,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -54,10 +55,13 @@ class HomeViewModelTest {
         PagingData.from(listOf(CharacterDomain(1, "Rick", "Alive", "Human", "img", "Earth")))
     )
 
-    private fun createViewModel() = HomeViewModel(getCharactersUseCase, uiMapper, logger, analytics, performance)
+    private fun createViewModel(debounceMs: Long = 0L) =
+        HomeViewModel(getCharactersUseCase, uiMapper, logger, analytics, performance, debounceMs)
+
+    // --- Estado inicial ---
 
     @Test
-    fun `GIVEN use case returns data WHEN init THEN state is Success`() = runTest {
+    fun `GIVEN use case returns data WHEN init THEN state is Success`() = runTest(testDispatcher) {
         every { getCharactersUseCase(any()) } returns defaultPagingFlow()
 
         viewModel = createViewModel()
@@ -66,7 +70,7 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `GIVEN init WHEN getCharacters THEN use case is called with empty string`() = runTest {
+    fun `GIVEN init THEN use case is called immediately with empty query`() = runTest(testDispatcher) {
         every { getCharactersUseCase("") } returns defaultPagingFlow()
 
         viewModel = createViewModel()
@@ -74,18 +78,10 @@ class HomeViewModelTest {
         coVerify { getCharactersUseCase("") }
     }
 
-    @Test
-    fun `GIVEN successful init WHEN onQueryChange THEN use case is called with new query`() = runTest {
-        every { getCharactersUseCase(any()) } returns defaultPagingFlow()
-
-        viewModel = createViewModel()
-        viewModel.onQueryChange("Morty")
-
-        coVerify(atLeast = 1) { getCharactersUseCase("Morty") }
-    }
+    // --- onRetry ---
 
     @Test
-    fun `GIVEN query set WHEN onRetry THEN use case is called again with same query`() = runTest {
+    fun `GIVEN query set WHEN onRetry THEN use case is called again with same query`() = runTest(testDispatcher) {
         every { getCharactersUseCase(any()) } returns defaultPagingFlow()
 
         viewModel = createViewModel()
@@ -95,8 +91,10 @@ class HomeViewModelTest {
         coVerify(atLeast = 2) { getCharactersUseCase("Rick") }
     }
 
+    // --- clearError ---
+
     @Test
-    fun `GIVEN state is not Error WHEN clearError THEN state remains unchanged`() = runTest {
+    fun `GIVEN state is not Error WHEN clearError THEN state remains unchanged`() = runTest(testDispatcher) {
         every { getCharactersUseCase(any()) } returns defaultPagingFlow()
         viewModel = createViewModel()
         val stateBefore = viewModel.uiState.value
@@ -106,40 +104,10 @@ class HomeViewModelTest {
         assertEquals(stateBefore, viewModel.uiState.value)
     }
 
-    @Test
-    fun `GIVEN multiple queries WHEN onQueryChange THEN each triggers use case with correct query`() = runTest {
-        every { getCharactersUseCase(any()) } returns defaultPagingFlow()
-
-        viewModel = createViewModel()
-        viewModel.onQueryChange("Rick")
-        viewModel.onQueryChange("Morty")
-
-        coVerify(atLeast = 1) { getCharactersUseCase("Rick") }
-        coVerify(atLeast = 1) { getCharactersUseCase("Morty") }
-    }
+    // --- Analytics: click e paginação ---
 
     @Test
-    fun `GIVEN non-blank query WHEN onQueryChange THEN SearchPerformed event is tracked`() = runTest {
-        every { getCharactersUseCase(any()) } returns defaultPagingFlow()
-
-        viewModel = createViewModel()
-        viewModel.onQueryChange("Rick")
-
-        verify { analytics.track(HomeEvent.SearchPerformed("Rick")) }
-    }
-
-    @Test
-    fun `GIVEN blank query WHEN onQueryChange THEN SearchPerformed is NOT tracked`() = runTest {
-        every { getCharactersUseCase(any()) } returns defaultPagingFlow()
-
-        viewModel = createViewModel()
-        viewModel.onQueryChange("")
-
-        verify(exactly = 0) { analytics.track(ofType<HomeEvent.SearchPerformed>()) }
-    }
-
-    @Test
-    fun `WHEN onCharacterClicked THEN CharacterClicked event is tracked`() = runTest {
+    fun `WHEN onCharacterClicked THEN CharacterClicked event is tracked`() = runTest(testDispatcher) {
         every { getCharactersUseCase(any()) } returns defaultPagingFlow()
         viewModel = createViewModel()
 
@@ -149,7 +117,7 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `WHEN onPageLoaded THEN PaginationLoadedNextPage event is tracked`() = runTest {
+    fun `WHEN onPageLoaded THEN PaginationLoadedNextPage event is tracked`() = runTest(testDispatcher) {
         every { getCharactersUseCase(any()) } returns defaultPagingFlow()
         viewModel = createViewModel()
 
@@ -158,12 +126,91 @@ class HomeViewModelTest {
         verify { analytics.track(HomeEvent.PaginationLoadedNextPage) }
     }
 
+    // --- Performance ---
+
     @Test
-    fun `GIVEN successful data load WHEN init THEN screen load trace is stopped once`() = runTest {
+    fun `GIVEN successful data load WHEN init THEN screen load trace is stopped once`() = runTest(testDispatcher) {
         every { getCharactersUseCase(any()) } returns defaultPagingFlow()
 
         viewModel = createViewModel()
 
         verify(exactly = 1) { performance.stopTrace("home_screen_load") }
+    }
+
+    // --- Debounce: comportamento de busca ---
+
+    @Test
+    fun `GIVEN query WHEN onQueryChange THEN use case is eventually called with that query`() = runTest(testDispatcher) {
+        every { getCharactersUseCase(any()) } returns defaultPagingFlow()
+        viewModel = createViewModel()
+
+        viewModel.onQueryChange("Morty")
+
+        coVerify(atLeast = 1) { getCharactersUseCase("Morty") }
+    }
+
+    @Test
+    fun `GIVEN rapid typing WHEN multiple onQueryChange THEN only last query reaches use case`() = runTest(testDispatcher) {
+        every { getCharactersUseCase(any()) } returns defaultPagingFlow()
+        viewModel = createViewModel(debounceMs = HomeViewModel.DEBOUNCE_MS)
+
+        viewModel.onQueryChange("R")
+        viewModel.onQueryChange("Ri")
+        viewModel.onQueryChange("Ric")
+        viewModel.onQueryChange("Rick")
+        advanceTimeBy(HomeViewModel.DEBOUNCE_MS + 1)
+
+        coVerify(exactly = 0) { getCharactersUseCase("R") }
+        coVerify(exactly = 0) { getCharactersUseCase("Ri") }
+        coVerify(exactly = 0) { getCharactersUseCase("Ric") }
+        coVerify(atLeast = 1) { getCharactersUseCase("Rick") }
+    }
+
+    @Test
+    fun `GIVEN non-blank query WHEN debounce fires THEN SearchPerformed is tracked`() = runTest(testDispatcher) {
+        every { getCharactersUseCase(any()) } returns defaultPagingFlow()
+        viewModel = createViewModel(debounceMs = HomeViewModel.DEBOUNCE_MS)
+
+        viewModel.onQueryChange("Rick")
+        advanceTimeBy(HomeViewModel.DEBOUNCE_MS + 1)
+
+        verify { analytics.track(HomeEvent.SearchPerformed("Rick")) }
+    }
+
+    @Test
+    fun `GIVEN non-blank query WHEN debounce has NOT fired THEN SearchPerformed is not tracked yet`() = runTest(testDispatcher) {
+        every { getCharactersUseCase(any()) } returns defaultPagingFlow()
+        viewModel = createViewModel(debounceMs = HomeViewModel.DEBOUNCE_MS)
+
+        viewModel.onQueryChange("Rick")
+        advanceTimeBy(HomeViewModel.DEBOUNCE_MS - 1)
+
+        verify(exactly = 0) { analytics.track(ofType<HomeEvent.SearchPerformed>()) }
+    }
+
+    @Test
+    fun `GIVEN blank query WHEN debounce fires THEN SearchPerformed is NOT tracked`() = runTest(testDispatcher) {
+        every { getCharactersUseCase(any()) } returns defaultPagingFlow()
+        viewModel = createViewModel(debounceMs = HomeViewModel.DEBOUNCE_MS)
+
+        viewModel.onQueryChange("")
+        advanceTimeBy(HomeViewModel.DEBOUNCE_MS + 1)
+
+        verify(exactly = 0) { analytics.track(ofType<HomeEvent.SearchPerformed>()) }
+    }
+
+    @Test
+    fun `GIVEN rapid typing WHEN debounce fires THEN SearchPerformed tracked only once for last query`() = runTest(testDispatcher) {
+        every { getCharactersUseCase(any()) } returns defaultPagingFlow()
+        viewModel = createViewModel(debounceMs = HomeViewModel.DEBOUNCE_MS)
+
+        viewModel.onQueryChange("R")
+        viewModel.onQueryChange("Ri")
+        viewModel.onQueryChange("Ric")
+        viewModel.onQueryChange("Rick")
+        advanceTimeBy(HomeViewModel.DEBOUNCE_MS + 1)
+
+        verify(exactly = 1) { analytics.track(ofType<HomeEvent.SearchPerformed>()) }
+        verify { analytics.track(HomeEvent.SearchPerformed("Rick")) }
     }
 }

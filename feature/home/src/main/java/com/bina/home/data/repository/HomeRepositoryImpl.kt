@@ -6,7 +6,7 @@ import androidx.paging.PagingData
 import androidx.paging.map
 import com.bina.home.data.datasource.CharacterDataSource
 import com.bina.home.data.mapper.CharacterMapper
-import com.bina.home.data.pagingSouce.CharacterPagingSource
+import com.bina.home.data.pagingSource.CharacterPagingSource
 import com.bina.home.domain.model.CharacterDomain
 import com.bina.home.domain.repository.HomeRepository
 import kotlinx.coroutines.flow.Flow

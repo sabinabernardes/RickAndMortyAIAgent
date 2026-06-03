@@ -6,7 +6,7 @@ import androidx.paging.PagingState
 import com.bina.home.data.datasource.CharacterDataSource
 import com.bina.home.data.model.CharacterData
 import com.bina.home.data.model.LocationData
-import com.bina.home.data.pagingSouce.CharacterPagingSource
+import com.bina.home.data.pagingSource.CharacterPagingSource
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk

@@ -67,7 +67,7 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(query) {
-        viewModel.getCharacters(query)
+        viewModel.onQueryChange(query)
     }
 
     Scaffold(
