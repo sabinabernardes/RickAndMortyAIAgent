@@ -119,7 +119,7 @@ fun CharacterDetailsScreen(
 }
 
 @Composable
-private fun CharacterDetailsContent(
+internal fun CharacterDetailsContent(
     character: CharacterDetailsUiModel,
     episodesState: EpisodesState,
     onBackClick: () -> Unit
