@@ -89,6 +89,8 @@ dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":core:navigation"))
     implementation(project(":core:network"))
+    implementation(project(":core:logging"))
+    implementation(project(":core:analytics"))
     implementation(project(":feature:home"))
     implementation(project(":feature:character_details"))
     implementation(project(":feature:chat"))
