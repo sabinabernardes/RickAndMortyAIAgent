@@ -58,6 +58,8 @@ tasks.register<JacocoReport>("jacocoTestReport") {
 dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":core:network"))
+    implementation(project(":core:logging"))
+    implementation(project(":core:analytics"))
     
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.compose.ui)

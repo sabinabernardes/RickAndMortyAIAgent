@@ -1,7 +1,9 @@
 package com.bina.rickandmorty.di
 
+import com.bina.analytics.di.analyticsModule
 import com.bina.character_details.di.characterDetailsModule
 import com.bina.chat.di.chatModule
+import com.bina.logging.di.loggingModule
 import com.bina.rickandmorty.BuildConfig
 import com.bina.home.data.datasource.CharacterDataSource
 import com.bina.home.data.datasource.CharacterDataSourceImpl
@@ -34,4 +36,4 @@ val keysModule = module {
     single(named("geminiApiKey")) { BuildConfig.GEMINI_API_KEY }
 }
 
-val appModules = listOf(networkModule, homeModule, characterDetailsModule, keysModule, chatModule)
+val appModules = listOf(loggingModule, analyticsModule, networkModule, homeModule, characterDetailsModule, keysModule, chatModule)
