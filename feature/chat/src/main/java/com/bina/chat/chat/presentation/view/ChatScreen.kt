@@ -50,7 +50,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import com.bina.features.chat.R
 import com.bina.chat.chat.domain.model.ChatNavigationEvent
 import com.bina.chat.chat.domain.model.MessageRole
@@ -61,6 +60,7 @@ import com.bina.designsystem.animation.fadeSlideIn
 import com.bina.designsystem.components.Toolbar
 import com.bina.designsystem.tokens.AnimationTokens
 import com.bina.designsystem.tokens.ColorTokens
+import com.bina.designsystem.tokens.DimensionTokens
 import com.bina.designsystem.tokens.ElevationTokens
 import com.bina.designsystem.tokens.ShapeTokens
 import com.bina.designsystem.tokens.SpacingTokens
@@ -247,7 +247,7 @@ private fun ChatMessageItem(message: ChatMessageUiModel) {
         horizontalArrangement = if (isUser) Arrangement.End else Arrangement.Start
     ) {
         Surface(
-            modifier = Modifier.widthIn(max = if (isUser) 280.dp else 340.dp),
+            modifier = Modifier.widthIn(max = if (isUser) DimensionTokens.ChatBubbleUserMaxWidth else DimensionTokens.ChatBubbleAiMaxWidth),
             shape = RoundedCornerShape(
                 topStart = ShapeTokens.Large.topStart,
                 topEnd = ShapeTokens.Large.topEnd,

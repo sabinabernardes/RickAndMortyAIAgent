@@ -14,6 +14,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.unit.dp
 import com.bina.designsystem.animation.shimmerEffect
+import com.bina.designsystem.tokens.DimensionTokens
 import com.bina.designsystem.tokens.SpacingTokens
 
 @Composable
@@ -31,7 +32,7 @@ fun CardCharacterSkeleton(modifier: Modifier = Modifier) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(160.dp)
+                    .height(DimensionTokens.CardCharacterImageHeight)
                     .shimmerEffect(baseColor = base, highlightColor = highlight)
             )
 
