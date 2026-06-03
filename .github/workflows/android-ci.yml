@@ -125,6 +125,8 @@ jobs:
           min-coverage-changed-files: 60
           title: Cobertura de Testes
           update-comment: true
+          pass-emoji: ':green_circle:'
+          fail-emoji: ':red_circle:'
 
   auto-merge:
     name: Enable auto-merge
