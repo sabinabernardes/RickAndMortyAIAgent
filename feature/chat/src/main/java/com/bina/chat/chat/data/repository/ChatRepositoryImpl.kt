@@ -47,8 +47,11 @@ class ChatRepositoryImpl(
         }
 
         val text = toolResponse.text?.takeIf { it.isNotBlank() }
-            ?: if (navigationEvent != null) "Aqui está, Morty. *burp*"
-               else "Não consegui processar isso."
+            ?: if (navigationEvent != null) {
+                "Aqui está, Morty. *burp*"
+            } else {
+                "Não consegui processar isso."
+            }
 
         return AgentMessageResult(text = text, navigationEvent = navigationEvent)
     }

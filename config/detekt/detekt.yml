@@ -81,6 +81,7 @@ formatting:
     indentSize: 4
   MaximumLineLength:
     active: false
+    maxLineLength: 140
   ModifierOrdering:
     active: true
   NoBlankLineBeforeRbrace:

@@ -212,7 +212,7 @@ class ChatViewModelTest {
     }
 
     @Test
-    fun `GIVEN OpenCharacter navigation event WHEN sendMessage THEN AgentNavigationTriggered with open_character is tracked`() = runTest(testDispatcher) {
+    fun `GIVEN OpenCharacter nav event WHEN sendMessage THEN tracks open_character`() = runTest(testDispatcher) {
         coEvery { checkModelAvailabilityUseCase() } returns ModelAvailability.Available
         coEvery { repository.warmup() } returns Unit
         coEvery { sendMessageUseCase(any()) } returns AgentMessageResult(
@@ -227,7 +227,7 @@ class ChatViewModelTest {
     }
 
     @Test
-    fun `GIVEN SearchCharacters navigation event WHEN sendMessage THEN AgentNavigationTriggered with search_characters is tracked`() = runTest(testDispatcher) {
+    fun `GIVEN SearchCharacters nav event WHEN sendMessage THEN tracks search_characters`() = runTest(testDispatcher) {
         coEvery { checkModelAvailabilityUseCase() } returns ModelAvailability.Available
         coEvery { repository.warmup() } returns Unit
         coEvery { sendMessageUseCase(any()) } returns AgentMessageResult(
