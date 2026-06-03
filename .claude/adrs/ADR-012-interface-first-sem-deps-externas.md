@@ -8,7 +8,7 @@
 
 ## Contexto
 
-É a primeira implementação de observabilidade no projeto. A usuária nunca implementou analytics antes e quer explorar o design sem compromisso com uma plataforma específica. A questão é: qual biblioteca ou padrão usar para logging e analytics?
+É a primeira implementação de observabilidade no projeto. qual biblioteca ou padrão usar para logging e analytics?
 
 Opções no mercado:
 - **Timber** — biblioteca de logging para Android, wrapper sobre `android.util.Log`
