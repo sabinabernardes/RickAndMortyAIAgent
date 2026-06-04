@@ -26,7 +26,7 @@ Screenshot testing (ou visual regression testing) captura uma imagem de referên
 | Renderização | Skia nativo via Robolectric | LayoutLib puro |
 | Overhead de setup | ~5 min (plugin + 1 anotação) | ~30 min por módulo |
 
-**Decisão:** Roborazzi, porque o projeto já tinha Robolectric em todos os módulos. Adicionar screenshot testing foi literalmente uma linha por teste. Ver [ADR-023](../adrs/ADR-023-roborazzi-screenshot-testing.md) para detalhes.
+**Decisão:** Roborazzi, porque o projeto já tinha Robolectric em todos os módulos. Adicionar screenshot testing foi literalmente uma linha por teste. Ver [ADR-023](https://github.com/sabinabernardes/RickAndMorty/blob/master/.claude/adrs/ADR-023-roborazzi-screenshot-testing.md) para detalhes.
 
 ---
 
@@ -347,6 +347,45 @@ roborazzi {
 ## Referências
 
 - [Roborazzi GitHub](https://github.com/takahirom/roborazzi)
-- [ADR-023: Decisão de escolher Roborazzi](../adrs/ADR-023-roborazzi-screenshot-testing.md)
-- [SDD: Paparazzi vs Roborazzi](../specs/screenshot-testing-paparazzi-vs-roborazzi-sdd.md)
-- [Wiki: Testes de UI (comportamento)](Testes-de-UI.md)
+- [ADR-023: Decisão de escolher Roborazzi](https://github.com/sabinabernardes/RickAndMorty/blob/master/.claude/adrs/ADR-023-roborazzi-screenshot-testing.md)
+- [SDD: Paparazzi vs Roborazzi](https://github.com/sabinabernardes/RickAndMorty/blob/master/.claude/specs/screenshot-testing-paparazzi-vs-roborazzi-sdd.md)
+- [Wiki: Testes de UI (comportamento)](Testes-de-UI)
+---
+
+## Galeria de Goldens
+
+Os goldens abaixo foram gerados pelo `recordRoborazziDebug` e estão commitados em `src/test/snapshots/` de cada módulo. Qualquer pixel diferente desses nas próximas execuções faz o CI falhar.
+
+### `:core:designsystem` — Componentes atômicos
+
+#### `StatusBadge` — light vs dark
+
+| Light | Dark |
+|:-----:|:----:|
+| <img src="assets/golden_status_alive_light.png" width="180"> | <img src="assets/golden_status_alive_dark.png" width="180"> |
+
+#### `CardCharacter` — light vs dark
+
+| Light | Dark |
+|:-----:|:----:|
+| <img src="assets/golden_card_light.png" width="280"> | <img src="assets/golden_card_dark.png" width="280"> |
+
+---
+
+### `:feature:home` — Estados de tela
+
+| Loading (sem erro) | Error light | Error dark |
+|:------------------:|:-----------:|:----------:|
+| <img src="assets/golden_home_loading.png" width="220"> | <img src="assets/golden_home_error_light.png" width="220"> | <img src="assets/golden_home_error_dark.png" width="220"> |
+
+---
+
+### `:feature:chat` — Chat vazio
+
+| Light | Dark |
+|:-----:|:----:|
+| <img src="assets/golden_chat_empty_light.png" width="220"> | <img src="assets/golden_chat_empty_dark.png" width="220"> |
+
+---
+
+> **Como ler:** cada imagem é exatamente o que o CI espera encontrar. Se uma mudança no tema escurecer um badge 1% a mais, o `verifyRoborazziDebug` falhará com uma imagem `_compare.png` mostrando o diff em vermelho.

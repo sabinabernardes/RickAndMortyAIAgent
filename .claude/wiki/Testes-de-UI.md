@@ -1,129 +1,212 @@
 # Testes de UI
 
-> Estratégia, ferramentas e cobertura de testes de UI por módulo. Todos rodam na JVM — sem emulador, sem CI especial.
+Os testes de UI do projeto cobrem componentes do `:core:designsystem` e as telas das features. Todos rodam **sem emulador e sem dispositivo físico** — na JVM, via Robolectric.
 
 ---
 
-## Ferramentas
+## Por que Robolectric?
 
-| Ferramenta | Papel |
-|-----------|-------|
-| **Robolectric** | Executa código Android na JVM — permite `createComposeRule` sem emulador |
-| **Compose Test JUnit4** | `assertIsDisplayed`, `assertIsEnabled`, `onNodeWithText`, `onNodeWithTag` |
-| **Roborazzi** | Screenshot testing — captura goldens e falha se pixel mudar |
+Testes instrumentados (`connectedAndroidTest`) exigem um emulador ou dispositivo conectado. Isso torna a execução lenta e frágil em CI. O Robolectric resolve o problema simulando o ambiente Android diretamente na JVM:
 
-**Por que Robolectric e não emulador?** O CI (`ubuntu-latest`) não tem GPU. Robolectric com `@GraphicsMode(NATIVE)` usa Skia nativo e reproduz renderização suficientemente fiel para testes de comportamento e screenshots. Ver [Screenshot Testing com Roborazzi](Screenshot-Testing-Roborazzi.md).
+| | Robolectric | Instrumentado |
+|---|---|---|
+| **Execução** | JVM local | Emulador / dispositivo |
+| **Velocidade** | Rápido (segundos) | Lento (minutos) |
+| **CI** | `./gradlew test` | Precisa de AVD |
+| **Uso aqui** | Testes de componente e tela | — |
+
+O Robolectric **não substitui** testes end-to-end, mas cobre o golden path de cada tela com custo quase zero de infraestrutura.
 
 ---
 
-## Padrão de Teste
+## Configuração
 
-Sub-composables são declarados `internal` (não `private`) para serem testados diretamente sem ViewModel:
+### 1. Dependência
+
+`gradle/libs.versions.toml`:
+```toml
+[versions]
+robolectric = "4.13"
+
+[libraries]
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
+```
+
+### 2. Build Gradle de cada módulo
 
 ```kotlin
-@RunWith(RobolectricTestRunner::class)
-@Config(sdk = [33])
-@GraphicsMode(GraphicsMode.Mode.NATIVE)
-class LoginScreenTest {
-
-    @get:Rule
-    val composeTestRule = createComposeRule()
-
-    @Test
-    fun `GIVEN idle state WHEN rendered THEN email field is visible`() {
-        composeTestRule.setContent {
-            RickAndMortyTheme { LoginForm(uiState = LoginUiState.Idle, onLoginClicked = { _, _ -> }) }
+android {
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true  // necessário para strings e recursos
         }
-        composeTestRule.onNodeWithText("Email").assertIsDisplayed()
     }
+}
+
+dependencies {
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.ui.test.junit4)
+    testImplementation(libs.androidx.ui.test.manifest)
 }
 ```
 
----
+### 3. Anotações obrigatórias em cada classe de teste
 
-## Cobertura por Módulo
+```kotlin
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [33])  // compileSdk 35 não é suportado pelo Robolectric 4.13
+class MinhaTelaTest {
+    @get:Rule
+    val composeTestRule = createComposeRule()
+}
+```
 
-### :feature:auth — `LoginScreenTest` ✅
-
-| # | Componente | Cenário | Tipo |
-|---|-----------|---------|------|
-| 1 | `LoginHeader` | Título "Rick & Morty AI" visível | Comportamento |
-| 2 | `LoginHeader` | Subtitle "Entre para continuar" visível | Comportamento |
-| 3 | `StudyBanner` | Label de autenticação simulada visível | Comportamento |
-| 4 | `StudyBanner` | "email válido" e "8 caracteres" visíveis | Comportamento |
-| 5 | `LoginForm(Idle)` | Campo Email visível | Comportamento |
-| 6 | `LoginForm(Idle)` | Campo Senha visível | Comportamento |
-| 7 | `LoginForm(Idle)` | Botão habilitado | Comportamento |
-| 8 | `LoginForm(Loading)` | Botão desabilitado | Comportamento |
-| 9 | `LoginForm(Loading)` | Golden light | Screenshot |
-| 10 | `LoginForm(Error)` | Mensagem de erro visível | Comportamento |
-| 11 | `LoginForm(Error "...8 caracteres...")` | Substring "8 caracteres" visível | Comportamento |
-| 12 | `LoginForm(Error)` | Golden light | Screenshot |
-| 13 | `LoginForm(Idle)` dark mode | Golden dark | Screenshot |
-| 14 | `StudyBanner` dark mode | Golden dark | Screenshot |
-
-> **Nota de implementação:** o estado `Loading` mostra `CircularProgressIndicator` no botão (sem texto "Entrar"). Por isso o botão é identificado por `testTag("login_button")`, não por texto.
-
-### :feature:home — `HomeScreenTest`
-
-Cenários planejados (ver [SDD](../specs/ui-testing-strategy-sdd.md)):
-- Loading → skeletons visíveis
-- Error → texto de erro exibido
-- Error + clique "Tentar novamente" → callback chamado
-- SearchToolbar → campo acessível por semântica
-
-### :feature:character_details — `CharacterDetailsScreenTest`
-
-Cenários planejados:
-- Loading → spinner visível
-- Error → texto de erro visível
-- Success → nome, espécie, status presentes
-- EpisodesLoading → skeleton de episódios
-- EpisodesSuccess → códigos de episódios visíveis
-- Clique voltar → callback chamado
-
-### :feature:chat — `ChatScreenTest`
-
-Cenários planejados:
-- `Initializing` → typing indicator
-- `ModelUnavailable` → mensagem de indisponibilidade
-- `Conversation` vazia → empty state icon
-- `Conversation` com mensagens → texto visível
-- Campo vazio → botão de enviar desabilitado
+> **Por que `sdk = [33]`?** O Robolectric 4.13 suporta até SDK 34. Como o projeto usa `compileSdk = 35`, é necessário fixar `sdk = [33]` para evitar o erro `DefaultSdkPicker: No compatible SDK`.
 
 ---
 
-## Screenshots Goldens
+## Visibilidade dos Composables
 
-Goldens são commitados no repositório e verificados no CI:
+Para que os testes do módulo consigam acessar os composables de tela, a visibilidade deve ser `internal` (não `private`):
 
-| Módulo | Localização | Goldens |
-|--------|------------|---------|
-| `:feature:auth` | `feature/auth/src/test/snapshots/` | 4 (loading light, error light, idle dark, banner dark) |
+```kotlin
+// HomeScreen.kt
+@Composable
+internal fun HomeContent(...) { ... }
 
-```bash
-# Regerar todos os goldens
-./gradlew :feature:auth:recordRoborazziDebug
+// CharacterDetailsScreen.kt
+@Composable
+internal fun CharacterDetailsContent(...) { ... }
 
-# Verificar (CI)
-./gradlew :feature:auth:verifyRoborazziDebug
-
-# Rodar todos os testes de UI
-./gradlew :feature:auth:testDebugUnitTest
+// ChatScreen.kt
+@Composable
+internal fun ConversationContent(...) { ... }
+internal fun ModelUnavailableContent() { ... }
 ```
 
 ---
 
-## Cobertura e CI
+## Cobertura por módulo
 
-Testes de comportamento (Robolectric) rodam via `testDebugUnitTest` — já estão no pipeline de CI sem configuração extra.
+### `:core:designsystem`
 
-A cobertura JaCoCo exclui composables de tela por padrão (`**/view/**`), pois a lógica real está no ViewModel e no UseCase. O que conta para coverage são os testes unitários de ViewModel e UseCase.
+| Classe | Testes |
+|--------|--------|
+| `CardCharacter` | name, species, location exibidos; click dispara callback |
+| `DialogError` | mensagem exibida; botões retry e dismiss disparam callbacks |
+| `StatusBadge` | textos "Alive", "Dead", "Unknown" exibidos |
+
+### `:feature:home`
+
+| Teste | Verificação |
+|-------|-------------|
+| Loading state | sem dialog de erro |
+| Error state | mensagem de erro visível |
+| Retry click | `viewModel.onRetry()` chamado |
+| Dismiss click | `viewModel.clearError()` chamado |
+| Character click | callback `onCharacterClick` disparado |
+
+### `:feature:character_details`
+
+| Teste | Verificação |
+|-------|-------------|
+| Success state | nome do personagem visível |
+| Success state | "Human · Male" visível |
+| With episodes | nome e código do episódio existem na tela |
+| Back button | callback `onBackClick` disparado |
+| Episodes error | mensagem de erro visível |
+
+### `:feature:chat`
+
+| Teste | Verificação |
+|-------|-------------|
+| Model unavailable | título de erro visível |
+| Model unavailable | mensagem descritiva visível |
+| Empty conversation | título "Fale com o Rick" visível |
+| User message | texto da mensagem visível |
+| AI message | texto da resposta visível |
+| Send message | callback `onSendMessage` dispara com o texto correto |
+
+### `:feature:auth`
+
+Testa sub-composables diretamente (`LoginHeader`, `StudyBanner`, `LoginForm`) — sem ViewModel, pois são declarados `internal`:
+
+| Teste | Verificação |
+|-------|-------------|
+| `LoginHeader` rendered | "Rick & Morty AI" visível |
+| `LoginHeader` rendered | "Entre para continuar" visível |
+| `StudyBanner` rendered | label de autenticação simulada visível |
+| `StudyBanner` rendered | "email válido" e "8 caracteres" visíveis |
+| `LoginForm(Idle)` | campo Email visível |
+| `LoginForm(Idle)` | campo Senha visível |
+| `LoginForm(Idle)` | botão `login_button` habilitado |
+| `LoginForm(Loading)` | botão `login_button` **desabilitado** |
+| `LoginForm(Loading)` | snapshot golden (light) |
+| `LoginForm(Error)` | mensagem de erro visível |
+| `LoginForm(Error "...8 caracteres...")` | substring "8 caracteres" visível |
+| `LoginForm(Error)` | snapshot golden (light) |
+| `LoginForm(Idle)` dark | snapshot golden (dark) |
+| `StudyBanner` dark | snapshot golden (dark) |
+
+> **Nota:** estado `Loading` exibe `CircularProgressIndicator` (sem texto "Entrar"). O botão é identificado por `testTag("login_button")`, não por texto.
 
 ---
 
-## Referências
+## Padrões e convenções
 
-- [Screenshot Testing com Roborazzi](Screenshot-Testing-Roborazzi.md) — goldens, record vs verify, dark mode, troubleshooting
-- [Feature: Auth Simulada](Feature-Auth-Simulada.md) — detalhes da `LoginScreenTest`
-- [SDD Estratégia de Testes de UI](../specs/ui-testing-strategy-sdd.md) — planejamento completo por feature
+### Given-When-Then no nome do teste
+
+```kotlin
+@Test
+fun `GIVEN error state WHEN retry clicked THEN onRetry is called on viewModel`() { ... }
+```
+
+### `assertExists()` vs `assertIsDisplayed()`
+
+Use `assertIsDisplayed()` para conteúdo visível na tela. Para conteúdo dentro de um container com scroll que pode estar fora da área visível, use `assertExists()`:
+
+```kotlin
+// conteúdo acima do fold — garante que está visível
+composeTestRule.onNodeWithText("Rick Sanchez").assertIsDisplayed()
+
+// episódios ficam abaixo do fold em scroll — verificar existência é suficiente
+composeTestRule.onNodeWithText("Pilot").assertExists()
+```
+
+### Nós com texto duplicado
+
+Quando o mesmo texto aparece mais de uma vez na árvore de semântica (ex: nome na header e no toolbar colapsável), use o índice:
+
+```kotlin
+composeTestRule.onAllNodesWithText("Rick Sanchez")[0].assertIsDisplayed()
+```
+
+### ViewModel com debounce em testes
+
+O `HomeViewModel` recebe `debounceMs` injetado. Testes de comportamento passam `0L` para que o debounce seja transparente:
+
+```kotlin
+private fun fakeViewModel() = HomeViewModel(
+    useCase = mockk(relaxed = true),
+    ...,
+    debounceMs = 0L
+)
+```
+
+---
+
+## Executando os testes
+
+```bash
+# Todos os módulos de uma vez
+./gradlew :core:designsystem:testDebugUnitTest \
+          :feature:home:testDebugUnitTest \
+          :feature:character_details:testDebugUnitTest \
+          :feature:chat:testDebugUnitTest \
+          :feature:auth:testDebugUnitTest
+
+# Módulo individual
+./gradlew :feature:home:testDebugUnitTest
+```
+
+Nenhum emulador ou dispositivo necessário. Os testes aparecem no resultado de `./gradlew test` junto com os testes unitários normais.
