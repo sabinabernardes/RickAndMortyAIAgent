@@ -98,8 +98,13 @@ Documentação completa na [Wiki do repositório](https://github.com/sabinaberna
 | [Core: Observabilidade](https://github.com/sabinabernardes/RickAndMorty/wiki/Core-Observabilidade) | Logging estruturado, analytics e performance monitoring |
 | [Documentação de Engenharia](https://github.com/sabinabernardes/RickAndMorty/wiki/Documentação-de-Engenharia) | Rules, Specs (SDDs) e ADRs do projeto |
 | [Testes de UI](https://github.com/sabinabernardes/RickAndMorty/wiki/Testes-de-UI) | Robolectric, createComposeRule e cobertura por módulo |
+| [Arquitetura](.claude/wiki/Arquitetura.md) | Grafo de módulos, camadas Clean Architecture, navegação, padrão de DI |
+| [Core: Observabilidade](.claude/wiki/Core-Observabilidade.md) | Logging, analytics e performance tracking por feature — todos os eventos |
+| [Testes de UI](.claude/wiki/Testes-de-UI.md) | Robolectric, Roborazzi, cobertura de testes de comportamento e screenshot por módulo |
 | [Screenshot Testing com Roborazzi](.claude/wiki/Screenshot-Testing-Roborazzi.md) | Goldens, record vs verify, dark mode, troubleshooting |
 | [Acessibilidade WCAG 2.1 AA](https://github.com/sabinabernardes/RickAndMorty/wiki/Acessibilidade-WCAG-2.1-AA) | TalkBack, contraste AA, semântica e live regions |
+| [Core: Security](.claude/wiki/Core-Security-Module.md) | EncryptedSharedPreferences, Android Keystore, interface SecureStorage |
+| [Feature: Auth Simulada](.claude/wiki/Feature-Auth-Simulada.md) | Autenticação local para estudo: Clean Architecture, JWT mock, validação no use case |
 
 ---
 

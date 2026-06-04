@@ -373,7 +373,46 @@ viewModel { ChatViewModel(get(), get(), get(), get(), get(), get(), get()) }
 
 ---
 
-## 7. Resumo dos Arquivos Alterados
+## 7. :feature:auth
+
+### 7.1 LoginViewModel
+
+Segue o mesmo padrão de `ChatViewModel` — `AppLogger`, `AnalyticsTracker` injetados via Koin (sem `PerformanceTracker`, pois o fluxo de login tem `delay(800)` fixo e não há latência real a medir).
+
+**Eventos rastreados:**
+
+| Evento | Quando disparado |
+|--------|-----------------|
+| `AuthEvent.LoginAttempt` | Sempre que `onLoginClicked` é chamado |
+| `AuthEvent.LoginSuccess` | `AuthResult.Success` |
+| `AuthEvent.LoginFailure` | Qualquer `AuthResult` de erro |
+| `AuthEvent.LogoutRequested` | `onLogoutClicked` (futuro) |
+
+**AuthEvent** (`feature/auth/src/main/java/com/bina/auth/analytics/AuthEvent.kt`):
+```kotlin
+sealed class AuthEvent : AnalyticsEvent {
+    object LoginAttempt : AuthEvent() { override val name = "auth_login_attempt" }
+    object LoginSuccess : AuthEvent() { override val name = "auth_login_success" }
+    object LoginFailure : AuthEvent() { override val name = "auth_login_failure" }
+    object LogoutRequested : AuthEvent() { override val name = "auth_logout" }
+}
+```
+
+**Deduplicação de analytics:** o ViewModel usa um único `if/else` após o `when` de `AuthResult` — não há `track(LoginFailure)` duplicado para cada caso de erro.
+
+### 7.2 Koin — authModule
+
+```kotlin
+val authModule = module {
+    factory<AuthRepository> { AuthRepositoryImpl(get()) }
+    factory { LoginUseCase(get()) }
+    viewModel { LoginViewModel(get(), get(), get()) }  // useCase, logger, analytics
+}
+```
+
+---
+
+## 8. Resumo dos Arquivos Alterados
 
 | Arquivo | Tipo de mudança |
 |---|---|
@@ -384,6 +423,8 @@ viewModel { ChatViewModel(get(), get(), get(), get(), get(), get(), get()) }
 | `feature/chat/…/ChatViewModel.kt` | +3 params, +companion, logging/tracking em `doCheckAvailability` e `sendMessage` |
 | `feature/chat/…/ChatModule.kt` | `viewModel { }` de 4 para 7 args |
 | `app/…/Modules.kt` — `homeModule` | `viewModel { }` de 2 para 5 args |
+| `feature/auth/…/LoginViewModel.kt` | +2 params (logger, analytics), `AuthEvent` em `onLoginClicked` |
+| `feature/auth/…/AuthModule.kt` | `viewModel { LoginViewModel(get(), get(), get()) }` |
 
 ---
 

@@ -105,7 +105,7 @@ open app/build/reports/lint-results-debug.html
 
 JaCoCo instrumenta os testes e gera relatório de cobertura por linha e instrução. O `jacocoFullReport` agrega os 5 módulos cobertos em um único XML.
 
-**Módulos cobertos:** `:feature:home`, `:feature:chat`, `:feature:character_details`, `:core:network`, `:core:navigation`
+**Módulos cobertos:** `:feature:home`, `:feature:chat`, `:feature:character_details`, `:feature:auth`, `:core:network`, `:core:navigation`, `:core:security`
 
 **Threshold:** 60% de instruction coverage (global e por arquivo modificado no PR)
 
@@ -113,6 +113,7 @@ JaCoCo instrumenta os testes e gera relatório de cobertura por linha e instruç
 - Código gerado: `R.class`, `BuildConfig.*`, `Manifest*.*`
 - DI: `**/di/**` (módulos Koin — estrutura, sem lógica testável)
 - Os próprios testes: `**/*Test*.*`
+- Infraestrutura Android não testável em JVM: `**/EncryptedPrefsStorage*` (depende de Android Keystore — coberta apenas por testes instrumentados)
 
 **Rodar localmente:**
 ```bash

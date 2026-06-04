@@ -67,6 +67,7 @@ O projeto já tem toda a infraestrutura de cobertura montada (`jacocoFullReport`
 - `**/R.class`, `**/BuildConfig.*`, `**/Manifest*.*` — gerado
 - `**/di/**` — módulos Koin (estrutura, não lógica)
 - `**/*Test*.*` — os próprios testes
+- `**/EncryptedPrefsStorage*` — depende de Android Keystore; não instanciável em JVM (`:core:security`)
 
 ## Consequências
 

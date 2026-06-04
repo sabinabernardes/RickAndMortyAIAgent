@@ -1,6 +1,6 @@
 # SDD — Estratégia de Testes de UI
 
-**Módulos:** `:core:designsystem`, `:feature:home`, `:feature:character_details`, `:feature:chat`  
+**Módulos:** `:core:designsystem`, `:feature:home`, `:feature:character_details`, `:feature:chat`, `:feature:auth`  
 **Status:** Planejado  
 **Autor:** Sabina Bernardes  
 **Data:** 2026-06-02
@@ -133,6 +133,29 @@ class HomeScreenTest {
 | 4 | `ChatUiState.Conversation` com mensagens | Texto das mensagens visível |
 | 5 | Campo de texto vazio | Botão de enviar desabilitado |
 | 6 | Campo de texto preenchido + clique em enviar | Callback de envio chamado, campo limpo |
+
+#### `:feature:auth` → `LoginScreenTest` ✅ implementado
+
+Testa sub-composables diretamente — sem ViewModel (composables são `internal`):
+
+| # | Componente / Estado | O que verificar |
+|---|--------------------|-----------------| 
+| 1 | `LoginHeader` | Texto "Rick & Morty AI" visível |
+| 2 | `LoginHeader` | Subtitle "Entre para continuar" visível |
+| 3 | `StudyBanner` | Label de autenticação simulada visível |
+| 4 | `StudyBanner` | Instrução "email válido" e "8 caracteres" visíveis |
+| 5 | `LoginForm(Idle)` | Campo Email visível |
+| 6 | `LoginForm(Idle)` | Campo Senha visível |
+| 7 | `LoginForm(Idle)` | Botão `login_button` habilitado |
+| 8 | `LoginForm(Loading)` | Botão `login_button` desabilitado |
+| 9 | `LoginForm(Loading)` | Snapshot golden (light) |
+| 10 | `LoginForm(Error)` | Mensagem de erro visível |
+| 11 | `LoginForm(Error("...8 caracteres..."))` | Texto "8 caracteres" visível |
+| 12 | `LoginForm(Error)` | Snapshot golden (light) |
+| 13 | `LoginForm(Idle)` dark mode | Snapshot golden (dark) |
+| 14 | `StudyBanner` dark mode | Snapshot golden (dark) |
+
+> **Implementação:** Roborazzi + Robolectric. 4 goldens em `feature/auth/src/test/snapshots/`. Ver [Screenshot Testing com Roborazzi](../wiki/Screenshot-Testing-Roborazzi.md).
 
 ---
 
