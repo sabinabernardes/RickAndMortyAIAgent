@@ -11,7 +11,6 @@ import com.bina.chat.chat.domain.model.ModelAvailability
 import com.bina.chat.chat.domain.repository.ChatRepository
 import com.bina.chat.chat.domain.usecase.CheckModelAvailabilityUseCase
 import com.bina.chat.chat.domain.usecase.SendMessageUseCase
-import com.bina.chat.chat.presentation.mapper.ChatMessageUiMapper
 import com.bina.chat.chat.presentation.state.ChatUiState
 import com.bina.logging.AppLogger
 import io.mockk.coEvery
@@ -39,7 +38,6 @@ class ChatViewModelTest {
     private val checkModelAvailabilityUseCase: CheckModelAvailabilityUseCase = mockk()
     private val sendMessageUseCase: SendMessageUseCase = mockk()
     private val repository: ChatRepository = mockk(relaxed = true)
-    private val uiMapper = ChatMessageUiMapper()
     private val logger = mockk<AppLogger>(relaxed = true)
     private val analytics = mockk<AnalyticsTracker>(relaxed = true)
     private val performance = mockk<PerformanceTracker>(relaxed = true)
@@ -62,7 +60,6 @@ class ChatViewModelTest {
         checkModelAvailabilityUseCase,
         sendMessageUseCase,
         repository,
-        uiMapper,
         logger,
         analytics,
         performance

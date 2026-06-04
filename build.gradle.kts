@@ -32,7 +32,10 @@ tasks.register("installGitHooks") {
     group = "setup"
     description = "Configura git para usar os hooks em .githooks/"
     doLast {
-        exec { commandLine("git", "config", "core.hooksPath", ".githooks") }
+        ProcessBuilder("git", "config", "core.hooksPath", ".githooks")
+            .directory(rootDir)
+            .start()
+            .waitFor()
         println("Git hooks instalados. Pre-commit Detekt ativo.")
     }
 }

@@ -11,7 +11,6 @@ import com.bina.chat.chat.domain.model.ModelAvailability
 import com.bina.chat.chat.domain.repository.ChatRepository
 import com.bina.chat.chat.domain.usecase.CheckModelAvailabilityUseCase
 import com.bina.chat.chat.domain.usecase.SendMessageUseCase
-import com.bina.chat.chat.presentation.mapper.ChatMessageUiMapper
 import com.bina.chat.chat.presentation.model.ChatMessageUiModel
 import com.bina.chat.chat.presentation.state.ChatUiState
 import com.bina.logging.AppLogger
@@ -27,7 +26,6 @@ class ChatViewModel(
     private val checkModelAvailabilityUseCase: CheckModelAvailabilityUseCase,
     private val sendMessageUseCase: SendMessageUseCase,
     private val repository: ChatRepository,
-    uiMapper: ChatMessageUiMapper,
     private val logger: AppLogger,
     private val analytics: AnalyticsTracker,
     private val performance: PerformanceTracker
@@ -106,8 +104,9 @@ class ChatViewModel(
                     analytics.track(ChatEvent.AgentNavigationTriggered(action))
                     _navigationEvent.emit(event)
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
-                if (e is CancellationException) throw e
                 performance.stopTrace(TRACE_RESPONSE_TIME)
                 logger.error(TAG, "send message failed", e)
                 val state = _uiState.value as? ChatUiState.Conversation ?: return@launch
