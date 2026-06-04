@@ -1,7 +1,9 @@
 package com.bina.auth.presentation.view
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,6 +33,8 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.dp
 import com.bina.auth.presentation.state.LoginUiState
 import com.bina.auth.presentation.viewmodel.LoginViewModel
 import com.bina.designsystem.tokens.SpacingTokens
@@ -60,7 +64,9 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             LoginHeader()
-            Spacer(modifier = Modifier.height(SpacingTokens.spacing32))
+            Spacer(modifier = Modifier.height(SpacingTokens.spacing16))
+            StudyBanner()
+            Spacer(modifier = Modifier.height(SpacingTokens.spacing24))
             LoginForm(
                 uiState = uiState,
                 onLoginClicked = viewModel::onLoginClicked
@@ -70,7 +76,7 @@ fun LoginScreen(
 }
 
 @Composable
-private fun LoginHeader() {
+internal fun LoginHeader() {
     Text(
         text = "Rick & Morty AI",
         style = MaterialTheme.typography.headlineMedium,
@@ -85,7 +91,36 @@ private fun LoginHeader() {
 }
 
 @Composable
-private fun LoginForm(
+internal fun StudyBanner() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.tertiary,
+                shape = MaterialTheme.shapes.small
+            )
+            .padding(SpacingTokens.spacing16),
+        horizontalArrangement = Arrangement.Start
+    ) {
+        Column {
+            Text(
+                text = "⚗️  Autenticação simulada — app de estudo",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.tertiary
+            )
+            Spacer(modifier = Modifier.height(SpacingTokens.spacing4))
+            Text(
+                text = "Use qualquer email válido e uma senha com no mínimo 8 caracteres.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+@Composable
+internal fun LoginForm(
     uiState: LoginUiState,
     onLoginClicked: (email: String, password: String) -> Unit
 ) {
@@ -152,7 +187,7 @@ private fun LoginForm(
             onLoginClicked(email, password)
         },
         enabled = !isLoading,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().testTag("login_button")
     ) {
         if (isLoading) {
             CircularProgressIndicator(
