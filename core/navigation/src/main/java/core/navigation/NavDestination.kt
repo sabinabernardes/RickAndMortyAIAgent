@@ -5,6 +5,7 @@ package core.navigation
  * Pode ser expandido para incluir argumentos.
  */
 sealed class NavDestination(val route: String) {
+    object Login : NavDestination("login")
     object Home : NavDestination("home") {
         const val routeWithQuery = "home?query={query}"
         fun createRoute(query: String) = "home?query=$query"
