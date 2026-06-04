@@ -6,21 +6,25 @@ import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import com.bina.chat.chat.domain.model.MessageRole
 import com.bina.chat.chat.presentation.model.ChatMessageUiModel
 import com.bina.chat.chat.presentation.state.ChatUiState
 import com.bina.designsystem.theme.RickAndMortyTheme
+import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
 class ChatScreenTest {
 
     @get:Rule
@@ -34,6 +38,7 @@ class ChatScreenTest {
             RickAndMortyTheme { ModelUnavailableContent() }
         }
         composeTestRule.onNodeWithText("Erro ao carregar modelo").assertIsDisplayed()
+        composeTestRule.onRoot().captureRoboImage()
     }
 
     @Test
@@ -58,6 +63,7 @@ class ChatScreenTest {
             }
         }
         composeTestRule.onNodeWithText("Fale com o Rick").assertIsDisplayed()
+        composeTestRule.onRoot().captureRoboImage()
     }
 
     // --- ConversationContent: messages ---
@@ -77,6 +83,7 @@ class ChatScreenTest {
             }
         }
         composeTestRule.onNodeWithText("Quem é o Rick?").assertIsDisplayed()
+        composeTestRule.onRoot().captureRoboImage()
     }
 
     @Test
@@ -95,8 +102,6 @@ class ChatScreenTest {
         }
         composeTestRule.onNodeWithText("Sou o cientista mais inteligente do universo.").assertIsDisplayed()
     }
-
-    // --- ConversationContent: send message ---
 
     // --- Accessibility ---
 
@@ -163,5 +168,39 @@ class ChatScreenTest {
         composeTestRule.onNode(hasSetTextAction()).performTextInput("Oi Rick")
         composeTestRule.onNodeWithContentDescription("Enviar").performClick()
         assertTrue(sentMessage == "Oi Rick")
+    }
+
+    // --- Dark mode snapshots ---
+
+    @Test
+    fun `GIVEN empty conversation dark mode WHEN rendered THEN matches snapshot`() {
+        composeTestRule.setContent {
+            RickAndMortyTheme(useDarkTheme = true) {
+                ConversationContent(
+                    state = ChatUiState.Conversation(messages = emptyList(), isAiTyping = false),
+                    onSendMessage = {},
+                    onDismissError = {}
+                )
+            }
+        }
+        composeTestRule.onRoot().captureRoboImage()
+    }
+
+    @Test
+    fun `GIVEN conversation with messages dark mode WHEN rendered THEN matches snapshot`() {
+        val messages = listOf(
+            ChatMessageUiModel(role = MessageRole.USER, text = "Quem é o Rick?"),
+            ChatMessageUiModel(role = MessageRole.AI, text = "Sou o cientista mais inteligente do universo.")
+        )
+        composeTestRule.setContent {
+            RickAndMortyTheme(useDarkTheme = true) {
+                ConversationContent(
+                    state = ChatUiState.Conversation(messages = messages, isAiTyping = false),
+                    onSendMessage = {},
+                    onDismissError = {}
+                )
+            }
+        }
+        composeTestRule.onRoot().captureRoboImage()
     }
 }

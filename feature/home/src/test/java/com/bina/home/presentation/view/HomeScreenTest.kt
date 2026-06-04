@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import com.bina.analytics.AnalyticsTracker
 import com.bina.analytics.PerformanceTracker
@@ -13,6 +14,7 @@ import com.bina.home.presentation.mapper.CharacterUiMapper
 import com.bina.home.presentation.state.CharactersUiState
 import com.bina.home.presentation.viewmodel.HomeViewModel
 import com.bina.logging.AppLogger
+import com.github.takahirom.roborazzi.captureRoboImage
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -22,9 +24,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
 class HomeScreenTest {
 
     @get:Rule
@@ -49,6 +53,8 @@ class HomeScreenTest {
         composeTestRule.onNode(hasContentDescription("Carregando personagens", substring = true)).assertExists()
     }
 
+    // --- Behavior ---
+
     @Test
     fun `GIVEN loading state WHEN rendered THEN no error dialog is shown`() {
         composeTestRule.setContent {
@@ -61,6 +67,7 @@ class HomeScreenTest {
             }
         }
         composeTestRule.onNodeWithText("Algo deu errado").assertDoesNotExist()
+        composeTestRule.onRoot().captureRoboImage()
     }
 
     @Test
@@ -75,6 +82,7 @@ class HomeScreenTest {
             }
         }
         composeTestRule.onNodeWithText("Sem conexão").assertIsDisplayed()
+        composeTestRule.onRoot().captureRoboImage()
     }
 
     @Test
@@ -122,5 +130,21 @@ class HomeScreenTest {
             }
         }
         assertTrue(clickedId == -1)
+    }
+
+    // --- Dark mode snapshot ---
+
+    @Test
+    fun `GIVEN error state dark mode WHEN rendered THEN matches snapshot`() {
+        composeTestRule.setContent {
+            RickAndMortyTheme(useDarkTheme = true) {
+                HomeContent(
+                    uiState = CharactersUiState.Error("Sem conexão"),
+                    onCharacterClick = {},
+                    viewModel = fakeViewModel()
+                )
+            }
+        }
+        composeTestRule.onRoot().captureRoboImage()
     }
 }

@@ -10,17 +10,21 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import com.bina.designsystem.theme.RickAndMortyTheme
+import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
 class CardCharacterTest {
 
     @get:Rule
@@ -30,6 +34,8 @@ class CardCharacterTest {
         override val intrinsicSize = Size.Unspecified
         override fun DrawScope.onDraw() { /* no-op */ }
     }
+
+    // --- Behavior ---
 
     @Test
     fun `GIVEN character data WHEN rendered THEN name is displayed`() {
@@ -45,6 +51,7 @@ class CardCharacterTest {
             }
         }
         composeTestRule.onNodeWithText("Rick Sanchez").assertIsDisplayed()
+        composeTestRule.onRoot().captureRoboImage()
     }
 
     @Test
@@ -133,5 +140,23 @@ class CardCharacterTest {
         }
         composeTestRule.onNodeWithText("Rick Sanchez").performClick()
         assertTrue(clicked)
+    }
+
+    // --- Dark mode snapshot ---
+
+    @Test
+    fun `GIVEN character data dark mode WHEN rendered THEN matches snapshot`() {
+        composeTestRule.setContent {
+            RickAndMortyTheme(useDarkTheme = true) {
+                CardCharacter(
+                    painter = placeholder,
+                    name = "Rick Sanchez",
+                    status = "Alive",
+                    species = "Human",
+                    lastLocation = "Earth (C-137)"
+                )
+            }
+        }
+        composeTestRule.onRoot().captureRoboImage()
     }
 }
