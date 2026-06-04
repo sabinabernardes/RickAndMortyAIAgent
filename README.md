@@ -192,8 +192,12 @@ ChatScreen (Compose)
 # Run unit tests across all modules
 ./gradlew testDebugUnitTest
 
-# Static analysis (Detekt + Android Lint)
+# Static analysis — per module
 ./gradlew detekt lint
+
+# Static analysis — aggregated report for all modules
+./gradlew detektAll
+# open build/reports/detekt/detekt-all.html
 
 # Generate coverage report (single module)
 ./gradlew :<module>:jacocoTestReport

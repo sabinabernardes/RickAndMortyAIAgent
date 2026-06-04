@@ -4,9 +4,13 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android) apply false
     alias(libs.plugins.kotlin.compose) apply false
     alias(libs.plugins.android.library) apply false
-    alias(libs.plugins.detekt) apply false
+    alias(libs.plugins.detekt)
     alias(libs.plugins.roborazzi) apply false
     jacoco
+}
+
+dependencies {
+    "detektPlugins"("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.7")
 }
 
 subprojects {
@@ -25,6 +29,26 @@ allprojects {
     tasks.withType<io.gitlab.arturbosch.detekt.DetektCreateBaselineTask>().configureEach {
         config.setFrom(rootProject.files("config/detekt/detekt.yml"))
         buildUponDefaultConfig = true
+    }
+}
+
+tasks.register<io.gitlab.arturbosch.detekt.Detekt>("detektAll") {
+    group = "verification"
+    description = "Relatório Detekt agregado de todos os módulos"
+    parallel = true
+    setSource(fileTree(rootDir) {
+        include("**/src/**/*.kt")
+        exclude("**/build/**", "**/test/**", "**/androidTest/**")
+    })
+    config.setFrom(files("config/detekt/detekt.yml"))
+    buildUponDefaultConfig = true
+    basePath = rootDir.absolutePath
+    reports {
+        html.required.set(true)
+        html.outputLocation.set(layout.buildDirectory.file("reports/detekt/detekt-all.html"))
+        xml.required.set(false)
+        txt.required.set(false)
+        sarif.required.set(false)
     }
 }
 
