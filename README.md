@@ -43,7 +43,7 @@ Each feature module is strictly divided into layers:
 | **Pagination** | Paging 3 (RemoteMediator ready) |
 | **Navigation** | Jetpack Navigation Compose |
 | **Generative AI** | Google Gemini 2.5 Flash via `com.google.ai.client.generativeai` |
-| **Testing** | MockK, JUnit 4, Turbine (Flow testing), Compose UI Test |
+| **Testing** | MockK, JUnit 4, Turbine (Flow testing), Compose UI Test, Roborazzi (Screenshot Testing) |
 | **Build** | Gradle Kotlin DSL, Version Catalogs (.toml) |
 
 ---
@@ -54,6 +54,7 @@ Each feature module is strictly divided into layers:
 We enforce the **Given-When-Then** pattern to ensure tests are readable and serve as living documentation.
 - **Unit Tests**: Coverage focus on `UseCases`, `ViewModels` (State emission), and `Mappers`.
 - **UI Tests**: Isolated component testing via Compose Testing library.
+- **Screenshot Tests**: Visual regression via **Roborazzi** — 12 goldens across 4 modules, verified in CI.
 - **Turbine**: Leveraged for robust `Flow` and `StateFlow` validation.
 
 ### Coverage Report (Unit Tests)
@@ -195,6 +196,12 @@ ChatScreen (Compose)
 # Generate aggregated coverage report for all modules
 ./gradlew jacocoFullReport
 
+# Generate screenshot goldens (all modules)
+./gradlew recordRoborazziDebug
+
+# Verify screenshot goldens against baseline (CI)
+./gradlew verifyRoborazziDebug
+
 # Build debug APK
 ./gradlew assembleDebug
 ```
@@ -204,7 +211,7 @@ ChatScreen (Compose)
 ## 📊 Roadmap
 
 - [ ] **Offline-first**: Room integration for character caching.
-- [ ] **Screenshot Testing**: Implementation of Paparazzi or Roborazzi.
+- [x] **Screenshot Testing**: Roborazzi with 12 goldens across 4 modules, verified in CI.
 - [ ] **Baseline Profile**: Startup time optimization with Jetpack Baseline Profiles.
 
 ---
@@ -226,6 +233,7 @@ A documentação completa do projeto está na [Wiki do repositório](https://git
 | [Core: Observabilidade](https://github.com/sabinabernardes/RickAndMorty/wiki/Core-Observabilidade) | Logging estruturado, analytics de eventos e performance monitoring |
 | [Documentação de Engenharia](https://github.com/sabinabernardes/RickAndMorty/wiki/Documentação-de-Engenharia) | Rules, Specs (SDDs) e ADRs do projeto |
 | [Testes de UI](https://github.com/sabinabernardes/RickAndMorty/wiki/Testes-de-UI) | Robolectric, createComposeRule e cobertura por módulo |
+| [Screenshot Testing com Roborazzi](.claude/wiki/Screenshot-Testing-Roborazzi.md) | Goldens, record vs verify, dark mode, troubleshooting |
 | [Acessibilidade WCAG 2.1 AA](https://github.com/sabinabernardes/RickAndMorty/wiki/Acessibilidade-WCAG-2.1-AA) | TalkBack, contraste AA, semântica e live regions |
 
 ---

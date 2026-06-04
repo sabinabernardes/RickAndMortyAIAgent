@@ -2,6 +2,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.roborazzi)
     jacoco
 }
 
@@ -43,6 +44,10 @@ android {
             isIncludeAndroidResources = true
         }
     }
+}
+
+roborazzi {
+    outputDir.set(layout.projectDirectory.dir("src/test/snapshots"))
 }
 
 tasks.register<JacocoReport>("jacocoTestReport") {
@@ -96,6 +101,8 @@ dependencies {
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.ui.test.junit4)
     testImplementation(libs.androidx.ui.test.manifest)
+    testImplementation(libs.roborazzi)
+    testImplementation(libs.roborazzi.compose)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

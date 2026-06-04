@@ -5,20 +5,24 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import com.bina.character_details.presentation.model.CharacterDetailsUiModel
 import com.bina.character_details.presentation.model.EpisodeUiModel
 import com.bina.character_details.presentation.state.EpisodesState
 import com.bina.designsystem.theme.RickAndMortyTheme
+import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
 class CharacterDetailsScreenTest {
 
     @get:Rule
@@ -35,6 +39,8 @@ class CharacterDetailsScreenTest {
         imageUrl = ""
     )
 
+    // --- Behavior ---
+
     @Test
     fun `GIVEN success state WHEN rendered THEN character name is displayed`() {
         composeTestRule.setContent {
@@ -47,6 +53,7 @@ class CharacterDetailsScreenTest {
             }
         }
         composeTestRule.onAllNodesWithText("Rick Sanchez")[0].assertIsDisplayed()
+        composeTestRule.onRoot().captureRoboImage()
     }
 
     @Test
@@ -79,6 +86,7 @@ class CharacterDetailsScreenTest {
         }
         composeTestRule.onNodeWithText("Pilot").assertExists()
         composeTestRule.onNodeWithText("S01E01").assertExists()
+        composeTestRule.onRoot().captureRoboImage()
     }
 
     @Test
@@ -110,7 +118,6 @@ class CharacterDetailsScreenTest {
                 )
             }
         }
-        // mergeDescendants = true merges child text nodes into one; the merged row contains both label and value
         composeTestRule.onNode(
             hasText("Status", substring = true) and hasText("Alive", substring = true)
         ).assertExists()
@@ -128,5 +135,21 @@ class CharacterDetailsScreenTest {
             }
         }
         composeTestRule.onNodeWithText("Não foi possível carregar os episódios.").assertExists()
+    }
+
+    // --- Dark mode snapshot ---
+
+    @Test
+    fun `GIVEN character details dark mode WHEN rendered THEN matches snapshot`() {
+        composeTestRule.setContent {
+            RickAndMortyTheme(useDarkTheme = true) {
+                CharacterDetailsContent(
+                    character = character,
+                    episodesState = EpisodesState.Loading,
+                    onBackClick = {}
+                )
+            }
+        }
+        composeTestRule.onRoot().captureRoboImage()
     }
 }
