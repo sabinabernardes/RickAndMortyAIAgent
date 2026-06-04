@@ -12,7 +12,6 @@ sealed class NavDestination(val route: String) {
     object Chat : NavDestination("chat")
     data class Detail(val itemId: String) : NavDestination("detail/{itemId}") {
         companion object {
-            const val route = "detail/{itemId}"
             fun createRoute(itemId: String) = "detail/$itemId"
         }
     }

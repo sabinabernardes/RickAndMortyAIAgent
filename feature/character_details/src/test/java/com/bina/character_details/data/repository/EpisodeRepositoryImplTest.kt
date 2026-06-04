@@ -2,13 +2,11 @@ package com.bina.character_details.data.repository
 
 import com.bina.character_details.data.datasource.EpisodeDataSource
 import com.bina.character_details.data.model.EpisodeData
-import com.bina.network.NetworkResult
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class EpisodeRepositoryImplTest {
@@ -20,7 +18,7 @@ class EpisodeRepositoryImplTest {
         EpisodeData(id = id, name = name, episode = "S01E01", airDate = "December 2, 2013")
 
     @Test
-    fun `GIVEN dataSource returns episodes WHEN getEpisodes THEN returns Success with mapped domains`() = runTest {
+    fun `GIVEN dataSource returns episodes WHEN getEpisodes THEN all are mapped to domain`() = runTest {
         val ids = listOf(1, 2)
         coEvery { dataSource.getEpisodes(ids) } returns listOf(
             episodeData(1, "Pilot"),
@@ -29,31 +27,27 @@ class EpisodeRepositoryImplTest {
 
         val result = repository.getEpisodes(ids)
 
-        assertTrue(result is NetworkResult.Success)
-        val episodes = (result as NetworkResult.Success).data
-        assertEquals(2, episodes.size)
-        assertEquals("Pilot", episodes[0].name)
-        assertEquals("Lawnmower Dog", episodes[1].name)
+        assertEquals(2, result.size)
+        assertEquals("Pilot", result[0].name)
+        assertEquals("Lawnmower Dog", result[1].name)
         coVerify(exactly = 1) { dataSource.getEpisodes(ids) }
     }
 
     @Test
-    fun `GIVEN dataSource returns empty list WHEN getEpisodes THEN returns Success with empty list`() = runTest {
+    fun `GIVEN dataSource returns empty list WHEN getEpisodes THEN returns empty list`() = runTest {
         coEvery { dataSource.getEpisodes(emptyList()) } returns emptyList()
 
         val result = repository.getEpisodes(emptyList())
 
-        assertTrue(result is NetworkResult.Success)
-        assertEquals(emptyList<Any>(), (result as NetworkResult.Success).data)
+        assertEquals(emptyList<Any>(), result)
     }
 
     @Test
-    fun `GIVEN dataSource throws WHEN getEpisodes THEN returns Error`() = runTest {
+    fun `GIVEN dataSource throws WHEN getEpisodes THEN exception propagates`() = runTest {
         coEvery { dataSource.getEpisodes(any()) } throws RuntimeException("Network error")
 
-        val result = repository.getEpisodes(listOf(1))
+        val exception = runCatching { repository.getEpisodes(listOf(1)) }.exceptionOrNull()
 
-        assertTrue(result is NetworkResult.Error)
-        assertEquals("Network error", (result as NetworkResult.Error).exception.message)
+        assertEquals("Network error", exception?.message)
     }
 }

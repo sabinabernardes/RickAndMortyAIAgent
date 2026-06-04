@@ -4,13 +4,11 @@ import com.bina.character_details.data.datasource.CharacterDetailsDataSource
 import com.bina.character_details.data.model.CharacterDetailsData
 import com.bina.character_details.data.model.LocationDetailsData
 import com.bina.character_details.data.model.OriginData
-import com.bina.network.NetworkResult
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class CharacterDetailsRepositoryImplTest {
@@ -27,24 +25,22 @@ class CharacterDetailsRepositoryImplTest {
     )
 
     @Test
-    fun `GIVEN dataSource returns data WHEN getCharacterDetails THEN returns Success with mapped domain`() = runTest {
+    fun `GIVEN dataSource returns data WHEN getCharacterDetails THEN maps and returns domain`() = runTest {
         coEvery { dataSource.getCharacterDetails(1) } returns characterData(id = 1, name = "Rick Sanchez")
 
         val result = repository.getCharacterDetails(1)
 
-        assertTrue(result is NetworkResult.Success)
-        assertEquals(1, (result as NetworkResult.Success).data.id)
-        assertEquals("Rick Sanchez", result.data.name)
+        assertEquals(1, result.id)
+        assertEquals("Rick Sanchez", result.name)
         coVerify(exactly = 1) { dataSource.getCharacterDetails(1) }
     }
 
     @Test
-    fun `GIVEN dataSource throws WHEN getCharacterDetails THEN returns Error`() = runTest {
+    fun `GIVEN dataSource throws WHEN getCharacterDetails THEN exception propagates`() = runTest {
         coEvery { dataSource.getCharacterDetails(any()) } throws RuntimeException("Not found")
 
-        val result = repository.getCharacterDetails(99)
+        val exception = runCatching { repository.getCharacterDetails(99) }.exceptionOrNull()
 
-        assertTrue(result is NetworkResult.Error)
-        assertEquals("Not found", (result as NetworkResult.Error).exception.message)
+        assertEquals("Not found", exception?.message)
     }
 }

@@ -1,8 +1,7 @@
 package com.bina.character_details.domain.repository
 
 import com.bina.character_details.domain.model.CharacterDetailsDomain
-import com.bina.network.NetworkResult
 
 interface CharacterDetailsRepository {
-    suspend fun getCharacterDetails(id: Int): NetworkResult<CharacterDetailsDomain>
+    suspend fun getCharacterDetails(id: Int): CharacterDetailsDomain
 }

@@ -64,8 +64,6 @@ dependencies {
     implementation(libs.material)
     testImplementation(libs.turbine)
     testImplementation(libs.mockk)
-    testImplementation(libs.junit)
-    testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(kotlin("test"))
     testImplementation(libs.mockwebserver)
     testImplementation(libs.retrofit.moshi)

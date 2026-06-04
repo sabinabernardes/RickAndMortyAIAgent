@@ -1,9 +1,0 @@
-<?xml version="1.0" ?>
-<SmellBaseline>
-  <ManuallySuppressedIssues></ManuallySuppressedIssues>
-  <CurrentIssues>
-    <ID>ArgumentListWrapping:LogcatAnalyticsTrackerTest.kt$LogcatAnalyticsTrackerTest$("Analytics", match { it.contains("search_performed") &amp;&amp; it.contains("query=Rick") &amp;&amp; it.contains("page=1") })</ID>
-    <ID>MultiLineIfElse:LogcatAnalyticsTracker.kt$LogcatAnalyticsTracker$" | ${event.properties.entries.joinToString { "${it.key}=${it.value}" }}"</ID>
-    <ID>MultiLineIfElse:LogcatAnalyticsTracker.kt$LogcatAnalyticsTracker$""</ID>
-  </CurrentIssues>
-</SmellBaseline>
