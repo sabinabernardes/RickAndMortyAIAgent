@@ -178,3 +178,15 @@ O ponto de inflexão costuma ser quando:
 - O build começa a demorar mais do que alguns minutos
 - Mais de uma pessoa trabalha em features diferentes simultaneamente
 - Há código que claramente deveria ser compartilhado mas acaba duplicado por convenção, não por compilador
+
+---
+
+## Veja também
+
+- [Core: Observabilidade](Core-Observabilidade) — logging, analytics e performance tracking integrados em cada feature
+- [Core: Security](Core-Security) — EncryptedSharedPreferences e Android Keystore
+- [Core: Navigation](Core-Navigation) — rotas centralizadas e NavDestination
+- [Core: Network](Core-Network) — cliente HTTP, retry e tratamento de erros
+- [Feature: Auth Simulada](Feature-Auth-Simulada) — exemplo completo de Clean Architecture por camada
+- [Testes de UI](Testes-de-UI) — estratégia de testes por módulo
+- [Documentação de Engenharia](Documentação-de-Engenharia) — ADRs, specs e por que essa arquitetura escala
