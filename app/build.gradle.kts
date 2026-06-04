@@ -91,9 +91,11 @@ dependencies {
     implementation(project(":core:network"))
     implementation(project(":core:logging"))
     implementation(project(":core:analytics"))
+    implementation(project(":core:security"))
     implementation(project(":feature:home"))
     implementation(project(":feature:character_details"))
     implementation(project(":feature:chat"))
+    implementation(project(":feature:auth"))
     implementation(libs.androidx.navigation.common.ktx)
     implementation(libs.androidx.navigation.compose)
 

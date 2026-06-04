@@ -158,9 +158,11 @@ tasks.register("installGitHooks") {
 val coveredModules = listOf(
     ":core:network",
     ":core:navigation",
+    ":core:security",
     ":feature:chat",
     ":feature:character_details",
-    ":feature:home"
+    ":feature:home",
+    ":feature:auth"
 )
 
 tasks.register<JacocoReport>("jacocoFullReport") {
@@ -178,7 +180,8 @@ tasks.register<JacocoReport>("jacocoFullReport") {
 
     val excludes = listOf(
         "**/R.class", "**/R\$*.class", "**/BuildConfig.*", "**/Manifest*.*",
-        "**/*Test*.*", "**/di/**", "**/*Screen*", "**/*Activity*", "**/*Fragment*"
+        "**/*Test*.*", "**/di/**", "**/*Screen*", "**/*Activity*", "**/*Fragment*",
+        "**/EncryptedPrefsStorage*"  // Android Keystore: requer device, coberto por testes instrumentados
     )
 
     classDirectories.setFrom(

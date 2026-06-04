@@ -31,4 +31,6 @@ include(":feature")
 include(":feature:home")
 include(":feature:character_details")
 include(":feature:chat")
+include(":core:security")
+include(":feature:auth")
 
