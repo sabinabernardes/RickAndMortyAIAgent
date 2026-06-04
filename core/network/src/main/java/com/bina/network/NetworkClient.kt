@@ -1,6 +1,5 @@
 package com.bina.network
 
-import com.bina.network.interceptor.ResilienceInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import okhttp3.OkHttpClient
@@ -13,11 +12,8 @@ object NetworkClient {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
-    private val resilienceInterceptor = ResilienceInterceptor()
-
     private val httpClient = OkHttpClient.Builder()
         .addInterceptor(logging)
-        .addInterceptor(resilienceInterceptor)
         .build()
 
     val retrofit: Retrofit = Retrofit.Builder()

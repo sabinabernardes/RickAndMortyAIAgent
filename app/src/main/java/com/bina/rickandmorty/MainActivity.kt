@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
                         HomeScreen(
                             initialQuery = initialQuery,
                             onCharacterClick = { id ->
-                                navController.navigate("detail/$id")
+                                navController.navigate(NavDestination.Detail.createRoute(id.toString()))
                             },
                             onChatClick = {
                                 navController.navigate(NavDestination.Chat.route)
@@ -61,7 +61,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(
-                        route = "detail/{itemId}",
+                        route = NavDestination.Detail.route,
                         arguments = listOf(navArgument("itemId") { type = NavType.IntType })
                     ) { backStackEntry ->
                         val characterId = backStackEntry.arguments?.getInt("itemId") ?: 0
