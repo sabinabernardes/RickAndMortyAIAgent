@@ -16,6 +16,26 @@ class NavDestinationTest {
     }
 
     @Test
+    fun `Login route is login`() {
+        assertEquals("login", NavDestination.Login.route)
+    }
+
+    @Test
+    fun `Chat route is chat`() {
+        assertEquals("chat", NavDestination.Chat.route)
+    }
+
+    @Test
+    fun `Home routeWithQuery has query param`() {
+        assertEquals("home?query={query}", NavDestination.Home.routeWithQuery)
+    }
+
+    @Test
+    fun `Home createRoute embeds query in route`() {
+        assertEquals("home?query=Rick", NavDestination.Home.createRoute("Rick"))
+    }
+
+    @Test
     fun `given itemId when createRoute then returns expected route`() {
         // Given
         val itemId = "123"

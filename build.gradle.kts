@@ -158,9 +158,11 @@ tasks.register("installGitHooks") {
 val coveredModules = listOf(
     ":core:network",
     ":core:navigation",
+    ":core:security",
     ":feature:chat",
     ":feature:character_details",
-    ":feature:home"
+    ":feature:home",
+    ":feature:auth"
 )
 
 tasks.register<JacocoReport>("jacocoFullReport") {
