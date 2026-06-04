@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues></ManuallySuppressedIssues>
+  <CurrentIssues>
+    <ID>FinalNewline:DialogPreviewContent.kt$com.bina.playground.ui.theme.playground.DialogPreviewContent.kt</ID>
+    <ID>FinalNewline:ExampleUnitTest.kt$com.bina.playground.ExampleUnitTest.kt</ID>
+    <ID>MultiLineIfElse:DesignSystemPlaygroundScreen.kt$ColorTokens.OnBackground</ID>
+    <ID>MultiLineIfElse:DesignSystemPlaygroundScreen.kt$ColorTokens.OnPrimary</ID>
+    <ID>MultiLineIfElse:DesignSystemPlaygroundScreen.kt$ColorTokens.Primary</ID>
+    <ID>MultiLineIfElse:DesignSystemPlaygroundScreen.kt$ColorTokens.Surface</ID>
+    <ID>NewLineAtEndOfFile:DialogPreviewContent.kt$com.bina.playground.ui.theme.playground.DialogPreviewContent.kt</ID>
+    <ID>NewLineAtEndOfFile:ExampleUnitTest.kt$com.bina.playground.ExampleUnitTest.kt</ID>
+    <ID>NoConsecutiveBlankLines:DesignSystemPlaygroundActivity.kt$ </ID>
+    <ID>NoWildcardImports:SearchToolbarPreviewContent.kt$import androidx.compose.foundation.layout.*</ID>
+    <ID>NoWildcardImports:SearchToolbarPreviewContent.kt$import androidx.compose.material3.*</ID>
+    <ID>NoWildcardImports:SearchToolbarPreviewContent.kt$import androidx.compose.runtime.*</ID>
+    <ID>SpacingAroundCurly:SearchToolbarPreviewContent.kt${</ID>
+    <ID>UnusedImports:DesignSystemPlaygroundScreen.kt$import androidx.compose.ui.graphics.Color</ID>
+    <ID>WildcardImport:SearchToolbarPreviewContent.kt$import androidx.compose.foundation.layout.*</ID>
+    <ID>WildcardImport:SearchToolbarPreviewContent.kt$import androidx.compose.material3.*</ID>
+    <ID>WildcardImport:SearchToolbarPreviewContent.kt$import androidx.compose.runtime.*</ID>
+  </CurrentIssues>
+</SmellBaseline>

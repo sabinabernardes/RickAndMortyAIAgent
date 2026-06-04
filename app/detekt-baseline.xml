@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues></ManuallySuppressedIssues>
+  <CurrentIssues>
+    <ID>ArgumentListWrapping:Modules.kt$(loggingModule, analyticsModule, networkModule, homeModule, characterDetailsModule, keysModule, chatModule)</ID>
+    <ID>FinalNewline:ExampleUnitTest.kt$com.bina.rickandmorty.ExampleUnitTest.kt</ID>
+    <ID>FinalNewline:Modules.kt$com.bina.rickandmorty.di.Modules.kt</ID>
+    <ID>NewLineAtEndOfFile:ExampleUnitTest.kt$com.bina.rickandmorty.ExampleUnitTest.kt</ID>
+    <ID>NewLineAtEndOfFile:Modules.kt$com.bina.rickandmorty.di.Modules.kt</ID>
+    <ID>NoWildcardImports:ExampleUnitTest.kt$import org.junit.Assert.*</ID>
+    <ID>PropertyWrapping:Modules.kt$val appModules = listOf(loggingModule, analyticsModule, networkModule, homeModule, characterDetailsModule, keysModule, chatModule)</ID>
+    <ID>UnusedImports:MainActivity.kt$import androidx.compose.foundation.layout.fillMaxSize</ID>
+    <ID>UnusedImports:MainActivity.kt$import androidx.compose.foundation.layout.padding</ID>
+    <ID>UnusedImports:MainActivity.kt$import androidx.compose.material3.Scaffold</ID>
+    <ID>UnusedImports:MainActivity.kt$import androidx.compose.material3.Text</ID>
+    <ID>UnusedImports:MainActivity.kt$import androidx.compose.runtime.Composable</ID>
+    <ID>UnusedImports:MainActivity.kt$import androidx.compose.ui.Modifier</ID>
+    <ID>UnusedImports:MainActivity.kt$import androidx.compose.ui.tooling.preview.Preview</ID>
+    <ID>WildcardImport:ExampleUnitTest.kt$import org.junit.Assert.*</ID>
+  </CurrentIssues>
+</SmellBaseline>

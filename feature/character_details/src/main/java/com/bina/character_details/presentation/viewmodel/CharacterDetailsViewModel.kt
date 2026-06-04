@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.bina.analytics.AnalyticsTracker
 import com.bina.analytics.PerformanceTracker
 import com.bina.character_details.analytics.CharacterDetailsEvent
+import com.bina.character_details.domain.model.CharacterDetailsDomain
 import com.bina.character_details.domain.usecase.GetCharacterDetailsUseCase
 import com.bina.character_details.domain.usecase.GetEpisodesUseCase
 import com.bina.character_details.presentation.mapper.CharacterDetailsUiMapper
@@ -12,6 +13,7 @@ import com.bina.character_details.presentation.mapper.EpisodeUiMapper
 import com.bina.character_details.presentation.state.CharacterDetailsUiState
 import com.bina.character_details.presentation.state.EpisodesState
 import com.bina.logging.AppLogger
+import com.bina.network.NetworkResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -30,7 +32,6 @@ class CharacterDetailsViewModel(
     private val _uiState = MutableStateFlow<CharacterDetailsUiState>(CharacterDetailsUiState.Loading)
     val uiState: StateFlow<CharacterDetailsUiState> = _uiState
 
-    @Suppress("TooGenericExceptionCaught")
     fun getCharacterDetails(id: Int) {
         viewModelScope.launch {
             _uiState.value = CharacterDetailsUiState.Loading
@@ -38,38 +39,61 @@ class CharacterDetailsViewModel(
             logger.debug(TAG, "loading character id=$id")
             performance.startTrace(TRACE_DETAILS_LOAD)
 
-            try {
-                val domain = getCharacterDetailsUseCase(id)
-                val duration = performance.stopTrace(TRACE_DETAILS_LOAD)
-                logger.info(TAG, "character $id loaded in ${duration}ms")
-                _uiState.value = CharacterDetailsUiState.Success(uiMapper.map(domain))
+            when (val result = getCharacterDetailsUseCase(id)) {
+                is NetworkResult.Success -> {
+                    val duration = performance.stopTrace(TRACE_DETAILS_LOAD)
+                    logger.info(TAG, "character $id loaded in ${duration}ms")
+                    _uiState.value = CharacterDetailsUiState.Success(uiMapper.map(result.data))
+                    loadEpisodes(result.data)
+                }
+                is NetworkResult.Error -> {
+                    performance.stopTrace(TRACE_DETAILS_LOAD)
+                    logger.error(TAG, "character $id load failed", result.exception)
+                    _uiState.value = CharacterDetailsUiState.Error(result.exception.message)
+                }
+                is NetworkResult.Unauthorized -> {
+                    performance.stopTrace(TRACE_DETAILS_LOAD)
+                    logger.error(TAG, "unauthorized loading character $id")
+                    _uiState.value = CharacterDetailsUiState.Error("Acesso não autorizado")
+                }
+                else -> {
+                    performance.stopTrace(TRACE_DETAILS_LOAD)
+                    _uiState.value = CharacterDetailsUiState.Error(null)
+                }
+            }
+        }
+    }
 
-                performance.startTrace(TRACE_EPISODES_FETCH)
-                try {
-                    val ids = domain.episodeUrls.map { it.substringAfterLast("/").toInt() }
-                    val episodes = getEpisodesUseCase(ids).map(episodeUiMapper::map)
-                    val episodeDuration = performance.stopTrace(TRACE_EPISODES_FETCH)
-                    logger.info(TAG, "episodes loaded count=${episodes.size} in ${episodeDuration}ms")
-                    analytics.track(CharacterDetailsEvent.EpisodesLoaded(episodes.size))
-                    _uiState.update { state ->
-                        if (state is CharacterDetailsUiState.Success) {
-                            state.copy(episodesState = EpisodesState.Success(episodes))
-                        } else { state }
-                    }
-                } catch (e: Exception) {
-                    performance.stopTrace(TRACE_EPISODES_FETCH)
-                    logger.warn(TAG, "episodes load failed", e)
-                    analytics.track(CharacterDetailsEvent.EpisodesLoadFailed)
-                    _uiState.update { state ->
-                        if (state is CharacterDetailsUiState.Success) {
-                            state.copy(episodesState = EpisodesState.Error(e.message))
-                        } else { state }
+    private suspend fun loadEpisodes(domain: CharacterDetailsDomain) {
+        performance.startTrace(TRACE_EPISODES_FETCH)
+        val ids = domain.episodeUrls.map { it.substringAfterLast("/").toInt() }
+
+        when (val result = getEpisodesUseCase(ids)) {
+            is NetworkResult.Success -> {
+                val episodes = result.data.map(episodeUiMapper::map)
+                val duration = performance.stopTrace(TRACE_EPISODES_FETCH)
+                logger.info(TAG, "episodes loaded count=${episodes.size} in ${duration}ms")
+                analytics.track(CharacterDetailsEvent.EpisodesLoaded(episodes.size))
+                _uiState.update { state ->
+                    if (state is CharacterDetailsUiState.Success) {
+                        state.copy(episodesState = EpisodesState.Success(episodes))
+                    } else {
+                        state
                     }
                 }
-            } catch (e: Exception) {
-                performance.stopTrace(TRACE_DETAILS_LOAD)
-                logger.error(TAG, "character $id load failed", e)
-                _uiState.value = CharacterDetailsUiState.Error(e.message)
+            }
+            else -> {
+                performance.stopTrace(TRACE_EPISODES_FETCH)
+                val error = if (result is NetworkResult.Error) result.exception else RuntimeException("Unknown error")
+                logger.warn(TAG, "episodes load failed", error)
+                analytics.track(CharacterDetailsEvent.EpisodesLoadFailed)
+                _uiState.update { state ->
+                    if (state is CharacterDetailsUiState.Success) {
+                        state.copy(episodesState = EpisodesState.Error(error.message))
+                    } else {
+                        state
+                    }
+                }
             }
         }
     }
