@@ -103,8 +103,7 @@ fun ChatScreen(
                 is ChatUiState.ModelDownloadable -> ModelUnavailableContent()
                 is ChatUiState.Conversation -> ConversationContent(
                     state = state,
-                    onSendMessage = viewModel::sendMessage,
-                    onDismissError = viewModel::dismissError
+                    onSendMessage = viewModel::sendMessage
                 )
             }
         }
@@ -150,12 +149,10 @@ internal fun ModelUnavailableContent() {
     }
 }
 
-@Suppress("UnusedParameter")
 @Composable
 internal fun ConversationContent(
     state: ChatUiState.Conversation,
-    onSendMessage: (String) -> Unit,
-    onDismissError: () -> Unit
+    onSendMessage: (String) -> Unit
 ) {
     var inputText by remember { mutableStateOf("") }
     val listState = rememberLazyListState()

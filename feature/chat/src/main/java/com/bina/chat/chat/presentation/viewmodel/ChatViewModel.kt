@@ -19,10 +19,10 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
-@Suppress("UnusedPrivateProperty")
 class ChatViewModel(
     private val checkModelAvailabilityUseCase: CheckModelAvailabilityUseCase,
     private val sendMessageUseCase: SendMessageUseCase,
@@ -69,7 +69,6 @@ class ChatViewModel(
         }
     }
 
-    @Suppress("TooGenericExceptionCaught")
     fun sendMessage(userText: String) {
         if (userText.isBlank()) return
         val currentState = _uiState.value as? ChatUiState.Conversation ?: return
@@ -107,7 +106,8 @@ class ChatViewModel(
                     analytics.track(ChatEvent.AgentNavigationTriggered(action))
                     _navigationEvent.emit(event)
                 }
-            } catch (e: Exception) {
+            } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
+                if (e is CancellationException) throw e
                 performance.stopTrace(TRACE_RESPONSE_TIME)
                 logger.error(TAG, "send message failed", e)
                 val state = _uiState.value as? ChatUiState.Conversation ?: return@launch
