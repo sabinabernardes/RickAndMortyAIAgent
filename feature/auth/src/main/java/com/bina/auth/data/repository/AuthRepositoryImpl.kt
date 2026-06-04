@@ -16,6 +16,8 @@ class AuthRepositoryImpl(
         return when {
             !email.matches(EMAIL_REGEX) -> AuthResult.InvalidEmail
             password.length < MIN_PASSWORD_LENGTH -> AuthResult.WeakPassword
+            // demo: simula rejeição server-side para estudar o fluxo de InvalidCredentials
+            email == DEMO_BLOCKED_EMAIL -> AuthResult.InvalidCredentials
             else -> {
                 val token = buildMockJwt(email)
                 secureStorage.save(KEY_TOKEN, token)
@@ -53,5 +55,6 @@ class AuthRepositoryImpl(
         private const val TOKEN_TTL_SECONDS = 3600L
         private const val MILLIS_TO_SECONDS = 1000L
         private val EMAIL_REGEX = Regex("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
+        const val DEMO_BLOCKED_EMAIL = "blocked@example.com"
     }
 }

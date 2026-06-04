@@ -79,6 +79,14 @@ class AuthRepositoryImplTest {
     }
 
     @Test
+    fun `login with demo blocked email returns InvalidCredentials`() = runTest {
+        val result = repository.login(AuthRepositoryImpl.DEMO_BLOCKED_EMAIL, "portal123")
+
+        assertTrue(result is AuthResult.InvalidCredentials)
+        assertTrue(storage.isEmpty())
+    }
+
+    @Test
     fun `token has JWT structure`() = runTest {
         val result = repository.login("rick@citadel.com", "portal123") as AuthResult.Success
 

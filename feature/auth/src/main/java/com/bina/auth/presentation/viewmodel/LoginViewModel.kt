@@ -33,24 +33,18 @@ class LoginViewModel(
             val result = loginUseCase(email, password)
             logger.debug(TAG, "login result=${result::class.simpleName}")
 
-            _uiState.value = when (result) {
-                is AuthResult.Success -> {
-                    analytics.track(AuthEvent.LoginSuccess)
-                    LoginUiState.Success
-                }
-                is AuthResult.InvalidEmail -> {
-                    analytics.track(AuthEvent.LoginFailure)
-                    LoginUiState.Error("Email inválido.")
-                }
-                is AuthResult.WeakPassword -> {
-                    analytics.track(AuthEvent.LoginFailure)
-                    LoginUiState.Error("A senha deve ter no mínimo 8 caracteres.")
-                }
-                is AuthResult.InvalidCredentials -> {
-                    analytics.track(AuthEvent.LoginFailure)
-                    LoginUiState.Error("Credenciais inválidas.")
-                }
+            val newState = when (result) {
+                is AuthResult.Success -> LoginUiState.Success
+                is AuthResult.InvalidEmail -> LoginUiState.Error("Email inválido.")
+                is AuthResult.WeakPassword -> LoginUiState.Error("A senha deve ter no mínimo 8 caracteres.")
+                is AuthResult.InvalidCredentials -> LoginUiState.Error("Credenciais inválidas.")
             }
+            if (newState is LoginUiState.Success) {
+                analytics.track(AuthEvent.LoginSuccess)
+            } else {
+                analytics.track(AuthEvent.LoginFailure)
+            }
+            _uiState.value = newState
         }
     }
 
