@@ -164,7 +164,7 @@ internal fun HomeContent(
     when (uiState) {
         is CharactersUiState.Loading -> LoadingContent(modifier = modifier)
         is CharactersUiState.Success -> {
-            val characters = uiState.data.collectAsLazyPagingItems()
+            val characters = viewModel.characters.collectAsLazyPagingItems()
 
             val previousAppendState = remember { mutableStateOf<LoadState>(LoadState.NotLoading(false)) }
             LaunchedEffect(characters.loadState.append) {

@@ -15,13 +15,14 @@ import com.bina.home.presentation.mapper.CharacterUiMapper
 import com.bina.home.presentation.model.CharacterUiModel
 import com.bina.logging.AppLogger
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
@@ -38,6 +39,9 @@ class HomeViewModel(
 
     private val _uiState = MutableStateFlow<CharactersUiState>(CharactersUiState.Loading)
     val uiState: StateFlow<CharactersUiState> = _uiState
+
+    private val _characters = MutableSharedFlow<PagingData<CharacterUiModel>>(replay = 1)
+    val characters: SharedFlow<PagingData<CharacterUiModel>> = _characters
 
     private var currentQuery = ""
     private var screenLoadTracked = false
@@ -105,7 +109,8 @@ class HomeViewModel(
                         logger.info(TAG, "home_screen_load: ${duration}ms")
                         screenLoadTracked = true
                     }
-                    _uiState.value = CharactersUiState.Success(flowOf(mappedPagingData))
+                    _characters.emit(mappedPagingData)
+                    _uiState.value = CharactersUiState.Success
                 }
         }
     }

@@ -20,6 +20,14 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import retrofit2.Retrofit
 
+private const val RICK_PERSONA = """Você é um especialista apaixonado no universo de Rick and Morty.
+Responda com o tom sarcástico, brilhante e impaciente do Rick Sanchez.
+Use gírias do Rick ocasionalmente (como "Morty", "wubba lubba dub dub", "burp").
+Seja direto e um pouco condescendente, mas sempre preciso sobre o universo do show.
+Quando o usuário pedir para VER ou MOSTRAR um personagem específico, use a função show_character.
+Quando o usuário pedir para BUSCAR ou LISTAR personagens por nome, use a função search_characters.
+Responda a seguinte pergunta como Rick responderia: """
+
 val chatModule = module {
     single<GenerativeModel> {
         val showCharacterFn = defineFunction(
@@ -43,7 +51,7 @@ val chatModule = module {
     single<CharacterSearchApiService> { get<Retrofit>().create(CharacterSearchApiService::class.java) }
     factory<CharacterSearchDataSource> { CharacterSearchDataSourceImpl(get()) }
     factory<ChatDataSource> { ChatDataSourceImpl(get()) }
-    factory<ChatRepository> { ChatRepositoryImpl(get(), get()) }
+    factory<ChatRepository> { ChatRepositoryImpl(get(), get(), RICK_PERSONA) }
     factory { CheckModelAvailabilityUseCase(get()) }
     factory { SendMessageUseCase(get()) }
     factory { ChatMessageUiMapper() }
