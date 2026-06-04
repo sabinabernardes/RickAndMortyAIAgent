@@ -21,7 +21,7 @@ class ChatRepositoryImplTest {
 
     private val dataSource: ChatDataSource = mockk()
     private val characterSearch: CharacterSearchDataSource = mockk()
-    private val repository = ChatRepositoryImpl(dataSource, characterSearch)
+    private val repository = ChatRepositoryImpl(dataSource, characterSearch, "PERSONA: ")
 
     @Test
     fun `GIVEN dataSource returns Available WHEN checkAvailability THEN returns Available`() = runTest {

@@ -7,14 +7,12 @@ import com.bina.home.di.homeModule
 import com.bina.logging.di.loggingModule
 import com.bina.network.NetworkClient
 import com.bina.rickandmorty.BuildConfig
-import com.bina.home.data.remote.RickAndMortyApiService
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import retrofit2.Retrofit
 
 val networkModule = module {
     single<Retrofit> { NetworkClient.retrofit }
-    single<RickAndMortyApiService> { get<Retrofit>().create(RickAndMortyApiService::class.java) }
 }
 
 val keysModule = module {
