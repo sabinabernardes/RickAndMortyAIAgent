@@ -1,0 +1,14 @@
+build:
+  maxIssues: 99999
+
+complexity:
+  active: true
+  CyclomaticComplexMethod:
+    active: true
+    threshold: 1
+    ignoreSingleWhenExpression: false
+    ignoreSimpleWhenEntries: false
+    ignoreNestingFunctions: false
+  CognitiveComplexMethod:
+    active: true
+    threshold: 1
