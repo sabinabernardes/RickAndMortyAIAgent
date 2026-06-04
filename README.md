@@ -135,7 +135,12 @@ ChatScreen (Compose)
    ```properties
    GEMINI_API_KEY=your_key_here
    ```
-3. Build and run — the chat is accessible via the FAB on the home screen.
+3. Install git hooks (one-time per clone):
+   ```bash
+   ./gradlew installGitHooks
+   ```
+   This enables a pre-commit hook that runs Detekt on staged `.kt` files. Skip with `git commit --no-verify` if needed.
+4. Build and run — the chat is accessible via the FAB on the home screen.
 
 > No login, no download, no setup required for the end user. Works on any Android device with internet access, including foldables (tested on Samsung Galaxy Z Flip 6).
 
