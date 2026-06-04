@@ -45,8 +45,8 @@ class NetworkCallTest {
     }
 
     @Test
-    fun `GIVEN call throws generic exception WHEN safeApiCall THEN returns Error with message`() = runTest {
-        val result = safeApiCall<String> { throw RuntimeException("network error") }
+    fun `GIVEN call throws IOException WHEN safeApiCall THEN returns Error with message`() = runTest {
+        val result = safeApiCall<String> { throw java.io.IOException("network error") }
 
         assertTrue(result is NetworkResult.Error)
         assertEquals("network error", (result as NetworkResult.Error).exception.message)
