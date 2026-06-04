@@ -8,17 +8,10 @@ import com.bina.chat.chat.domain.repository.ChatRepository
 import com.bina.chat.search.data.datasource.CharacterSearchDataSource
 import kotlinx.coroutines.flow.Flow
 
-private const val RICK_PERSONA = """Você é um especialista apaixonado no universo de Rick and Morty.
-Responda com o tom sarcástico, brilhante e impaciente do Rick Sanchez.
-Use gírias do Rick ocasionalmente (como "Morty", "wubba lubba dub dub", "burp").
-Seja direto e um pouco condescendente, mas sempre preciso sobre o universo do show.
-Quando o usuário pedir para VER ou MOSTRAR um personagem específico, use a função show_character.
-Quando o usuário pedir para BUSCAR ou LISTAR personagens por nome, use a função search_characters.
-Responda a seguinte pergunta como Rick responderia: """
-
 class ChatRepositoryImpl(
     private val dataSource: ChatDataSource,
-    private val characterSearch: CharacterSearchDataSource
+    private val characterSearch: CharacterSearchDataSource,
+    private val persona: String
 ) : ChatRepository {
 
     override suspend fun checkAvailability(): ModelAvailability = dataSource.checkAvailability()
@@ -26,10 +19,10 @@ class ChatRepositoryImpl(
     override suspend fun warmup() = dataSource.warmup()
 
     override fun streamResponse(userMessage: String): Flow<String> =
-        dataSource.sendMessageStream(RICK_PERSONA + userMessage)
+        dataSource.sendMessageStream(persona + userMessage)
 
     override suspend fun sendAgentMessage(userMessage: String): AgentMessageResult {
-        val toolResponse = dataSource.sendMessageWithTools(RICK_PERSONA + userMessage)
+        val toolResponse = dataSource.sendMessageWithTools(persona + userMessage)
 
         val navigationEvent = toolResponse.functionCalls.firstOrNull()?.let { call ->
             when (call.name) {
