@@ -180,7 +180,8 @@ tasks.register<JacocoReport>("jacocoFullReport") {
 
     val excludes = listOf(
         "**/R.class", "**/R\$*.class", "**/BuildConfig.*", "**/Manifest*.*",
-        "**/*Test*.*", "**/di/**", "**/*Screen*", "**/*Activity*", "**/*Fragment*"
+        "**/*Test*.*", "**/di/**", "**/*Screen*", "**/*Activity*", "**/*Fragment*",
+        "**/EncryptedPrefsStorage*"  // Android Keystore: requer device, coberto por testes instrumentados
     )
 
     classDirectories.setFrom(

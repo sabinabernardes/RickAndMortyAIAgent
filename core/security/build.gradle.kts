@@ -46,7 +46,8 @@ tasks.register<JacocoReport>("jacocoTestReport") {
             "**/BuildConfig.*",
             "**/Manifest*.*",
             "**/*Test*.*",
-            "**/di/**"
+            "**/di/**",
+            "**/EncryptedPrefsStorage*"  // Android Keystore: requer device, coberto por testes instrumentados
         )
     }
 
