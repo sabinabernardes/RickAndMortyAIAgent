@@ -28,6 +28,15 @@ allprojects {
     }
 }
 
+tasks.register("installGitHooks") {
+    group = "setup"
+    description = "Configura git para usar os hooks em .githooks/"
+    doLast {
+        exec { commandLine("git", "config", "core.hooksPath", ".githooks") }
+        println("Git hooks instalados. Pre-commit Detekt ativo.")
+    }
+}
+
 val coveredModules = listOf(
     ":core:network",
     ":core:navigation",

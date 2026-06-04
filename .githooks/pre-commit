@@ -1,0 +1,21 @@
+#!/bin/sh
+# Roda Detekt apenas se houver arquivos .kt staged
+
+STAGED_KT=$(git diff --cached --name-only --diff-filter=ACM | grep "\.kt$")
+
+if [ -z "$STAGED_KT" ]; then
+  exit 0
+fi
+
+echo "⚙ Detekt..."
+./gradlew detekt --daemon -q 2>&1
+
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "✗ Detekt falhou. Corrija os problemas antes de commitar."
+  echo "  Para ver o relatório: open build/reports/detekt/detekt.html"
+  echo "  Para pular (emergência): git commit --no-verify"
+  exit 1
+fi
+
+echo "✓ Detekt OK"
