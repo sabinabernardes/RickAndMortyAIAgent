@@ -58,7 +58,6 @@ class ChatScreenTest {
                 ConversationContent(
                     state = ChatUiState.Conversation(messages = emptyList(), isAiTyping = false),
                     onSendMessage = {},
-                    onDismissError = {}
                 )
             }
         }
@@ -78,7 +77,6 @@ class ChatScreenTest {
                 ConversationContent(
                     state = ChatUiState.Conversation(messages = messages, isAiTyping = false),
                     onSendMessage = {},
-                    onDismissError = {}
                 )
             }
         }
@@ -96,7 +94,6 @@ class ChatScreenTest {
                 ConversationContent(
                     state = ChatUiState.Conversation(messages = messages, isAiTyping = false),
                     onSendMessage = {},
-                    onDismissError = {}
                 )
             }
         }
@@ -112,7 +109,6 @@ class ChatScreenTest {
                 ConversationContent(
                     state = ChatUiState.Conversation(messages = emptyList(), isAiTyping = true),
                     onSendMessage = {},
-                    onDismissError = {}
                 )
             }
         }
@@ -129,7 +125,6 @@ class ChatScreenTest {
                 ConversationContent(
                     state = ChatUiState.Conversation(messages = messages, isAiTyping = false),
                     onSendMessage = {},
-                    onDismissError = {}
                 )
             }
         }
@@ -146,7 +141,6 @@ class ChatScreenTest {
                 ConversationContent(
                     state = ChatUiState.Conversation(messages = messages, isAiTyping = false),
                     onSendMessage = {},
-                    onDismissError = {}
                 )
             }
         }
@@ -161,7 +155,6 @@ class ChatScreenTest {
                 ConversationContent(
                     state = ChatUiState.Conversation(messages = emptyList(), isAiTyping = false),
                     onSendMessage = { sentMessage = it },
-                    onDismissError = {}
                 )
             }
         }
@@ -179,7 +172,6 @@ class ChatScreenTest {
                 ConversationContent(
                     state = ChatUiState.Conversation(messages = emptyList(), isAiTyping = false),
                     onSendMessage = {},
-                    onDismissError = {}
                 )
             }
         }
@@ -197,7 +189,6 @@ class ChatScreenTest {
                 ConversationContent(
                     state = ChatUiState.Conversation(messages = messages, isAiTyping = false),
                     onSendMessage = {},
-                    onDismissError = {}
                 )
             }
         }

@@ -32,8 +32,5 @@
     <ID>NewLineAtEndOfFile:ChatRepositoryImplTest.kt$com.bina.chat.chat.data.repository.ChatRepositoryImplTest.kt</ID>
     <ID>NewLineAtEndOfFile:ChatViewModel.kt$com.bina.chat.chat.presentation.viewmodel.ChatViewModel.kt</ID>
     <ID>NewLineAtEndOfFile:ChatViewModelTest.kt$com.bina.chat.chat.presentation.viewmodel.ChatViewModelTest.kt</ID>
-    <ID>TooGenericExceptionCaught:ChatViewModel.kt$ChatViewModel$e: Exception</ID>
-    <ID>UnusedParameter:ChatScreen.kt$onDismissError: () -&gt; Unit</ID>
-    <ID>UnusedPrivateProperty:ChatViewModel.kt$ChatViewModel$private val uiMapper: ChatMessageUiMapper</ID>
   </CurrentIssues>
 </SmellBaseline>

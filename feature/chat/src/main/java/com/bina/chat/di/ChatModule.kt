@@ -6,7 +6,6 @@ import com.bina.chat.chat.data.repository.ChatRepositoryImpl
 import com.bina.chat.chat.domain.repository.ChatRepository
 import com.bina.chat.chat.domain.usecase.CheckModelAvailabilityUseCase
 import com.bina.chat.chat.domain.usecase.SendMessageUseCase
-import com.bina.chat.chat.presentation.mapper.ChatMessageUiMapper
 import com.bina.chat.chat.presentation.viewmodel.ChatViewModel
 import com.bina.chat.search.data.datasource.CharacterSearchDataSource
 import com.bina.chat.search.data.datasource.CharacterSearchDataSourceImpl
@@ -54,6 +53,5 @@ val chatModule = module {
     factory<ChatRepository> { ChatRepositoryImpl(get(), get(), RICK_PERSONA) }
     factory { CheckModelAvailabilityUseCase(get()) }
     factory { SendMessageUseCase(get()) }
-    factory { ChatMessageUiMapper() }
-    viewModel { ChatViewModel(get(), get(), get(), get(), get(), get(), get()) }
+    viewModel { ChatViewModel(get(), get(), get(), get(), get(), get()) }
 }

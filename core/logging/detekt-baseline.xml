@@ -2,6 +2,5 @@
 <SmellBaseline>
   <ManuallySuppressedIssues></ManuallySuppressedIssues>
   <CurrentIssues>
-    <ID>UnusedImports:LogcatLoggerTest.kt$import io.mockk.every</ID>
   </CurrentIssues>
 </SmellBaseline>
