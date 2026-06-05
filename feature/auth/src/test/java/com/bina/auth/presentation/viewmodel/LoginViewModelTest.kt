@@ -2,6 +2,7 @@ package com.bina.auth.presentation.viewmodel
 
 import com.bina.analytics.AnalyticsTracker
 import com.bina.analytics.event.AnalyticsEvent
+import com.bina.auth.domain.model.AuthResult
 import com.bina.auth.domain.model.UserSession
 import com.bina.auth.domain.repository.AuthRepository
 import com.bina.auth.domain.usecase.LoginUseCase
@@ -49,9 +50,8 @@ class LoginViewModelTest {
 
     @Test
     fun `valid credentials transition to Success`() = runTest {
-        coEvery { repository.login(any(), any()) } returns UserSession(
-            token = "mock.token.sig",
-            email = "rick@citadel.com"
+        coEvery { repository.login(any(), any()) } returns AuthResult.Success(
+            UserSession(token = "mock.token.sig", email = "rick@citadel.com")
         )
 
         viewModel.onLoginClicked("rick@citadel.com", "portal123")
@@ -61,7 +61,8 @@ class LoginViewModelTest {
 
     @Test
     fun `invalid email transitions to Error`() = runTest {
-        // LoginUseCase validates email format before calling repository
+        coEvery { repository.login(any(), any()) } returns AuthResult.InvalidEmail
+
         viewModel.onLoginClicked("bad-email", "portal123")
 
         val state = viewModel.uiState.value
@@ -71,7 +72,8 @@ class LoginViewModelTest {
 
     @Test
     fun `weak password transitions to Error`() = runTest {
-        // LoginUseCase validates password length before calling repository
+        coEvery { repository.login(any(), any()) } returns AuthResult.WeakPassword
+
         viewModel.onLoginClicked("rick@citadel.com", "short")
 
         val state = viewModel.uiState.value
@@ -81,8 +83,9 @@ class LoginViewModelTest {
 
     @Test
     fun `invalid credentials transitions to generic Error`() = runTest {
-        // LoginUseCase returns InvalidCredentials for DEMO_BLOCKED_EMAIL without calling repository
-        viewModel.onLoginClicked(LoginUseCase.DEMO_BLOCKED_EMAIL, "portal123")
+        coEvery { repository.login(any(), any()) } returns AuthResult.InvalidCredentials
+
+        viewModel.onLoginClicked("rick@citadel.com", "wrongpass")
 
         val state = viewModel.uiState.value
         assertTrue(state is LoginUiState.Error)
@@ -91,15 +94,18 @@ class LoginViewModelTest {
 
     @Test
     fun `analytics tracks login attempt on every click`() = runTest {
-        // invalid email causes LoginUseCase to short-circuit — no repository mock needed
-        viewModel.onLoginClicked("bad-email", "anypassword")
+        coEvery { repository.login(any(), any()) } returns AuthResult.InvalidEmail
+
+        viewModel.onLoginClicked("any@email.com", "anypassword")
 
         verify { analytics.track(any<AnalyticsEvent>()) }
     }
 
     @Test
     fun `resetState returns to Idle`() = runTest {
-        coEvery { repository.login(any(), any()) } returns UserSession(token = "t", email = "e@e.com")
+        coEvery { repository.login(any(), any()) } returns AuthResult.Success(
+            UserSession(token = "t", email = "e@e.com")
+        )
         viewModel.onLoginClicked("e@e.com", "password1")
         assertTrue(viewModel.uiState.value is LoginUiState.Success)
 
