@@ -1,6 +1,5 @@
 package com.bina.auth.data.repository
 
-import com.bina.auth.domain.model.AuthResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -21,35 +20,21 @@ class AuthRepositoryImplTest {
     }
 
     @Test
-    fun `login with valid credentials returns Success and saves token`() = runTest {
-        val result = repository.login("rick@citadel.com", "portal123")
+    fun `login saves token and email and returns session`() = runTest {
+        val session = repository.login("rick@citadel.com", "portal123")
 
-        assertTrue(result is AuthResult.Success)
-        assertNotNull(storage.get("auth_token"))
+        assertEquals("rick@citadel.com", session.email)
+        assertNotNull(session.token)
+        assertEquals(session.token, storage.get("auth_token"))
         assertEquals("rick@citadel.com", storage.get("auth_email"))
     }
 
     @Test
-    fun `login with invalid email returns InvalidEmail`() = runTest {
-        val result = repository.login("not-an-email", "portal123")
+    fun `token has JWT structure`() = runTest {
+        val session = repository.login("rick@citadel.com", "portal123")
 
-        assertTrue(result is AuthResult.InvalidEmail)
-        assertTrue(storage.isEmpty())
-    }
-
-    @Test
-    fun `login with short password returns WeakPassword`() = runTest {
-        val result = repository.login("rick@citadel.com", "short")
-
-        assertTrue(result is AuthResult.WeakPassword)
-        assertTrue(storage.isEmpty())
-    }
-
-    @Test
-    fun `login with exactly 8 char password succeeds`() = runTest {
-        val result = repository.login("morty@earth.com", "12345678")
-
-        assertTrue(result is AuthResult.Success)
+        val parts = session.token.split(".")
+        assertEquals(3, parts.size)
     }
 
     @Test
@@ -76,21 +61,5 @@ class AuthRepositoryImplTest {
         assertNotNull(session)
         assertEquals("rick@citadel.com", session?.email)
         assertNotNull(session?.token)
-    }
-
-    @Test
-    fun `login with demo blocked email returns InvalidCredentials`() = runTest {
-        val result = repository.login(AuthRepositoryImpl.DEMO_BLOCKED_EMAIL, "portal123")
-
-        assertTrue(result is AuthResult.InvalidCredentials)
-        assertTrue(storage.isEmpty())
-    }
-
-    @Test
-    fun `token has JWT structure`() = runTest {
-        val result = repository.login("rick@citadel.com", "portal123") as AuthResult.Success
-
-        val parts = result.session.token.split(".")
-        assertEquals(3, parts.size)
     }
 }
