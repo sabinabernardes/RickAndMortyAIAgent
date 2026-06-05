@@ -181,6 +181,111 @@ O ponto de inflexão costuma ser quando:
 
 ---
 
+## Esta arquitetura em um app de produção com milhões de usuários
+
+O projeto é educacional, mas as decisões arquiteturais refletem exatamente o que o Google recomenda para apps Android em produção — com argumentos que ficam mais fortes, não mais fracos, conforme a escala cresce.
+
+### Clean Architecture: regras de negócio que não quebram com mudança de infraestrutura
+
+A separação em Domain → Data → Presentation significa que as regras de negócio (UseCases) não conhecem Retrofit, Room, Firebase ou qualquer SDK externo. Quando um app chega a milhões de usuários, a infraestrutura muda com frequência: troca de CDN, migração de banco, novo backend de analytics. Clean Architecture garante que essas mudanças não quebrem a lógica de negócio.
+
+**No projeto:** `LoginUseCase` valida credenciais sem saber que o repositório usa `delay()` hoje — amanhã poderia usar uma chamada real de rede sem tocar no UseCase.
+
+> "Separation of concerns is the most important principle to follow when designing your app architecture."
+> — [Guide to app architecture · Google](https://developer.android.com/topic/architecture)
+
+### Modularização: o que o Gradle não compila não atrasa o build
+
+Em um app com dezenas de features e um time de 50+ engenheiros, o tempo de build é um KPI de produtividade. Módulos independentes são compilados em paralelo pelo Gradle e, mais importante, **não são recompilados quando não mudaram**.
+
+A Google usa exatamente essa estratégia no Now in Android — o app de referência deles — que tem mais de 20 módulos, compilados com Gradle Configuration Cache e Build Cache habilitados.
+
+**No projeto:** mudar `:feature:auth` não retoca `:feature:chat`, `:core:designsystem` nem `:core:network`.
+
+Além disso, modularização habilita o **Play Feature Delivery**: features podem ser entregues sob demanda pelo Play Store, reduzindo o tamanho do APK inicial — crítico para usuários com dispositivos de entrada ou conexões lentas.
+
+> "Modularization is a practice of organizing a codebase into loosely coupled and self contained parts. Each part is a module. Each module is independent and serves a clear purpose."
+> — [Guide to Android app modularization · Google](https://developer.android.com/topic/modularization)
+
+### Interface-first: troca de infraestrutura sem tocar nas features
+
+`AppLogger`, `AnalyticsTracker`, `PerformanceTracker` e `SecureStorage` são interfaces. As features nunca importam `Log.d()`, `FirebaseAnalytics` ou `EncryptedSharedPreferences` diretamente.
+
+Em produção, esse padrão vale muito:
+
+| Interface | Hoje (estudo) | Em produção |
+|-----------|--------------|-------------|
+| `AnalyticsTracker` | `LogcatAnalyticsTracker` | `FirebaseAnalyticsTracker` |
+| `PerformanceTracker` | `LogcatPerformanceTracker` | `FirebasePerformanceTracker` |
+| `AppLogger` | `LogcatLogger` | `CrashlyticsLogger` |
+| `SecureStorage` | `EncryptedPrefsStorage` | `EncryptedDataStoreStorage` |
+
+Cada troca é **uma nova classe + uma linha no Koin**. As 4 features não mudam.
+
+> "We recommend that you code to interfaces for the repositories, data sources and other classes in your app. This way you can swap implementations for testing and in future features."
+> — [Architecture recommendations · Google](https://developer.android.com/topic/architecture/recommendations)
+
+### StateFlow + sealed UiState: sem estado ambíguo em produção
+
+`Loading`, `Success`, `Error` são estados mutuamente exclusivos representados por tipos — não por combinações de booleans (`isLoading = true`, `hasError = false`, `data = null`). Isso elimina estados impossíveis como `isLoading = true && hasError = true`.
+
+Em escala, isso importa para rastreamento de bugs: um evento de analytics disparado em `LoginUiState.Error` sempre carrega a mensagem de erro. Não há campo nullable que esqueceu de ser preenchido.
+
+> "We recommend modeling UI state as a sealed class when there are a small number of different states."
+> — [UI layer · Google](https://developer.android.com/topic/architecture/ui-layer/stateholders)
+
+### Paging 3: paginação em escala sem carregar a lista inteira
+
+`:feature:home` usa Paging 3 para carregar personagens. Com milhões de registros no backend, a única abordagem viável é paginação — carregar a lista completa em memória causaria OOM (out of memory) em dispositivos de entrada.
+
+O Paging 3 integra com `LazyColumn`/`LazyVerticalGrid` do Compose, gerencia cache, retry e estado de loading de cada página de forma independente.
+
+> "The Paging library helps you load and display pages of data from a larger dataset from local storage or over network."
+> — [Paging 3 overview · Google](https://developer.android.com/topic/libraries/architecture/paging/v3-overview)
+
+### Segurança com Android Keystore: o padrão para tokens em produção
+
+`:core:security` usa `EncryptedSharedPreferences` com chave mestra gerada pelo **Android Keystore**. A chave nunca sai do hardware seguro (TEE/SE) — mesmo que o arquivo de preferências seja extraído, os dados são ilegíveis sem a chave de hardware.
+
+Essa é a recomendação explícita do Google para armazenar tokens de acesso, credenciais e dados sensíveis em apps Android. Em produção, o mesmo padrão seria usado para tokens OAuth e refresh tokens.
+
+> "Use the Android Keystore system to store cryptographic keys in a container to make it more difficult to extract from the device."
+> — [Android Keystore System · Google](https://developer.android.com/privacy-and-security/keystore)
+
+### O que precisaria evoluir para produção real
+
+Esta arquitetura está pronta para as evoluções críticas de escala sem reescrita:
+
+| Necessidade em produção | Caminho de evolução | Impacto no código atual |
+|------------------------|--------------------|-----------------------|
+| Offline-first | Room + repositório offline-first (mesmo contrato de interface) | Só a implementação do repositório |
+| Analytics de produção | `FirebaseAnalyticsTracker` implementando `AnalyticsTracker` | Uma classe nova, uma linha no Koin |
+| Auth real (OAuth) | `AuthRepositoryImpl` chamando API real | O `LoginUseCase` não muda |
+| Performance de startup | Baseline Profiles por módulo | Configuração de build, sem toque em código |
+| Features sob demanda | Play Feature Delivery com módulos dinâmicos | Configuração de módulo, sem refatoração |
+| Background sync | WorkManager chamando os mesmos UseCases | Nova camada de agendamento, domínio intacto |
+
+---
+
+## Referências oficiais do Google
+
+| Referência | O que cobre |
+|-----------|------------|
+| [Guide to app architecture](https://developer.android.com/topic/architecture) | Princípios de Clean Architecture para Android — camadas, UDF, recomendações |
+| [Modularization guide](https://developer.android.com/topic/modularization) | Estratégias de modularização, tipos de módulo, when to modularize |
+| [Architecture recommendations](https://developer.android.com/topic/architecture/recommendations) | Lista prescritiva de boas práticas por camada |
+| [Now in Android](https://github.com/android/nowinandroid) | App de referência do Google — multi-módulo, Compose, MVI em produção |
+| [UI layer](https://developer.android.com/topic/architecture/ui-layer) | StateFlow, sealed UiState, UDF (Unidirectional Data Flow) |
+| [Data layer](https://developer.android.com/topic/architecture/data-layer) | Repositórios, fontes de dados, interface-first |
+| [Paging 3](https://developer.android.com/topic/libraries/architecture/paging/v3-overview) | Paginação em escala integrada com Compose |
+| [Android Keystore System](https://developer.android.com/privacy-and-security/keystore) | Armazenamento seguro de chaves criptográficas |
+| [Jetpack Security](https://developer.android.com/jetpack/androidx/releases/security) | EncryptedSharedPreferences e EncryptedFile |
+| [Baseline Profiles](https://developer.android.com/topic/performance/baselineprofiles) | Otimização de startup e performance por módulo |
+| [Play Feature Delivery](https://developer.android.com/guide/playcore/feature-delivery) | Entrega de features sob demanda para reduzir APK inicial |
+| [WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager) | Background sync garantido, compatível com Doze e App Standby |
+
+---
+
 ## Veja também
 
 - [Core: Observabilidade](Core-Observabilidade) — logging, analytics e performance tracking integrados em cada feature
