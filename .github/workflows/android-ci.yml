@@ -15,16 +15,16 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Java 17 (Zulu)
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
           java-version: '17'
 
       - name: Cache Gradle dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.gradle/caches
@@ -60,14 +60,14 @@ jobs:
 
       - name: Upload Detekt report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: detekt-results
           path: '**/build/reports/detekt/detekt.html'
 
       - name: Upload Lint report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: lint-results
           path: '**/build/reports/lint-results-debug.html'
@@ -75,19 +75,21 @@ jobs:
   test:
     name: Testes e Cobertura
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Java 17 (Zulu)
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
           java-version: '17'
 
       - name: Cache Gradle dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.gradle/caches
@@ -108,7 +110,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: test-results
           path: '**/build/reports/tests/testDebugUnitTest'
@@ -120,7 +122,7 @@ jobs:
 
       - name: Upload screenshot diffs on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: roborazzi-diffs
           path: '**/build/outputs/roborazzi/**_compare.png'
@@ -132,9 +134,10 @@ jobs:
           files: build/reports/jacoco/full/jacocoFullReport.xml
           flags: unittests
           fail_ci_if_error: false
+          comment: true
 
       - name: Upload JaCoCo XML
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: jacoco-xml
           path: build/reports/jacoco/full/jacocoFullReport.xml
@@ -149,10 +152,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Download JaCoCo XML
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: jacoco-xml
           path: build/reports/jacoco/full/
@@ -168,4 +171,3 @@ jobs:
           update-comment: true
           pass-emoji: ':green_circle:'
           fail-emoji: ':red_circle:'
-
