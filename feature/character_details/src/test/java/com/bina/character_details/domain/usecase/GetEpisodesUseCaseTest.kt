@@ -3,6 +3,8 @@ package com.bina.character_details.domain.usecase
 import com.bina.character_details.domain.model.EpisodeDomain
 import com.bina.character_details.domain.repository.EpisodeRepository
 import com.bina.network.NetworkResult
+import com.bina.network.data
+import com.bina.network.successOf
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -23,7 +25,7 @@ class GetEpisodesUseCaseTest {
             EpisodeDomain(1, "Pilot", "S01E01", "December 2, 2013"),
             EpisodeDomain(2, "Lawnmower Dog", "S01E02", "December 9, 2013")
         )
-        coEvery { repository.getEpisodes(ids) } returns NetworkResult.Success(expected)
+        coEvery { repository.getEpisodes(ids) } returns successOf(expected)
 
         val result = useCase(ids)
 
@@ -34,7 +36,7 @@ class GetEpisodesUseCaseTest {
 
     @Test
     fun `GIVEN empty list WHEN invoke THEN returns Success with empty list`() = runTest {
-        coEvery { repository.getEpisodes(emptyList()) } returns NetworkResult.Success(emptyList())
+        coEvery { repository.getEpisodes(emptyList()) } returns successOf(emptyList())
 
         val result = useCase(emptyList())
 
