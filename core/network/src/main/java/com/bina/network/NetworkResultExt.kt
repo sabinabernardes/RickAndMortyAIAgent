@@ -14,3 +14,9 @@ fun <T, R> NetworkResult<T>.mapSuccess(transform: (T) -> R): NetworkResult<R> = 
 
 fun <T> successOf(data: T, headers: Headers = Headers.headersOf()): NetworkResult.Success<T> =
     NetworkResult.Success(ResponseEnvelope(data, headers))
+
+fun demoReviewdog(): Int {
+    val retryLimit = 999
+    val timeoutMs = 3600
+    return retryLimit + timeoutMs
+}
