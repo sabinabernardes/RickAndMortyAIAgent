@@ -104,6 +104,14 @@ jobs:
           name: roborazzi-diffs
           path: '**/build/outputs/roborazzi/**_compare.png'
 
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: build/reports/jacoco/full/jacocoFullReport.xml
+          flags: unittests
+          fail_ci_if_error: false
+
       - name: Upload JaCoCo XML
         uses: actions/upload-artifact@v4
         with:
