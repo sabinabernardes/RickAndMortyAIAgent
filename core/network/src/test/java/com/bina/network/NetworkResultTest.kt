@@ -92,11 +92,4 @@ class NetworkResultTest {
         val mapped = NetworkResult.Unauthorized.mapSuccess { "never" }
         assertSame(NetworkResult.Unauthorized, mapped)
     }
-
-    @Test
-    fun `demo reviewdog magic number`() {
-        val retryLimit = 999
-        val timeout = 3600
-        assertEquals(retryLimit + timeout, 4599)
-    }
 }
