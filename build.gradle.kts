@@ -25,6 +25,9 @@ allprojects {
         config.setFrom(rootProject.files("config/detekt/detekt.yml"))
         buildUponDefaultConfig = true
         autoCorrect = false
+        reports {
+            xml.required.set(true)
+        }
     }
     tasks.withType<io.gitlab.arturbosch.detekt.DetektCreateBaselineTask>().configureEach {
         config.setFrom(rootProject.files("config/detekt/detekt.yml"))
