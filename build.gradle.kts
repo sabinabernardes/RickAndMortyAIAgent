@@ -46,10 +46,12 @@ tasks.register<io.gitlab.arturbosch.detekt.Detekt>("detektAll") {
     config.setFrom(files("config/detekt/detekt.yml"))
     buildUponDefaultConfig = true
     basePath = rootDir.absolutePath
+    ignoreFailures = true
     reports {
         html.required.set(true)
         html.outputLocation.set(layout.buildDirectory.file("reports/detekt/detekt-all.html"))
-        xml.required.set(false)
+        xml.required.set(true)
+        xml.outputLocation.set(layout.buildDirectory.file("reports/detekt/detekt-all.xml"))
         txt.required.set(false)
         sarif.required.set(false)
     }

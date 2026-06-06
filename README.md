@@ -102,7 +102,7 @@ Documentação completa na [Wiki do repositório](https://github.com/sabinaberna
 | [Testes de UI](https://github.com/sabinabernardes/RickAndMorty/wiki/Testes-de-UI) | Robolectric, createComposeRule e cobertura por módulo |
 | [Screenshot Testing com Roborazzi](.claude/wiki/Screenshot-Testing-Roborazzi.md) | Goldens, record vs verify, dark mode, troubleshooting |
 | [Acessibilidade WCAG 2.1 AA](https://github.com/sabinabernardes/RickAndMorty/wiki/Acessibilidade-WCAG-2.1-AA) | TalkBack, contraste AA, semântica e live regions |
-| [CI — Qualidade Contínua](.claude/wiki/CI-Qualidade-Continua.md) | JaCoCo + Codecov, Detekt + Reviewdog, coverage gate 60% |
+| [CI — Qualidade Contínua](https://github.com/sabinabernardes/RickAndMortyAIAgent/wiki/CI-CD-Quality-Gates) | JaCoCo + Codecov, Detekt + Reviewdog, coverage gate 60% |
 
 ---
 

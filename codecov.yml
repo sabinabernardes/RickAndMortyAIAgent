@@ -1,0 +1,70 @@
+coverage:
+  status:
+    project:
+      default:
+        target: 60%
+        threshold: 5%
+    patch:
+      default:
+        target: 60%
+
+comment:
+  layout: "reach,diff,flags,components"
+  behavior: default
+  require_changes: false
+
+flags:
+  unittests:
+    carryforward: true
+
+component_management:
+  individual_components:
+    - component_id: core_network
+      name: ":core:network"
+      paths:
+        - core/network/src/main/**
+
+    - component_id: core_navigation
+      name: ":core:navigation"
+      paths:
+        - core/navigation/src/main/**
+
+    - component_id: core_security
+      name: ":core:security"
+      paths:
+        - core/security/src/main/**
+
+    - component_id: core_logging
+      name: ":core:logging"
+      paths:
+        - core/logging/src/main/**
+
+    - component_id: core_analytics
+      name: ":core:analytics"
+      paths:
+        - core/analytics/src/main/**
+
+    - component_id: core_designsystem
+      name: ":core:designsystem"
+      paths:
+        - core/designsystem/src/main/**
+
+    - component_id: feature_auth
+      name: ":feature:auth"
+      paths:
+        - feature/auth/src/main/**
+
+    - component_id: feature_home
+      name: ":feature:home"
+      paths:
+        - feature/home/src/main/**
+
+    - component_id: feature_character_details
+      name: ":feature:character_details"
+      paths:
+        - feature/character_details/src/main/**
+
+    - component_id: feature_chat
+      name: ":feature:chat"
+      paths:
+        - feature/chat/src/main/**

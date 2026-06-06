@@ -74,4 +74,22 @@ class NetworkResultTest {
         val mapped = error.mapSuccess { "never" }
         assertSame(error, mapped)
     }
+
+    @Test
+    fun `mapSuccess on Loading returns same Loading`() {
+        val mapped = NetworkResult.Loading.mapSuccess { "never" }
+        assertSame(NetworkResult.Loading, mapped)
+    }
+
+    @Test
+    fun `mapSuccess on Empty returns same Empty`() {
+        val mapped = NetworkResult.Empty.mapSuccess { "never" }
+        assertSame(NetworkResult.Empty, mapped)
+    }
+
+    @Test
+    fun `mapSuccess on Unauthorized returns same Unauthorized`() {
+        val mapped = NetworkResult.Unauthorized.mapSuccess { "never" }
+        assertSame(NetworkResult.Unauthorized, mapped)
+    }
 }
