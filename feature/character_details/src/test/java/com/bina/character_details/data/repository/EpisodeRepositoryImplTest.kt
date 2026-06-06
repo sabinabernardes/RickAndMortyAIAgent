@@ -3,6 +3,7 @@ package com.bina.character_details.data.repository
 import com.bina.character_details.data.datasource.EpisodeDataSource
 import com.bina.character_details.data.model.EpisodeData
 import com.bina.network.NetworkResult
+import com.bina.network.data
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -48,12 +49,12 @@ class EpisodeRepositoryImplTest {
     }
 
     @Test
-    fun `GIVEN dataSource throws WHEN getEpisodes THEN returns Error`() = runTest {
+    fun `GIVEN dataSource throws WHEN getEpisodes THEN returns NetworkError`() = runTest {
         coEvery { dataSource.getEpisodes(any()) } throws RuntimeException("Network error")
 
         val result = repository.getEpisodes(listOf(1))
 
-        assertTrue(result is NetworkResult.Error)
-        assertEquals("Network error", (result as NetworkResult.Error).exception.message)
+        assertTrue(result is NetworkResult.NetworkError)
+        assertEquals("Network error", (result as NetworkResult.NetworkError).exception.message)
     }
 }

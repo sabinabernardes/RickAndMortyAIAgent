@@ -8,6 +8,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import retrofit2.Response
 
 // ADR-010: a API retorna objeto único (não array) quando há apenas um ID
 class EpisodeDataSourceImplTest {
@@ -20,7 +21,7 @@ class EpisodeDataSourceImplTest {
 
     @Test
     fun `GIVEN single id WHEN getEpisodes THEN calls getEpisodeSingle`() = runTest {
-        coEvery { api.getEpisodeSingle(1) } returns episodeData(1)
+        coEvery { api.getEpisodeSingle(1) } returns Response.success(episodeData(1))
 
         val result = dataSource.getEpisodes(listOf(1))
 
@@ -32,7 +33,9 @@ class EpisodeDataSourceImplTest {
 
     @Test
     fun `GIVEN multiple ids WHEN getEpisodes THEN calls getEpisodes with comma-separated ids`() = runTest {
-        coEvery { api.getEpisodes("1,2,3") } returns listOf(episodeData(1), episodeData(2), episodeData(3))
+        coEvery { api.getEpisodes("1,2,3") } returns Response.success(
+            listOf(episodeData(1), episodeData(2), episodeData(3))
+        )
 
         val result = dataSource.getEpisodes(listOf(1, 2, 3))
 
@@ -43,7 +46,9 @@ class EpisodeDataSourceImplTest {
 
     @Test
     fun `GIVEN two ids WHEN getEpisodes THEN calls getEpisodes not getEpisodeSingle`() = runTest {
-        coEvery { api.getEpisodes("5,10") } returns listOf(episodeData(5), episodeData(10))
+        coEvery { api.getEpisodes("5,10") } returns Response.success(
+            listOf(episodeData(5), episodeData(10))
+        )
 
         val result = dataSource.getEpisodes(listOf(5, 10))
 

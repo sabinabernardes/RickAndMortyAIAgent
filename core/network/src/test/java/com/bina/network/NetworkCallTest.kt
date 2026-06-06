@@ -1,62 +1,70 @@
 package com.bina.network
 
 import kotlinx.coroutines.test.runTest
+import okhttp3.Headers
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import retrofit2.HttpException
 import retrofit2.Response
 
 class NetworkCallTest {
 
-    private fun httpException(code: Int) = HttpException(
-        Response.error<Any>(code, "error".toResponseBody("text/plain".toMediaType()))
-    )
-
     @Test
-    fun `GIVEN successful call WHEN safeApiCall THEN returns Success with data`() = runTest {
-        val result = safeApiCall { "data" }
+    fun `GIVEN successful response WHEN safeApiCall THEN returns Success with data and headers`() = runTest {
+        val headers = Headers.headersOf("X-Request-Id", "abc")
+        val result = safeApiCall { Response.success("data", headers) }
 
         assertTrue(result is NetworkResult.Success)
         assertEquals("data", (result as NetworkResult.Success).data)
+        assertEquals("abc", result.envelope.headers["X-Request-Id"])
     }
 
     @Test
-    fun `GIVEN call throws HttpException 401 WHEN safeApiCall THEN returns Unauthorized`() = runTest {
-        val result = safeApiCall<String> { throw httpException(401) }
+    fun `GIVEN response with null body WHEN safeApiCall THEN returns Empty`() = runTest {
+        val result = safeApiCall { Response.success<String?>(null) }
+
+        assertTrue(result is NetworkResult.Empty)
+    }
+
+    @Test
+    fun `GIVEN 401 response WHEN safeApiCall THEN returns Unauthorized`() = runTest {
+        val result = safeApiCall { Response.error<String>(401, "".toResponseBody()) }
 
         assertTrue(result is NetworkResult.Unauthorized)
     }
 
     @Test
-    fun `GIVEN call throws HttpException 500 WHEN safeApiCall THEN returns Error`() = runTest {
-        val result = safeApiCall<String> { throw httpException(500) }
+    fun `GIVEN 404 response WHEN safeApiCall THEN returns BusinessError`() = runTest {
+        val result = safeApiCall {
+            Response.error<String>(404, "not found".toResponseBody("text/plain".toMediaType()))
+        }
 
-        assertTrue(result is NetworkResult.Error)
+        assertTrue(result is NetworkResult.BusinessError)
+        assertEquals(404, (result as NetworkResult.BusinessError).code)
     }
 
     @Test
-    fun `GIVEN call throws HttpException 404 WHEN safeApiCall THEN returns Error`() = runTest {
-        val result = safeApiCall<String> { throw httpException(404) }
+    fun `GIVEN 422 response WHEN safeApiCall THEN returns BusinessError with code`() = runTest {
+        val result = safeApiCall { Response.error<String>(422, "validation error".toResponseBody()) }
 
-        assertTrue(result is NetworkResult.Error)
+        assertTrue(result is NetworkResult.BusinessError)
+        assertEquals(422, (result as NetworkResult.BusinessError).code)
     }
 
     @Test
-    fun `GIVEN call throws IOException WHEN safeApiCall THEN returns Error with message`() = runTest {
+    fun `GIVEN 500 response WHEN safeApiCall THEN returns NetworkError`() = runTest {
+        val result = safeApiCall { Response.error<String>(500, "".toResponseBody()) }
+
+        assertTrue(result is NetworkResult.NetworkError)
+    }
+
+    @Test
+    fun `GIVEN IOException thrown WHEN safeApiCall THEN returns NetworkError with message`() = runTest {
         val result = safeApiCall<String> { throw java.io.IOException("network error") }
 
-        assertTrue(result is NetworkResult.Error)
-        assertEquals("network error", (result as NetworkResult.Error).exception.message)
-    }
-
-    @Test
-    fun `GIVEN call returns null WHEN safeApiCall THEN returns Success with null`() = runTest {
-        val result = safeApiCall<String?> { null }
-
-        assertTrue(result is NetworkResult.Success)
-        assertEquals(null, (result as NetworkResult.Success).data)
+        assertTrue(result is NetworkResult.NetworkError)
+        assertEquals("network error", (result as NetworkResult.NetworkError).exception.message)
     }
 }

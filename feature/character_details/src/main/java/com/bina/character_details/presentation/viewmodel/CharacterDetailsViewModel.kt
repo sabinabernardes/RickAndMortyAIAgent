@@ -14,6 +14,7 @@ import com.bina.character_details.presentation.state.CharacterDetailsUiState
 import com.bina.character_details.presentation.state.EpisodesState
 import com.bina.logging.AppLogger
 import com.bina.network.NetworkResult
+import com.bina.network.data
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -46,10 +47,15 @@ class CharacterDetailsViewModel(
                     _uiState.value = CharacterDetailsUiState.Success(uiMapper.map(result.data))
                     loadEpisodes(result.data)
                 }
-                is NetworkResult.Error -> {
+                is NetworkResult.NetworkError -> {
                     performance.stopTrace(TRACE_DETAILS_LOAD)
                     logger.error(TAG, "character $id load failed", result.exception)
                     _uiState.value = CharacterDetailsUiState.Error(result.exception.message)
+                }
+                is NetworkResult.BusinessError -> {
+                    performance.stopTrace(TRACE_DETAILS_LOAD)
+                    logger.error(TAG, "character $id business error ${result.code}: ${result.message}")
+                    _uiState.value = CharacterDetailsUiState.Error(result.message)
                 }
                 is NetworkResult.Unauthorized -> {
                     performance.stopTrace(TRACE_DETAILS_LOAD)
@@ -84,7 +90,7 @@ class CharacterDetailsViewModel(
             }
             else -> {
                 performance.stopTrace(TRACE_EPISODES_FETCH)
-                val error = if (result is NetworkResult.Error) result.exception else RuntimeException("Unknown error")
+                val error = if (result is NetworkResult.NetworkError) result.exception else RuntimeException("Unknown error")
                 logger.warn(TAG, "episodes load failed", error)
                 analytics.track(CharacterDetailsEvent.EpisodesLoadFailed)
                 _uiState.update { state ->

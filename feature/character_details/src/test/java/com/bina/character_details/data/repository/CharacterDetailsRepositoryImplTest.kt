@@ -5,6 +5,7 @@ import com.bina.character_details.data.model.CharacterDetailsData
 import com.bina.character_details.data.model.LocationDetailsData
 import com.bina.character_details.data.model.OriginData
 import com.bina.network.NetworkResult
+import com.bina.network.data
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -12,6 +13,9 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.ResponseBody.Companion.toResponseBody
+import retrofit2.Response
 
 class CharacterDetailsRepositoryImplTest {
 
@@ -28,7 +32,7 @@ class CharacterDetailsRepositoryImplTest {
 
     @Test
     fun `GIVEN dataSource returns data WHEN getCharacterDetails THEN returns Success with mapped domain`() = runTest {
-        coEvery { dataSource.getCharacterDetails(1) } returns characterData(id = 1, name = "Rick Sanchez")
+        coEvery { dataSource.getCharacterDetails(1) } returns Response.success(characterData(id = 1, name = "Rick Sanchez"))
 
         val result = repository.getCharacterDetails(1)
 
@@ -39,12 +43,24 @@ class CharacterDetailsRepositoryImplTest {
     }
 
     @Test
-    fun `GIVEN dataSource throws WHEN getCharacterDetails THEN returns Error`() = runTest {
+    fun `GIVEN dataSource returns 404 WHEN getCharacterDetails THEN returns BusinessError`() = runTest {
+        coEvery { dataSource.getCharacterDetails(any()) } returns Response.error(
+            404, "not found".toResponseBody("text/plain".toMediaType())
+        )
+
+        val result = repository.getCharacterDetails(99)
+
+        assertTrue(result is NetworkResult.BusinessError)
+        assertEquals(404, (result as NetworkResult.BusinessError).code)
+    }
+
+    @Test
+    fun `GIVEN dataSource throws WHEN getCharacterDetails THEN returns NetworkError`() = runTest {
         coEvery { dataSource.getCharacterDetails(any()) } throws RuntimeException("Not found")
 
         val result = repository.getCharacterDetails(99)
 
-        assertTrue(result is NetworkResult.Error)
-        assertEquals("Not found", (result as NetworkResult.Error).exception.message)
+        assertTrue(result is NetworkResult.NetworkError)
+        assertEquals("Not found", (result as NetworkResult.NetworkError).exception.message)
     }
 }
