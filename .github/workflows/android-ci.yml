@@ -34,6 +34,8 @@ jobs:
             gradle-${{ runner.os }}-
 
       - name: Run Detekt
+        id: detekt
+        continue-on-error: true
         run: ./gradlew detekt
 
       - name: Setup Reviewdog
@@ -54,6 +56,10 @@ jobs:
                 -reporter=github-pr-review \
                 -filter-mode=added \
                 -fail-on-error=false
+
+      - name: Fail if Detekt found violations
+        if: steps.detekt.outcome == 'failure'
+        run: exit 1
 
       - name: Run Lint
         run: ./gradlew lint
@@ -134,7 +140,6 @@ jobs:
           files: build/reports/jacoco/full/jacocoFullReport.xml
           flags: unittests
           fail_ci_if_error: false
-          comment: true
 
       - name: Upload JaCoCo XML
         uses: actions/upload-artifact@v5
