@@ -2,6 +2,8 @@
 
 [![Android CI](https://github.com/sabinabernardes/RickAndMorty/actions/workflows/android-ci.yml/badge.svg)](https://github.com/sabinabernardes/RickAndMorty/actions/workflows/android-ci.yml)
 
+[![codecov](https://codecov.io/gh/sabinabernardes/RickAndMortyAIAgent/graph/badge.svg?token=YOUR_CODECOV_BADGE_TOKEN)](https://codecov.io/gh/sabinabernardes/RickAndMortyAIAgent)
+
 Enterprise-grade Android project demonstrating **Clean Architecture**, **Multi-module**, and **Generative AI** integration. Built as a technical showcase for scalable Android development with Jetpack Compose.
 
 ---
@@ -100,6 +102,7 @@ Documentação completa na [Wiki do repositório](https://github.com/sabinaberna
 | [Testes de UI](https://github.com/sabinabernardes/RickAndMorty/wiki/Testes-de-UI) | Robolectric, createComposeRule e cobertura por módulo |
 | [Screenshot Testing com Roborazzi](.claude/wiki/Screenshot-Testing-Roborazzi.md) | Goldens, record vs verify, dark mode, troubleshooting |
 | [Acessibilidade WCAG 2.1 AA](https://github.com/sabinabernardes/RickAndMorty/wiki/Acessibilidade-WCAG-2.1-AA) | TalkBack, contraste AA, semântica e live regions |
+| [CI — Qualidade Contínua](.claude/wiki/CI-Qualidade-Continua.md) | JaCoCo + Codecov, Detekt + Reviewdog, coverage gate 60% |
 
 ---
 
