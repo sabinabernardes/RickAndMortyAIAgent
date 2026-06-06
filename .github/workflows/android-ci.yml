@@ -10,6 +10,8 @@ jobs:
   static-analysis:
     name: Análise Estática
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
 
     steps:
       - name: Checkout code
@@ -33,6 +35,25 @@ jobs:
 
       - name: Run Detekt
         run: ./gradlew detekt
+
+      - name: Setup Reviewdog
+        if: github.event_name == 'pull_request'
+        uses: reviewdog/action-setup@v1
+        with:
+          reviewdog_version: latest
+
+      - name: Post Detekt annotations via Reviewdog
+        if: github.event_name == 'pull_request'
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          find . -path "*/build/reports/detekt/*.xml" -not -path "*detekt-all*" \
+            | xargs cat \
+            | reviewdog -f=checkstyle \
+                -name="detekt" \
+                -reporter=github-pr-review \
+                -filter-mode=added \
+                -fail-on-error=false
 
       - name: Run Lint
         run: ./gradlew lint
@@ -103,6 +124,14 @@ jobs:
         with:
           name: roborazzi-diffs
           path: '**/build/outputs/roborazzi/**_compare.png'
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: build/reports/jacoco/full/jacocoFullReport.xml
+          flags: unittests
+          fail_ci_if_error: false
 
       - name: Upload JaCoCo XML
         uses: actions/upload-artifact@v4
