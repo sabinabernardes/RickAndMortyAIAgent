@@ -12,9 +12,8 @@ import com.bina.character_details.presentation.mapper.CharacterDetailsUiMapper
 import com.bina.character_details.presentation.mapper.EpisodeUiMapper
 import com.bina.character_details.presentation.state.CharacterDetailsUiState
 import com.bina.character_details.presentation.state.EpisodesState
+import com.bina.domain.DomainResult
 import com.bina.logging.AppLogger
-import com.bina.network.NetworkResult
-import com.bina.network.successOf
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -48,7 +47,7 @@ class CharacterDetailsViewModelTest {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         every { performance.stopTrace(any()) } returns 100L
-        coEvery { getEpisodesUseCase(any()) } returns successOf(emptyList())
+        coEvery { getEpisodesUseCase(any()) } returns DomainResult.Success(emptyList())
         viewModel = CharacterDetailsViewModel(
             getCharacterDetailsUseCase, getEpisodesUseCase, uiMapper, episodeUiMapper,
             logger, analytics, performance
@@ -68,7 +67,7 @@ class CharacterDetailsViewModelTest {
             gender = "Male", origin = "Earth", location = "Earth",
             image = "url", episodeUrls = emptyList()
         )
-        coEvery { getCharacterDetailsUseCase(id) } returns successOf(characterDomain)
+        coEvery { getCharacterDetailsUseCase(id) } returns DomainResult.Success(characterDomain)
 
         viewModel.getCharacterDetails(id)
 
@@ -83,7 +82,7 @@ class CharacterDetailsViewModelTest {
     fun `GIVEN a character id WHEN getCharacterDetails fails THEN should emit error state`() = runTest {
         val id = 1
         val errorMessage = "Error loading character"
-        coEvery { getCharacterDetailsUseCase(id) } returns NetworkResult.NetworkError(Exception(errorMessage))
+        coEvery { getCharacterDetailsUseCase(id) } returns DomainResult.Error(errorMessage)
 
         viewModel.getCharacterDetails(id)
 
@@ -109,8 +108,8 @@ class CharacterDetailsViewModelTest {
             EpisodeDomain(1, "Pilot", "S01E01", "December 2, 2013"),
             EpisodeDomain(2, "Lawnmower Dog", "S01E02", "December 9, 2013")
         )
-        coEvery { getCharacterDetailsUseCase(id) } returns successOf(characterDomain)
-        coEvery { getEpisodesUseCase(listOf(1, 2)) } returns successOf(episodes)
+        coEvery { getCharacterDetailsUseCase(id) } returns DomainResult.Success(characterDomain)
+        coEvery { getEpisodesUseCase(listOf(1, 2)) } returns DomainResult.Success(episodes)
 
         viewModel.getCharacterDetails(id)
 
@@ -123,15 +122,15 @@ class CharacterDetailsViewModelTest {
     }
 
     @Test
-    fun `GIVEN episodes use case returns NetworkError WHEN getCharacterDetails THEN episodesState is Error`() = runTest {
+    fun `GIVEN episodes use case returns Error WHEN getCharacterDetails THEN episodesState is Error`() = runTest {
         val id = 1
         val characterDomain = CharacterDetailsDomain(
             id = 1, name = "Rick", status = "Alive", species = "Human", gender = "Male",
             origin = "Earth", location = "Earth", image = "url",
             episodeUrls = listOf("https://rickandmortyapi.com/api/episode/1")
         )
-        coEvery { getCharacterDetailsUseCase(id) } returns successOf(characterDomain)
-        coEvery { getEpisodesUseCase(listOf(1)) } returns NetworkResult.NetworkError(RuntimeException("Episodes error"))
+        coEvery { getCharacterDetailsUseCase(id) } returns DomainResult.Success(characterDomain)
+        coEvery { getEpisodesUseCase(listOf(1)) } returns DomainResult.Error("Episodes error")
 
         viewModel.getCharacterDetails(id)
 
@@ -150,8 +149,8 @@ class CharacterDetailsViewModelTest {
             origin = "Earth", location = "Earth", image = "url",
             episodeUrls = emptyList()
         )
-        coEvery { getCharacterDetailsUseCase(id) } returns successOf(characterDomain)
-        coEvery { getEpisodesUseCase(emptyList()) } returns successOf(emptyList())
+        coEvery { getCharacterDetailsUseCase(id) } returns DomainResult.Success(characterDomain)
+        coEvery { getEpisodesUseCase(emptyList()) } returns DomainResult.Success(emptyList())
 
         viewModel.getCharacterDetails(id)
 
@@ -170,8 +169,8 @@ class CharacterDetailsViewModelTest {
             origin = "Earth", location = "Earth", image = "url",
             episodeUrls = listOf("https://rickandmortyapi.com/api/episode/42")
         )
-        coEvery { getCharacterDetailsUseCase(id) } returns successOf(characterDomain)
-        coEvery { getEpisodesUseCase(listOf(42)) } returns successOf(
+        coEvery { getCharacterDetailsUseCase(id) } returns DomainResult.Success(characterDomain)
+        coEvery { getEpisodesUseCase(listOf(42)) } returns DomainResult.Success(
             listOf(EpisodeDomain(42, "Total Rickall", "S02E04", "August 30, 2015"))
         )
 
@@ -186,7 +185,7 @@ class CharacterDetailsViewModelTest {
     @Test
     fun `GIVEN character id WHEN getCharacterDetails THEN ScreenOpened event is tracked`() = runTest {
         val id = 5
-        coEvery { getCharacterDetailsUseCase(id) } returns successOf(
+        coEvery { getCharacterDetailsUseCase(id) } returns DomainResult.Success(
             CharacterDetailsDomain(
                 id = id, name = "Morty", status = "Alive", species = "Human", gender = "Male",
                 origin = "Earth", location = "Earth", image = "url", episodeUrls = emptyList()
@@ -209,8 +208,8 @@ class CharacterDetailsViewModelTest {
                 "https://rickandmortyapi.com/api/episode/2"
             )
         )
-        coEvery { getCharacterDetailsUseCase(id) } returns successOf(characterDomain)
-        coEvery { getEpisodesUseCase(listOf(1, 2)) } returns successOf(
+        coEvery { getCharacterDetailsUseCase(id) } returns DomainResult.Success(characterDomain)
+        coEvery { getEpisodesUseCase(listOf(1, 2)) } returns DomainResult.Success(
             listOf(
                 EpisodeDomain(1, "Pilot", "S01E01", "December 2, 2013"),
                 EpisodeDomain(2, "Lawnmower Dog", "S01E02", "December 9, 2013")
@@ -225,14 +224,14 @@ class CharacterDetailsViewModelTest {
     @Test
     fun `GIVEN episodes fail WHEN getCharacterDetails THEN EpisodesLoadFailed event is tracked`() = runTest {
         val id = 1
-        coEvery { getCharacterDetailsUseCase(id) } returns successOf(
+        coEvery { getCharacterDetailsUseCase(id) } returns DomainResult.Success(
             CharacterDetailsDomain(
                 id = id, name = "Rick", status = "Alive", species = "Human", gender = "Male",
                 origin = "Earth", location = "Earth", image = "url",
                 episodeUrls = listOf("https://rickandmortyapi.com/api/episode/1")
             )
         )
-        coEvery { getEpisodesUseCase(any()) } returns NetworkResult.NetworkError(RuntimeException("network error"))
+        coEvery { getEpisodesUseCase(any()) } returns DomainResult.Error("network error")
 
         viewModel.getCharacterDetails(id)
 
@@ -242,14 +241,14 @@ class CharacterDetailsViewModelTest {
     @Test
     fun `GIVEN episodes fail WHEN getCharacterDetails THEN episodes_fetch trace is stopped`() = runTest {
         val id = 1
-        coEvery { getCharacterDetailsUseCase(id) } returns successOf(
+        coEvery { getCharacterDetailsUseCase(id) } returns DomainResult.Success(
             CharacterDetailsDomain(
                 id = id, name = "Rick", status = "Alive", species = "Human", gender = "Male",
                 origin = "Earth", location = "Earth", image = "url",
                 episodeUrls = listOf("https://rickandmortyapi.com/api/episode/1")
             )
         )
-        coEvery { getEpisodesUseCase(any()) } returns NetworkResult.NetworkError(RuntimeException("network error"))
+        coEvery { getEpisodesUseCase(any()) } returns DomainResult.Error("network error")
 
         viewModel.getCharacterDetails(id)
 

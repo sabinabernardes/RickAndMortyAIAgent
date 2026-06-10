@@ -2,9 +2,7 @@ package com.bina.character_details.domain.usecase
 
 import com.bina.character_details.domain.model.CharacterDetailsDomain
 import com.bina.character_details.domain.repository.CharacterDetailsRepository
-import com.bina.network.NetworkResult
-import com.bina.network.data
-import com.bina.network.successOf
+import com.bina.domain.DomainResult
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -25,11 +23,11 @@ class GetCharacterDetailsUseCaseTest {
             gender = "Male", origin = "Earth", location = "Earth",
             image = "url", episodeUrls = emptyList()
         )
-        coEvery { repository.getCharacterDetails(id) } returns successOf(expectedCharacter)
+        coEvery { repository.getCharacterDetails(id) } returns DomainResult.Success(expectedCharacter)
 
         val result = useCase(id)
 
-        assertTrue(result is NetworkResult.Success)
-        assertEquals(expectedCharacter, (result as NetworkResult.Success).data)
+        assertTrue(result is DomainResult.Success)
+        assertEquals(expectedCharacter, (result as DomainResult.Success).data)
     }
 }

@@ -26,8 +26,8 @@ val characterDetailsModule = module {
     factory<EpisodeDataSource> { EpisodeDataSourceImpl(get()) }
     factory<CharacterDetailsRepository> { CharacterDetailsRepositoryImpl(get()) }
     factory<EpisodeRepository> { EpisodeRepositoryImpl(get()) }
-    factory { GetCharacterDetailsUseCase(get()) }
-    factory { GetEpisodesUseCase(get()) }
+    factory { GetCharacterDetailsUseCase(get(), get()) }
+    factory { GetEpisodesUseCase(get(), get()) }
     factory { CharacterDetailsUiMapper() }
     factory { EpisodeUiMapper() }
     viewModel { CharacterDetailsViewModel(get(), get(), get(), get(), get(), get(), get()) }
