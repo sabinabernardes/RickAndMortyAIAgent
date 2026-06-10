@@ -98,6 +98,7 @@ Documentação completa na [Wiki do repositório](https://github.com/sabinaberna
 | [Core: Navigation](https://github.com/sabinabernardes/RickAndMorty/wiki/Core-Navigation) | Rotas centralizadas e fluxo de navegação |
 | [Core: Network](https://github.com/sabinabernardes/RickAndMorty/wiki/Core-Network) | Cliente HTTP, retry com backoff exponencial |
 | [Core: Observabilidade](https://github.com/sabinabernardes/RickAndMorty/wiki/Core-Observabilidade) | Logging estruturado, analytics e performance monitoring |
+| [Core: Domain — UseCase e DomainResult](https://github.com/sabinabernardes/RickAndMortyAIAgent/wiki/Core-Domain) | Padrão UseCase, DomainResult, ObservableUseCase e observabilidade automática |
 | [Documentação de Engenharia](https://github.com/sabinabernardes/RickAndMorty/wiki/Documentação-de-Engenharia) | Rules, Specs (SDDs) e ADRs do projeto |
 | [Testes de UI](https://github.com/sabinabernardes/RickAndMorty/wiki/Testes-de-UI) | Robolectric, createComposeRule e cobertura por módulo |
 | [Screenshot Testing com Roborazzi](.claude/wiki/Screenshot-Testing-Roborazzi.md) | Goldens, record vs verify, dark mode, troubleshooting |
