@@ -2,8 +2,7 @@ package com.bina.character_details.data.repository
 
 import com.bina.character_details.data.datasource.EpisodeDataSource
 import com.bina.character_details.data.model.EpisodeData
-import com.bina.network.NetworkResult
-import com.bina.network.data
+import com.bina.domain.DomainResult
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -30,8 +29,8 @@ class EpisodeRepositoryImplTest {
 
         val result = repository.getEpisodes(ids)
 
-        assertTrue(result is NetworkResult.Success)
-        val episodes = (result as NetworkResult.Success).data
+        assertTrue(result is DomainResult.Success)
+        val episodes = (result as DomainResult.Success).data
         assertEquals(2, episodes.size)
         assertEquals("Pilot", episodes[0].name)
         assertEquals("Lawnmower Dog", episodes[1].name)
@@ -44,17 +43,17 @@ class EpisodeRepositoryImplTest {
 
         val result = repository.getEpisodes(emptyList())
 
-        assertTrue(result is NetworkResult.Success)
-        assertEquals(emptyList<Any>(), (result as NetworkResult.Success).data)
+        assertTrue(result is DomainResult.Success)
+        assertEquals(emptyList<Any>(), (result as DomainResult.Success).data)
     }
 
     @Test
-    fun `GIVEN dataSource throws WHEN getEpisodes THEN returns NetworkError`() = runTest {
+    fun `GIVEN dataSource throws WHEN getEpisodes THEN returns Error with message`() = runTest {
         coEvery { dataSource.getEpisodes(any()) } throws RuntimeException("Network error")
 
         val result = repository.getEpisodes(listOf(1))
 
-        assertTrue(result is NetworkResult.NetworkError)
-        assertEquals("Network error", (result as NetworkResult.NetworkError).exception.message)
+        assertTrue(result is DomainResult.Error)
+        assertEquals("Network error", (result as DomainResult.Error).message)
     }
 }

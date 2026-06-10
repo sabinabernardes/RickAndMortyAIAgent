@@ -2,9 +2,7 @@ package com.bina.character_details.domain.usecase
 
 import com.bina.character_details.domain.model.EpisodeDomain
 import com.bina.character_details.domain.repository.EpisodeRepository
-import com.bina.network.NetworkResult
-import com.bina.network.data
-import com.bina.network.successOf
+import com.bina.domain.DomainResult
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -25,22 +23,22 @@ class GetEpisodesUseCaseTest {
             EpisodeDomain(1, "Pilot", "S01E01", "December 2, 2013"),
             EpisodeDomain(2, "Lawnmower Dog", "S01E02", "December 9, 2013")
         )
-        coEvery { repository.getEpisodes(ids) } returns successOf(expected)
+        coEvery { repository.getEpisodes(ids) } returns DomainResult.Success(expected)
 
         val result = useCase(ids)
 
-        assertTrue(result is NetworkResult.Success)
-        assertEquals(expected, (result as NetworkResult.Success).data)
+        assertTrue(result is DomainResult.Success)
+        assertEquals(expected, (result as DomainResult.Success).data)
         coVerify(exactly = 1) { repository.getEpisodes(ids) }
     }
 
     @Test
     fun `GIVEN empty list WHEN invoke THEN returns Success with empty list`() = runTest {
-        coEvery { repository.getEpisodes(emptyList()) } returns successOf(emptyList())
+        coEvery { repository.getEpisodes(emptyList()) } returns DomainResult.Success(emptyList())
 
         val result = useCase(emptyList())
 
-        assertTrue(result is NetworkResult.Success)
-        assertEquals(emptyList<EpisodeDomain>(), (result as NetworkResult.Success).data)
+        assertTrue(result is DomainResult.Success)
+        assertEquals(emptyList<EpisodeDomain>(), (result as DomainResult.Success).data)
     }
 }

@@ -4,8 +4,7 @@ import com.bina.character_details.data.datasource.CharacterDetailsDataSource
 import com.bina.character_details.data.model.CharacterDetailsData
 import com.bina.character_details.data.model.LocationDetailsData
 import com.bina.character_details.data.model.OriginData
-import com.bina.network.NetworkResult
-import com.bina.network.data
+import com.bina.domain.DomainResult
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -36,31 +35,31 @@ class CharacterDetailsRepositoryImplTest {
 
         val result = repository.getCharacterDetails(1)
 
-        assertTrue(result is NetworkResult.Success)
-        assertEquals(1, (result as NetworkResult.Success).data.id)
+        assertTrue(result is DomainResult.Success)
+        assertEquals(1, (result as DomainResult.Success).data.id)
         assertEquals("Rick Sanchez", result.data.name)
         coVerify(exactly = 1) { dataSource.getCharacterDetails(1) }
     }
 
     @Test
-    fun `GIVEN dataSource returns 404 WHEN getCharacterDetails THEN returns BusinessError`() = runTest {
+    fun `GIVEN dataSource returns 404 WHEN getCharacterDetails THEN returns Error with code`() = runTest {
         coEvery { dataSource.getCharacterDetails(any()) } returns Response.error(
             404, "not found".toResponseBody("text/plain".toMediaType())
         )
 
         val result = repository.getCharacterDetails(99)
 
-        assertTrue(result is NetworkResult.BusinessError)
-        assertEquals(404, (result as NetworkResult.BusinessError).code)
+        assertTrue(result is DomainResult.Error)
+        assertEquals(404, (result as DomainResult.Error).code)
     }
 
     @Test
-    fun `GIVEN dataSource throws WHEN getCharacterDetails THEN returns NetworkError`() = runTest {
+    fun `GIVEN dataSource throws WHEN getCharacterDetails THEN returns Error with message`() = runTest {
         coEvery { dataSource.getCharacterDetails(any()) } throws RuntimeException("Not found")
 
         val result = repository.getCharacterDetails(99)
 
-        assertTrue(result is NetworkResult.NetworkError)
-        assertEquals("Not found", (result as NetworkResult.NetworkError).exception.message)
+        assertTrue(result is DomainResult.Error)
+        assertEquals("Not found", (result as DomainResult.Error).message)
     }
 }

@@ -12,9 +12,8 @@ import com.bina.character_details.presentation.mapper.CharacterDetailsUiMapper
 import com.bina.character_details.presentation.mapper.EpisodeUiMapper
 import com.bina.character_details.presentation.state.CharacterDetailsUiState
 import com.bina.character_details.presentation.state.EpisodesState
+import com.bina.domain.DomainResult
 import com.bina.logging.AppLogger
-import com.bina.network.NetworkResult
-import com.bina.network.data
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -38,47 +37,34 @@ class CharacterDetailsViewModel(
             _uiState.value = CharacterDetailsUiState.Loading
             analytics.track(CharacterDetailsEvent.ScreenOpened(id.toString()))
             logger.debug(TAG, "loading character id=$id")
-            performance.startTrace(TRACE_DETAILS_LOAD)
 
             when (val result = getCharacterDetailsUseCase(id)) {
-                is NetworkResult.Success -> {
-                    val duration = performance.stopTrace(TRACE_DETAILS_LOAD)
-                    logger.info(TAG, "character $id loaded in ${duration}ms")
+                is DomainResult.Success -> {
+                    logger.info(TAG, "character $id loaded")
                     _uiState.value = CharacterDetailsUiState.Success(uiMapper.map(result.data))
                     loadEpisodes(result.data)
                 }
-                is NetworkResult.NetworkError -> {
-                    performance.stopTrace(TRACE_DETAILS_LOAD)
-                    logger.error(TAG, "character $id load failed", result.exception)
-                    _uiState.value = CharacterDetailsUiState.Error(result.exception.message)
-                }
-                is NetworkResult.BusinessError -> {
-                    performance.stopTrace(TRACE_DETAILS_LOAD)
-                    logger.error(TAG, "character $id business error ${result.code}: ${result.message}")
-                    _uiState.value = CharacterDetailsUiState.Error(result.message)
-                }
-                is NetworkResult.Unauthorized -> {
-                    performance.stopTrace(TRACE_DETAILS_LOAD)
+                is DomainResult.Unauthorized -> {
                     logger.error(TAG, "unauthorized loading character $id")
                     _uiState.value = CharacterDetailsUiState.Error("Acesso não autorizado")
                 }
-                else -> {
-                    performance.stopTrace(TRACE_DETAILS_LOAD)
-                    _uiState.value = CharacterDetailsUiState.Error(null)
+                is DomainResult.Error -> {
+                    logger.error(TAG, "character $id load failed: ${result.message}")
+                    _uiState.value = CharacterDetailsUiState.Error(result.message)
                 }
+                else -> _uiState.value = CharacterDetailsUiState.Error(null)
             }
         }
     }
 
     private suspend fun loadEpisodes(domain: CharacterDetailsDomain) {
-        performance.startTrace(TRACE_EPISODES_FETCH)
         val ids = domain.episodeUrls.map { it.substringAfterLast("/").toInt() }
-
+        performance.startTrace("episodes_fetch")
         when (val result = getEpisodesUseCase(ids)) {
-            is NetworkResult.Success -> {
+            is DomainResult.Success -> {
+                performance.stopTrace("episodes_fetch")
                 val episodes = result.data.map(episodeUiMapper::map)
-                val duration = performance.stopTrace(TRACE_EPISODES_FETCH)
-                logger.info(TAG, "episodes loaded count=${episodes.size} in ${duration}ms")
+                logger.info(TAG, "episodes loaded count=${episodes.size}")
                 analytics.track(CharacterDetailsEvent.EpisodesLoaded(episodes.size))
                 _uiState.update { state ->
                     if (state is CharacterDetailsUiState.Success) {
@@ -88,14 +74,25 @@ class CharacterDetailsViewModel(
                     }
                 }
             }
-            else -> {
-                performance.stopTrace(TRACE_EPISODES_FETCH)
-                val error = if (result is NetworkResult.NetworkError) result.exception else RuntimeException("Unknown error")
-                logger.warn(TAG, "episodes load failed", error)
+            is DomainResult.Error -> {
+                performance.stopTrace("episodes_fetch")
+                logger.warn(TAG, "episodes load failed: ${result.message}")
                 analytics.track(CharacterDetailsEvent.EpisodesLoadFailed)
                 _uiState.update { state ->
                     if (state is CharacterDetailsUiState.Success) {
-                        state.copy(episodesState = EpisodesState.Error(error.message))
+                        state.copy(episodesState = EpisodesState.Error(result.message))
+                    } else {
+                        state
+                    }
+                }
+            }
+            else -> {
+                performance.stopTrace("episodes_fetch")
+                logger.warn(TAG, "episodes load failed: resultado inesperado ${result::class.simpleName}")
+                analytics.track(CharacterDetailsEvent.EpisodesLoadFailed)
+                _uiState.update { state ->
+                    if (state is CharacterDetailsUiState.Success) {
+                        state.copy(episodesState = EpisodesState.Error(null))
                     } else {
                         state
                     }
@@ -106,7 +103,5 @@ class CharacterDetailsViewModel(
 
     companion object {
         private const val TAG = "CharacterDetailsViewModel"
-        private const val TRACE_DETAILS_LOAD = "character_details_load"
-        private const val TRACE_EPISODES_FETCH = "episodes_fetch"
     }
 }

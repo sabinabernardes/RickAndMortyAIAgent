@@ -56,6 +56,7 @@ tasks.register<JacocoReport>("jacocoTestReport") {
 
 dependencies {
     implementation(project(":core:logging"))
+    implementation(project(":core:domain"))
     implementation(libs.koin.android)
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
