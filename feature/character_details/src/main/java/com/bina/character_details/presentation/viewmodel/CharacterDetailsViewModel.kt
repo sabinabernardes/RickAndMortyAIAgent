@@ -69,7 +69,9 @@ class CharacterDetailsViewModel(
                 _uiState.update { state ->
                     if (state is CharacterDetailsUiState.Success) {
                         state.copy(episodesState = EpisodesState.Success(episodes))
-                    } else state
+                    } else {
+                        state
+                    }
                 }
             }
             is DomainResult.Error -> {
@@ -79,7 +81,9 @@ class CharacterDetailsViewModel(
                 _uiState.update { state ->
                     if (state is CharacterDetailsUiState.Success) {
                         state.copy(episodesState = EpisodesState.Error(result.message))
-                    } else state
+                    } else {
+                        state
+                    }
                 }
             }
             else -> {
@@ -89,7 +93,9 @@ class CharacterDetailsViewModel(
                 _uiState.update { state ->
                     if (state is CharacterDetailsUiState.Success) {
                         state.copy(episodesState = EpisodesState.Error(null))
-                    } else state
+                    } else {
+                        state
+                    }
                 }
             }
         }
